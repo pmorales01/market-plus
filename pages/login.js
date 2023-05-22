@@ -1,6 +1,12 @@
 "use client"
+
+import NavBar from '../components/NavBar'
+
 export default function Login () {
     return (
-        <h1>Login</h1>
+        <>
+            <NavBar />
+            <h1>Login</h1>
+        </>
     )
 }
