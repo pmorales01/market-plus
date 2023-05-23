@@ -2,10 +2,23 @@ from fastapi import FastAPI, Form
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from motor.motor_asyncio import AsyncIOMotorClient
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import os 
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
 
 #Initialize MongoDB client
 mongo_client = AsyncIOMotorClient("mongodb://localhost:27017")
@@ -30,4 +43,4 @@ async def login(user: User):
         user = User(username=user.username, email=user.email, password=user.password)
     except:
         return {'error': '...'}
-    return {'username': username, 'email': email, 'password' : password}
+    return 'Logging in'
