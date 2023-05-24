@@ -9,7 +9,8 @@ import os
 app = FastAPI()
 
 origins = [
-    "http://localhost:3000"
+    "http://localhost:3000",
+    "http://127.0.0.1:3000"
 ]
 
 app.add_middleware(
@@ -44,3 +45,12 @@ async def login(user: User):
     except:
         return {'error': '...'}
     return 'Logging in'
+
+# POST request sent by the signup form
+@app.post('/signup/')
+async def signup(user: User):
+    try:
+        user = User(username=user.username, email=user.email, password=user.password)
+    except:
+        return {'error': '...'}
+    return 'Success!'
