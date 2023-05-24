@@ -1,11 +1,11 @@
 "use client"
-
-import Link from 'next/link';
 import NavBar from '../components/NavBar'
+import Alert from '../components/Alert'
 import { useState } from 'react'
 
-export default function Login () {
+export default function signup () {
     const [message, setMessage] = useState('')
+    const [color, setColor] = useState('')
 
     const handleSubmit = async (event) => {
         event.preventDefault()
@@ -35,12 +35,16 @@ export default function Login () {
             // make a POST request to login
             const response = await fetch("http://127.0.0.1:8000/signup/", requestOptions)
             
+            setMessage(response.json())
+
             // set the message if the status returned is not 200 OK
-            if (response.status != 200){
-                setMessage(response.json())
+            if (response.status == 200){
+                setColor('lime-300')
             }
+
         } catch (error) {
             console.log("Error")
+            setColor('red-400')
         }
     }
 
@@ -48,9 +52,12 @@ export default function Login () {
         <>
             <NavBar/>
             <form method='post' className="form-control w-full max-w-xs" onSubmit={handleSubmit}>
-                <div className="bg-red-200">
-                    <p>{message}</p>
-                </div>
+                { message && <Alert msg={message} color={color} /> }
+                <label className="label" htmlFor="username">
+                    <span className="label-text">Username</span>
+                    <span className="label-text-alt text-red-500">Required * </span>
+                </label>
+                <input type="text" id="username" name="username" autoComplete='on' className="input input-bordered input-sm w-full max-w-xs" required></input>
                 <label className="label" htmlFor="email">
                     <span className="label-text">Email</span>
                     <span className="label-text-alt text-red-500">Required * </span>
@@ -61,7 +68,6 @@ export default function Login () {
                     <span className="label-text-alt text-red-500">Required * </span>
                 </label>
                 <input type="password" id="password" name="password" className="input input-bordered input-sm w-full max-w-xs" required></input>
-                <p><Link href="/signup" className='link link-hover'>New Customer?</Link></p>
                 <button className="btn btn-primary">
                     Submit
                 </button>
