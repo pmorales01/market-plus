@@ -4,6 +4,9 @@ from fastapi.staticfiles import StaticFiles
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, validator, ValidationError
+from pymongo.errors import DuplicateKeyError, OperationFailure
+from pymongo import MongoClient
+
 import os 
 
 app = FastAPI()
@@ -24,7 +27,6 @@ app.add_middleware(
 #Initialize MongoDB client
 mongo_client = AsyncIOMotorClient("mongodb://localhost:27017")
 db = mongo_client["market"]
-collection = db["products"]
 
 # User model
 class User(BaseModel):
@@ -38,13 +40,15 @@ class User(BaseModel):
             raise ValueError('username must be between 5-10 characters long!')
         elif len(v) > 10: # username is longer than 10 characters
             raise ValueError('username must be between 5-10 characters long!')
-    
+        return v
+
     @validator('password')
     def password_wrong_length(cls, v):
         if len(v) < 8: # password is shorter than 8 characters
             raise ValueError('password must be between 8-15 characters long!')
         elif len(v) > 15: # password is longer than 15 characters
             raise ValueError('password must be between 8-15 characters long!')
+        return v
 
 # GET request made to the index page
 @app.get('/')
@@ -65,6 +69,26 @@ async def login(user: User):
 async def signup(username: str = Form(...), email: str = Form(...), password: str = Form(...)):
     try:
         user = User(username=username, email=email, password=password)
+
+        collection = db["users"]
+
+        # check if username already exists
+        username_result = await collection.find_one({"username": user.username})
+        
+        error_msgs = []
+        if username_result:
+            error_msgs.append('Username already exists!')
+            raise DuplicateKeyError("Username already exists!")
+        
+        # check if email is already in use
+        email_result = await collection.find_one({"email": user.email})
+        
+        if email_result:
+            error_msgs.append("Email already in use!")
+            raise DuplicateKeyError("Email already in use!")
+        
+        result = await collection.insert_one(dict(user))
+
         return 'Success!'
     except ValidationError as e:
         errors = [] # list to store raised ValueError's
@@ -75,3 +99,9 @@ async def signup(username: str = Form(...), email: str = Form(...), password: st
 
         # return a 400 status code and ValueErrors
         raise HTTPException(status_code=400, detail=errors)
+    except DuplicateKeyError:
+        raise HTTPException(status_code=409, detail=error_msgs)
+
+@app.get('/users/{username}')
+async def user_index():
+    raise HTTPException(status_code=401, detail="Unauthorized")
