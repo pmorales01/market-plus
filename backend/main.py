@@ -1,9 +1,9 @@
-from fastapi import FastAPI, Form
+from fastapi import FastAPI, Form, HTTPException
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, validator, ValidationError
 import os 
 
 app = FastAPI()
@@ -30,7 +30,21 @@ collection = db["products"]
 class User(BaseModel):
     username: str = Form(...)
     email: str = Form(...)
-    password: str = Form(...)
+    password: str = Form(...) #remove min_length, max_length override @validator's
+
+    @validator('username')
+    def username_lengh(cls, v):
+        if len(v) < 5: # username is shorter than 5 characters
+            raise ValueError('username must be between 5-10 characters long!')
+        elif len(v) > 10: # username is longer than 10 characters
+            raise ValueError('username must be between 5-10 characters long!')
+    
+    @validator('password')
+    def password_wrong_length(cls, v):
+        if len(v) < 8: # password is shorter than 8 characters
+            raise ValueError('password must be between 8-15 characters long!')
+        elif len(v) > 15: # password is longer than 15 characters
+            raise ValueError('password must be between 8-15 characters long!')
 
 # GET request made to the index page
 @app.get('/')
@@ -48,9 +62,16 @@ async def login(user: User):
 
 # POST request sent by the signup form
 @app.post('/signup/')
-async def signup(user: User):
+async def signup(username: str = Form(...), email: str = Form(...), password: str = Form(...)):
     try:
-        user = User(username=user.username, email=user.email, password=user.password)
-    except:
-        return {'error': '...'}
-    return 'Success!'
+        user = User(username=username, email=email, password=password)
+        return 'Success!'
+    except ValidationError as e:
+        errors = [] # list to store raised ValueError's
+        
+        # add each ValueError to the list
+        for error in e.errors():
+            errors.append(error['msg'])
+
+        # return a 400 status code and ValueErrors
+        raise HTTPException(status_code=400, detail=errors)
