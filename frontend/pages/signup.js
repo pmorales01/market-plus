@@ -2,10 +2,16 @@
 import NavBar from '../components/NavBar'
 import Alert from '../components/Alert'
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 
 export default function signup () {
+    // tracks message of the alert box
     const [message, setMessage] = useState('')
+
+    // tracks color of the alert box
     const [color, setColor] = useState('')
+
+    const router = useRouter()
 
     const handleSubmit = async (event) => {
         event.preventDefault()
@@ -30,16 +36,16 @@ export default function signup () {
 
             // make a POST request to sign up (create a user)
             const response = await fetch("http://127.0.0.1:8000/signup/", requestOptions)
-            if (response.status == 200){ // successful request
-                setColor('bg-lime-300')
-            } else { // bad request
-                setColor('bg-red-200')
-            }
-
+            
             // get the response from HTTP request and create an <Alert/>
             const data = await response.json()
 
-            setMessage(data.detail)
+             if (response.status == 200){ // successful request
+                router.push(`/users/${formData.get('username')}`)
+            } else { // bad request
+                setMessage(data.detail)
+                setColor('bg-red-200')
+            }
         } catch (error) {
             console.log("Error")
         }

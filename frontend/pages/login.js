@@ -2,42 +2,42 @@
 
 import Link from 'next/link';
 import NavBar from '../components/NavBar'
+import Alert from '../components/Alert'
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 
 export default function Login () {
     const [message, setMessage] = useState('')
+    const [color, setColor] = useState('')
+    const router = useRouter()
 
     const handleSubmit = async (event) => {
         event.preventDefault()
 
-        // FormData object to get the login form's values
-        const formData = new FormData(event.target)
-
         try {
-            // headers
-            var myHeaders = new Headers();
-            myHeaders.append("Content-Type", "application/json")
+            // FormData object to get the login form's values
+            const formData = new FormData(event.target)
 
-            // create the JSON to send with the form's values
-            var raw = JSON.stringify({
-            "username": formData.get('username'),
-            "email": formData.get('email'),
-            "password": formData.get('password')
-            })
+            formData.append('email', document.getElementById('email').value)
+            formData.append('password', document.getElementById('password').value)
 
             var requestOptions = {
                 method: 'POST',
-                headers: myHeaders,
-                body: raw,
+                body: formData,
                 redirect: 'follow'
             }
 
             // make a POST request to login
-            const response = await fetch("http://127.0.0.1:8000/signup/", requestOptions)
+            const response = await fetch("http://127.0.0.1:8000/login/", requestOptions)
             
             // set the message if the status returned is not 200 OK
-            if (response.status != 200){
-                setMessage(response.json())
+            const data = await response.json()
+
+            if (response.status != 200) {
+                setMessage(data.detail)
+                setColor('bg-red-200')
+            } else if (response.status == 200) {
+                router.push(`/users/${data}`)
             }
         } catch (error) {
             console.log("Error")
@@ -48,9 +48,7 @@ export default function Login () {
         <>
             <NavBar/>
             <form method='post' className="form-control w-full max-w-xs" onSubmit={handleSubmit}>
-                <div className="bg-red-200">
-                    <p>{message}</p>
-                </div>
+                {message && color && <Alert message={message} color={color} />}
                 <label className="label" htmlFor="email">
                     <span className="label-text">Email</span>
                     <span className="label-text-alt text-red-500">Required * </span>
