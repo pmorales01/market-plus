@@ -10,41 +10,38 @@ export default function signup () {
     const handleSubmit = async (event) => {
         event.preventDefault()
 
-        // FormData object to get the login form's values
-        const formData = new FormData(event.target)
-
         try {
             // headers
             var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json")
 
-            // create the JSON to send with the form's values
-            var raw = JSON.stringify({
-            "username": formData.get('username'),
-            "email": formData.get('email'),
-            "password": formData.get('password')
-            })
+            // FormData object to get the login form's values
+            const formData = new FormData()
+
+            formData.append('username', document.getElementById('username').value);
+            formData.append('email', document.getElementById('email').value);
+            formData.append('password', document.getElementById('password').value);
 
             var requestOptions = {
                 method: 'POST',
-                headers: myHeaders,
-                body: raw,
+                body: formData,
                 redirect: 'follow'
-            }
+            };
 
-            // make a POST request to login
+            // make a POST request to sign up (create a user)
             const response = await fetch("http://127.0.0.1:8000/signup/", requestOptions)
-            
-            setMessage(response.json())
-
-            // set the message if the status returned is not 200 OK
-            if (response.status == 200){
-                setColor('lime-300')
+            if (response.status == 200){ // successful request
+                setColor('bg-lime-300')
+            } else { // bad request
+                setColor('bg-red-200')
             }
 
+            // get the response from HTTP request and create an <Alert/>
+            const data = await response.json()
+
+            setMessage(data.detail)
         } catch (error) {
             console.log("Error")
-            setColor('red-400')
         }
     }
 
@@ -52,7 +49,7 @@ export default function signup () {
         <>
             <NavBar/>
             <form method='post' className="form-control w-full max-w-xs" onSubmit={handleSubmit}>
-                { message && <Alert msg={message} color={color} /> }
+                { message && color && <Alert message={message} color={color} /> }
                 <label className="label" htmlFor="username">
                     <span className="label-text">Username</span>
                     <span className="label-text-alt text-red-500">Required * </span>
