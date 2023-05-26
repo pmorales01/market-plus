@@ -50,6 +50,11 @@ class User(BaseModel):
             raise ValueError('password must be between 8-15 characters long!')
         return v
 
+# UserLogin model
+class UserLogin(BaseModel):
+    email: str = Form(...)
+    password: str = Form(...)
+
 # GET request made to the index page
 @app.get('/')
 async def index():
@@ -57,12 +62,23 @@ async def index():
 
 # POST request sent by the login form
 @app.post('/login/')
-async def login(user: User):
+async def login(email: str = Form(...), password: str = Form(...)):
     try:
-        user = User(username=user.username, email=user.email, password=user.password)
+        user = UserLogin(email=email,password=password)
+
+        collection = db['users']
+
+        # find a user with the same email and password combo
+        result = await collection.find_one({"email": user.email, "password": user.password})
+
+        # user not found, raise operation failure error
+        if result is None:
+            raise OperationFailure('This combination of email and password does not exist!')
+        
+        return "Access granted!"
     except:
-        return {'error': '...'}
-    return 'Logging in'
+        raise HTTPException(status_code=404, detail=["This combination of email and password does not exist!"])
+
 
 # POST request sent by the signup form
 @app.post('/signup/')
