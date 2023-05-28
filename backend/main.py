@@ -1,15 +1,23 @@
-from fastapi import FastAPI, Form, HTTPException
+from fastapi import FastAPI, Form, HTTPException, Depends, Cookie, Request
 from fastapi.responses import FileResponse
-from fastapi.staticfiles import StaticFiles
+from fastapi.security import OAuth2PasswordBearer
+from fastapi.responses import HTMLResponse, JSONResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.middleware.cors import CORSMiddleware
+from datetime import timedelta, datetime
 from pydantic import BaseModel, Field, validator, ValidationError
 from pymongo.errors import DuplicateKeyError, OperationFailure
+from dotenv import load_dotenv
 from pymongo import MongoClient
-
-import os 
+import os, jwt 
 
 app = FastAPI()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+load_dotenv()  # Load env variables from .env
+
+app.secret_key = os.getenv('SECRET_KEY')
 
 origins = [
     "http://localhost:3000",
@@ -75,8 +83,20 @@ async def login(email: str = Form(...), password: str = Form(...)):
         if result is None:
             raise OperationFailure('This combination of email and password does not exist!')
         
-        return "Access granted!"
-    except:
+        # Create a JWT token
+        token = jwt.encode({
+            'username': result['username'],
+            'expiration': str(datetime.now() + timedelta(minutes=10))
+        }, app.secret_key, algorithm='HS256')
+
+        # create a response 
+        response = JSONResponse(content='')
+
+        # set the cookie
+        response.set_cookie(key='token', value=token, httponly=True, secure=False)
+        return {'token': token}
+
+    except OperationFailure:
         raise HTTPException(status_code=404, detail=["This combination of email and password does not exist!"])
 
 
@@ -118,6 +138,24 @@ async def signup(username: str = Form(...), email: str = Form(...), password: st
     except DuplicateKeyError:
         raise HTTPException(status_code=409, detail=error_msgs)
 
-@app.get('/users/{username}')
-async def user_index():
-    raise HTTPException(status_code=401, detail="Unauthorized")
+@app.get('/account')
+async def user_index(token: str = Depends(oauth2_scheme)):  
+    try: 
+        try:
+            payload = jwt.decode(token, app.secret_key, algorithms='HS256')
+            
+            # get the decoded token's expiration time
+            expiration_time = datetime.fromisoformat(payload['expiration'])
+
+            # check if token is expired
+            if datetime.now() > expiration_time:
+                raise HTTPException(status_code='401', detail="Expired Token")
+
+            return {"token": payload}
+        except jwt.exceptions.InvalidSignatureError:
+            raise HTTPException(status_code='401', detail="Invalid token signature")
+    except HTTPException as e:
+        return e
+    except jwt.exceptions.DecodeError:
+        raise HTTPException(status_code=400, detail="Invalid token format")
+
