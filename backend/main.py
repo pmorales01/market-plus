@@ -1,6 +1,6 @@
-from fastapi import FastAPI, Form, HTTPException, Depends, Cookie, Request
-from fastapi.responses import FileResponse
-from fastapi.security import OAuth2PasswordBearer
+from fastapi import FastAPI, Form, HTTPException, Depends, Cookie, Request, Response
+from fastapi.responses import JSONResponse
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.responses import HTMLResponse, JSONResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,7 +13,7 @@ import os, jwt
 
 app = FastAPI()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
 load_dotenv()  # Load env variables from .env
 
@@ -69,8 +69,8 @@ async def index():
     return "Welcome to Market+!"
 
 # POST request sent by the login form
-@app.post('/login/')
-async def login(email: str = Form(...), password: str = Form(...)):
+@app.post('/login', response_model=None)
+async def login(response: Response, email: str = Form(...), password: str = Form(...)):
     try:
         user = UserLogin(email=email,password=password)
 
@@ -89,13 +89,10 @@ async def login(email: str = Form(...), password: str = Form(...)):
             'expiration': str(datetime.now() + timedelta(minutes=10))
         }, app.secret_key, algorithm='HS256')
 
-        # create a response 
-        response = JSONResponse(content='')
-
         # set the cookie
-        response.set_cookie(key='token', value=token, httponly=True, secure=False)
-        return {'token': token}
-
+        response.set_cookie(key="auth_token", value=token, httponly=True)
+  
+        return {"auth_token": token, "token_type": "bearer"}
     except OperationFailure:
         raise HTTPException(status_code=404, detail=["This combination of email and password does not exist!"])
 
@@ -143,7 +140,7 @@ async def user_index(token: str = Depends(oauth2_scheme)):
     try: 
         try:
             payload = jwt.decode(token, app.secret_key, algorithms='HS256')
-            
+
             # get the decoded token's expiration time
             expiration_time = datetime.fromisoformat(payload['expiration'])
 
@@ -158,4 +155,3 @@ async def user_index(token: str = Depends(oauth2_scheme)):
         return e
     except jwt.exceptions.DecodeError:
         raise HTTPException(status_code=400, detail="Invalid token format")
-

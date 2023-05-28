@@ -32,15 +32,18 @@ export default function Login () {
             
             // set the message if the status returned is not 200 OK
             const data = await response.json()
-
+            console.log(data)
+            console.log(response)
             if (response.status != 200) {
                 setMessage(data.detail)
                 setColor('bg-red-200')
             } else if (response.status == 200) {
-                router.push(`/users/${data}`)
+                // save the JWT
+                document.cookie = `auth_token=${data['auth_token']}`
+                router.push('/account')
             }
         } catch (error) {
-            console.log("Error")
+            console.log("Unexpected Error")
         }
     }
 
