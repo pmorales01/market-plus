@@ -146,12 +146,13 @@ async def user_index(token: str = Depends(oauth2_scheme)):
 
             # check if token is expired
             if datetime.now() > expiration_time:
-                raise HTTPException(status_code='401', detail="Expired Token")
+                raise HTTPException(status_code=401, detail="Expired Token")
 
-            return {"token": payload}
+            return {"payload": payload}
         except jwt.exceptions.InvalidSignatureError:
-            raise HTTPException(status_code='401', detail="Invalid token signature")
+            raise HTTPException(status_code=401, detail="Invalid token signature")
     except HTTPException as e:
+        raise HTTPException(status_code=401, detail="Expired Token")
         return e
     except jwt.exceptions.DecodeError:
         raise HTTPException(status_code=400, detail="Invalid token format")
