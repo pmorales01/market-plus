@@ -41,7 +41,9 @@ export default function signup () {
             const data = await response.json()
 
              if (response.status == 200){ // successful request
-                router.push(`/users/${formData.get('username')}`)
+                // save the JWT
+                document.cookie = `auth_token=${data['auth_token']}`
+                router.push('/account')
             } else { // bad request
                 setMessage(data.detail)
                 setColor('bg-red-200')

@@ -99,7 +99,7 @@ async def login(response: Response, email: str = Form(...), password: str = Form
 
 # POST request sent by the signup form
 @app.post('/signup/')
-async def signup(username: str = Form(...), email: str = Form(...), password: str = Form(...)):
+async def signup(response: Response, username: str = Form(...), email: str = Form(...), password: str = Form(...)):
     try:
         user = User(username=username, email=email, password=password)
 
@@ -121,8 +121,18 @@ async def signup(username: str = Form(...), email: str = Form(...), password: st
             raise DuplicateKeyError("Email already in use!")
         
         result = await collection.insert_one(dict(user))
+        
+        if result.acknowledged:
+            # Create a JWT token
+            token = jwt.encode({
+                'username': user.username,
+                'expiration': str(datetime.now() + timedelta(minutes=10))
+            }, app.secret_key, algorithm='HS256')
 
-        return 'Success!'
+            # set the cookie
+            response.set_cookie(key="auth_token", value=token, httponly=True)
+    
+            return {"auth_token": token, "token_type": "bearer"}
     except ValidationError as e:
         errors = [] # list to store raised ValueError's
         
