@@ -1,23 +1,52 @@
 "use client"
 import Link from 'next/link';
-import { Fragment } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import 'tailwindcss/tailwind.css';
-
-const navigation = [
-  { name: 'Dashboard', href: '#', current: true },
-  { name: 'Team', href: '#', current: false },
-  { name: 'Projects', href: '#', current: false },
-  { name: 'Calendar', href: '#', current: false },
-  { name: 'Login', href: '/login', current: false}
-]
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(' ')
 }
 
 export default function NavBar() {
+  const [authenticated, setAuthenticated] = useState(false)
+
+  useEffect(() => {
+    const validate = async () => {
+      try {
+        var requestOptions = {
+            method: 'GET',
+            credentials: 'include'
+        }; 
+        
+        // validate jwt
+        const response = await fetch("http://127.0.0.1:8000/validate-token", requestOptions)
+           
+        const data = await response.json()
+        
+        // if user is not authenticated (or expired), redirect to login
+        if (response.status == 200) {
+          setAuthenticated(true)
+        }
+      } catch (error) {
+          console.log(error)
+      }
+    }
+    validate()
+  })
+
+  
+  
+  const navigation = [
+    { name: 'Dashboard', href: '#', current: true },
+    { name: 'Team', href: '#', current: false },
+    { name: 'Projects', href: '#', current: false },
+    { name: 'Calendar', href: '#', current: false },
+    ...(authenticated ? [{ name: 'Sign Out', href: '/signout', current: false}] :
+    [{ name: 'Login', href: '/login', current: false}])
+  ]
+
   return (
     <Disclosure as="nav" className="bg-white">
       {({ open }) => (

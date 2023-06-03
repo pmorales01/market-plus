@@ -25,12 +25,6 @@ export default function account() {
                 // fetch user data and check if user is authenticated
                 const response = await fetch("http://127.0.0.1:8000/account", requestOptions)
                
-                console.log(response)
-
-                const data = await response.json()
-
-                console.log(data)
-
                 // if user is not authenticated (or expired), redirect to login
                 if (response.status != 200) {
                     router.push('/login')
