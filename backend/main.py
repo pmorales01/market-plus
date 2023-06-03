@@ -64,10 +64,6 @@ class UserLogin(BaseModel):
     email: str = Form(...)
     password: str = Form(...)
 
-class Token(BaseModel):
-    access_token: str
-    token_type: str
-
 # GET request made to the index page
 @app.get('/')
 async def index():
@@ -131,7 +127,7 @@ async def signup(response: Response, username: str = Form(...), email: str = For
             # Create a JWT token
             token = jwt.encode({
                 'username': user.username,
-                'expiration': str(datetime.now() + timedelta(minutes=10))
+                'expiration': str(datetime.now() + timedelta(seconds=10))
             }, app.secret_key, algorithm='HS256')
 
             # set the cookie
@@ -150,14 +146,13 @@ async def signup(response: Response, username: str = Form(...), email: str = For
     except DuplicateKeyError:
         raise HTTPException(status_code=409, detail=error_msgs)
 
-@app.get('/account')
-async def user_index(request: Request):
+@app.get('/validate-token')
+async def validate_token(request: Request):
     try: 
         try:
-            # get the cookie from the request and remove '{cookie_name}='
+            # get the cookie from the request and remove '{cookie_name}=
             cookie = request.headers.get('Cookie').split('=')[1]
 
-            # decode the JWT to get the payload
             payload = jwt.decode(cookie, app.secret_key, algorithms='HS256')
 
             # get the decoded token's expiration time
@@ -175,3 +170,7 @@ async def user_index(request: Request):
         return e
     except jwt.exceptions.DecodeError:
         raise HTTPException(status_code=400, detail="Invalid token format")
+
+@app.get('/account')
+async def account(request: Request, token: str = Depends(validate_token)):
+    return {'token': token}
