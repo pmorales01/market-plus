@@ -18,17 +18,18 @@ export default function Login () {
             // FormData object to get the login form's values
             const formData = new FormData(event.target)
 
-            formData.append('email', document.getElementById('email').value)
+            formData.append('username', document.getElementById('email').value)
             formData.append('password', document.getElementById('password').value)
 
             var requestOptions = {
                 method: 'POST',
+                credentials: 'include',
                 body: formData,
                 redirect: 'follow'
             }
 
             // make a POST request to login
-            const response = await fetch("http://127.0.0.1:8000/login/", requestOptions)
+            const response = await fetch("http://127.0.0.1:8000/login", requestOptions)
             
             // set the message if the status returned is not 200 OK
             const data = await response.json()
@@ -37,8 +38,6 @@ export default function Login () {
                 setMessage(data.detail)
                 setColor('bg-red-200')
             } else if (response.status == 200) {
-                // save the JWT
-                document.cookie = `auth_token=${data['auth_token']}`
                 router.push('/account')
             }
         } catch (error) {

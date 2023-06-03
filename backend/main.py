@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import timedelta, datetime
 from pydantic import BaseModel, Field, validator, ValidationError
 from pymongo.errors import DuplicateKeyError, OperationFailure
+from typing import Annotated
 from dotenv import load_dotenv
 from pymongo import MongoClient
 import os, jwt 
@@ -63,6 +64,10 @@ class UserLogin(BaseModel):
     email: str = Form(...)
     password: str = Form(...)
 
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
 # GET request made to the index page
 @app.get('/')
 async def index():
@@ -70,9 +75,9 @@ async def index():
 
 # POST request sent by the login form
 @app.post('/login', response_model=None)
-async def login(response: Response, email: str = Form(...), password: str = Form(...)):
+async def login(response: Response, form_data: Annotated[OAuth2PasswordRequestForm, Depends()]):
     try:
-        user = UserLogin(email=email,password=password)
+        user = UserLogin(email=form_data.username,password=form_data.password)
 
         collection = db['users']
 
@@ -84,21 +89,21 @@ async def login(response: Response, email: str = Form(...), password: str = Form
             raise OperationFailure('This combination of email and password does not exist!')
         
         # Create a JWT token
-        token = jwt.encode({
+        access_token = jwt.encode({
             'username': result['username'],
             'expiration': str(datetime.now() + timedelta(minutes=10))
         }, app.secret_key, algorithm='HS256')
 
         # set the cookie
-        response.set_cookie(key="auth_token", value=token, httponly=True)
+        response.set_cookie(key="access_token", value=access_token, httponly=True, path='/')
   
-        return {"auth_token": token, "token_type": "bearer"}
+        return {"access_token": access_token, "token_type": "bearer"}
     except OperationFailure:
         raise HTTPException(status_code=404, detail=["This combination of email and password does not exist!"])
 
 
 # POST request sent by the signup form
-@app.post('/signup/')
+@app.post('/signup')
 async def signup(response: Response, username: str = Form(...), email: str = Form(...), password: str = Form(...)):
     try:
         user = User(username=username, email=email, password=password)
@@ -146,10 +151,14 @@ async def signup(response: Response, username: str = Form(...), email: str = For
         raise HTTPException(status_code=409, detail=error_msgs)
 
 @app.get('/account')
-async def user_index(token: str = Depends(oauth2_scheme)):  
+async def user_index(request: Request):
     try: 
         try:
-            payload = jwt.decode(token, app.secret_key, algorithms='HS256')
+            # get the cookie from the request and remove '{cookie_name}='
+            cookie = request.headers.get('Cookie').split('=')[1]
+
+            # decode the JWT to get the payload
+            payload = jwt.decode(cookie, app.secret_key, algorithms='HS256')
 
             # get the decoded token's expiration time
             expiration_time = datetime.fromisoformat(payload['expiration'])

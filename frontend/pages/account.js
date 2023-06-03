@@ -17,25 +17,10 @@ export default function account() {
     useEffect(() => {
         const authenticate = async () => {
             try {
-                // get JWT from cookie
-                const token = getCookieValue('auth_token')
-                
-                // if token does not exist, redirect to login page
-                if (!token) {
-                    router.push('/login')
-                    return 
-                }
-
-
-                // headers for fetch
-                var headers = new Headers();
-                headers.append("Authorization", `Bearer ${token}`);
-                                
                 var requestOptions = {
-                  method: 'GET',
-                  headers: headers,
-                  redirect: 'follow'
-                };
+                    method: 'GET',
+                    credentials: 'include'
+                }; 
                 
                 // fetch user data and check if user is authenticated
                 const response = await fetch("http://127.0.0.1:8000/account", requestOptions)
