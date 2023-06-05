@@ -22,7 +22,7 @@ app.secret_key = os.getenv('SECRET_KEY')
 
 origins = [
     "http://localhost:3000",
-    "http://127.0.0.1:3000"
+    "http://127.0.0.1:3000", 
 ]
 
 app.add_middleware(
@@ -83,7 +83,7 @@ async def login(response: Response, form_data: Annotated[OAuth2PasswordRequestFo
         # user not found, raise operation failure error
         if result is None:
             raise OperationFailure('This combination of email and password does not exist!')
-        
+          
         # Create a JWT token
         access_token = jwt.encode({
             'username': result['username'],
@@ -91,8 +91,8 @@ async def login(response: Response, form_data: Annotated[OAuth2PasswordRequestFo
         }, app.secret_key, algorithm='HS256')
 
         # set the cookie
-        response.set_cookie(key="access_token", value=access_token, httponly=True, path='/')
-  
+        response.set_cookie(key="access_token", value=access_token, httponly=True, path='/', secure=True, samesite="lax")
+
         return {"access_token": access_token, "token_type": "bearer"}
     except OperationFailure:
         raise HTTPException(status_code=404, detail=["This combination of email and password does not exist!"])
@@ -150,8 +150,15 @@ async def signup(response: Response, username: str = Form(...), email: str = For
 async def validate_token(request: Request):
     try: 
         try:
-            # get the cookie from the request and remove '{cookie_name}=
-            cookie = request.headers.get('Cookie').split('=')[1]
+            # get the cookie from the request
+            cookie = request.headers.get('Cookie')
+
+            # cookie does not exist, so user is not authenticated
+            if cookie == None:
+                raise HTTPException(status_code=401, detail="No Authentication Token Provided")
+
+            # remove '{cookie_name}=' from cookie
+            cookie = cookie.split('=')[1]
 
             payload = jwt.decode(cookie, app.secret_key, algorithms='HS256')
 
@@ -162,15 +169,14 @@ async def validate_token(request: Request):
             if datetime.now() > expiration_time:
                 raise HTTPException(status_code=401, detail="Expired Token")
 
-            return {"payload": payload}
+            return payload
         except jwt.exceptions.InvalidSignatureError:
             raise HTTPException(status_code=401, detail="Invalid token signature")
-    except HTTPException as e:
-        raise HTTPException(status_code=401, detail="Expired Token")
-        return e
     except jwt.exceptions.DecodeError:
         raise HTTPException(status_code=400, detail="Invalid token format")
-
+    except HTTPException as e:
+            raise HTTPException(status_code=e.status_code, detail=e.detail)
+            
 @app.get('/account')
 async def account(request: Request, token: str = Depends(validate_token)):
-    return {'token': token}
+    return token
