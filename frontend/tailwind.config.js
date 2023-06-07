@@ -12,11 +12,19 @@ module.exports = {
         light: {
           ...require('daisyui/src/colors/themes')['[data-theme=light]'], 
           primary: '#28BFF6',
+          secondary: '#F08590',
+          fontFamily: 'ui-monospace',
           '.btn-primary:hover': {
             'background-color': 'red'
           },
           'span': {
             'font-size': '14px'
+          },
+          '.title': {
+            'color': '#F08590',
+            'font-size': '2.25rem',
+            'line-height': '2.5rem',
+            'font-weight': '500'
           }
         },
       },
