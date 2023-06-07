@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Form, HTTPException, Depends, Cookie, Request, Response
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.responses import HTMLResponse, JSONResponse
 from motor.motor_asyncio import AsyncIOMotorClient
@@ -91,7 +91,7 @@ async def login(response: Response, form_data: Annotated[OAuth2PasswordRequestFo
         }, app.secret_key, algorithm='HS256')
 
         # set the cookie
-        response.set_cookie(key="access_token", value=access_token, httponly=True, path='/', secure=True, samesite="lax")
+        response.set_cookie(key="access_token", value=access_token, httponly=True, path='/', secure=True, samesite="lax", expires=600)
 
         return {"access_token": access_token, "token_type": "bearer"}
     except OperationFailure:
@@ -127,12 +127,13 @@ async def signup(response: Response, username: str = Form(...), email: str = For
             # Create a JWT token
             token = jwt.encode({
                 'username': user.username,
-                'expiration': str(datetime.now() + timedelta(seconds=10))
+                'expiration': str(datetime.now() + timedelta(minutes=10))
             }, app.secret_key, algorithm='HS256')
 
             # set the cookie
-            response.set_cookie(key="auth_token", value=token, httponly=True)
-    
+            response.set_cookie(key="access_token", value=access_token, httponly=True, path='/', secure=True, samesite="lax", expires=600)
+
+            response.delete_cookie
             return {"auth_token": token, "token_type": "bearer"}
     except ValidationError as e:
         errors = [] # list to store raised ValueError's
@@ -180,3 +181,16 @@ async def validate_token(request: Request):
 @app.get('/account')
 async def account(request: Request, token: str = Depends(validate_token)):
     return token
+
+@app.get('/signout', response_model=None)
+async def signout():
+    try:        
+        # create a new response
+        response = Response()
+
+        # delete the 'access_token' cookie
+        response.delete_cookie(key="access_token")
+
+        return response
+    except HTTPException as e:
+        return e
