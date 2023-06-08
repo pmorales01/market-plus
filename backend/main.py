@@ -10,7 +10,7 @@ from pymongo.errors import DuplicateKeyError, OperationFailure
 from typing import Annotated
 from dotenv import load_dotenv
 from pymongo import MongoClient
-import os, jwt 
+import os, jwt, sys
 
 app = FastAPI()
 
@@ -39,6 +39,8 @@ db = mongo_client["market"]
 
 # User model
 class User(BaseModel):
+    fname: str = Form(...)
+    lname: str = Form(...)
     username: str = Form(...)
     email: str = Form(...)
     password: str = Form(...) #remove min_length, max_length override @validator's
@@ -99,10 +101,16 @@ async def login(response: Response, form_data: Annotated[OAuth2PasswordRequestFo
 
 
 # POST request sent by the signup form
-@app.post('/signup')
-async def signup(response: Response, username: str = Form(...), email: str = Form(...), password: str = Form(...)):
+@app.post('/signup', response_model=None)
+async def signup(
+    response: Response, 
+    fname: str = Form(...), 
+    lname: str = Form(...), 
+    username: str = Form(...), 
+    email: str = Form(...), 
+    password: str = Form(...)):
     try:
-        user = User(username=username, email=email, password=password)
+        user = User(fname=fname, lname=lname, username=username, email=email, password=password)
 
         collection = db["users"]
 
@@ -110,6 +118,7 @@ async def signup(response: Response, username: str = Form(...), email: str = For
         username_result = await collection.find_one({"username": user.username})
         
         error_msgs = []
+
         if username_result:
             error_msgs.append('Username already exists!')
             raise DuplicateKeyError("Username already exists!")
@@ -125,7 +134,7 @@ async def signup(response: Response, username: str = Form(...), email: str = For
         
         if result.acknowledged:
             # Create a JWT token
-            token = jwt.encode({
+            access_token = jwt.encode({
                 'username': user.username,
                 'expiration': str(datetime.now() + timedelta(minutes=10))
             }, app.secret_key, algorithm='HS256')
@@ -133,8 +142,7 @@ async def signup(response: Response, username: str = Form(...), email: str = For
             # set the cookie
             response.set_cookie(key="access_token", value=access_token, httponly=True, path='/', secure=True, samesite="lax", expires=600)
 
-            response.delete_cookie
-            return {"auth_token": token, "token_type": "bearer"}
+            return {"access_token": access_token, "token_type": "bearer"}
     except ValidationError as e:
         errors = [] # list to store raised ValueError's
         
@@ -151,6 +159,8 @@ async def signup(response: Response, username: str = Form(...), email: str = For
 async def validate_token(request: Request):
     try: 
         try:
+            sys.tracebacklimit = 0
+
             # get the cookie from the request
             cookie = request.headers.get('Cookie')
 
@@ -169,7 +179,6 @@ async def validate_token(request: Request):
             # check if token is expired
             if datetime.now() > expiration_time:
                 raise HTTPException(status_code=401, detail="Expired Token")
-
             return payload
         except jwt.exceptions.InvalidSignatureError:
             raise HTTPException(status_code=401, detail="Invalid token signature")
