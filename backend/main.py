@@ -189,7 +189,16 @@ async def validate_token(request: Request):
             
 @app.get('/account')
 async def account(request: Request, token: str = Depends(validate_token)):
-    return token
+    try:
+        collection = db['users']
+
+        # lookup the user's first name
+        result = await collection.find_one({'username' : token['username']}, {'fname' : 1, 'username' : 1})
+
+        return {'name' : result['fname'], 'username' : result['username']}
+    except:
+        return {"msg" : 'error occured'}
+
 
 @app.get('/signout', response_model=None)
 async def signout():
@@ -203,3 +212,7 @@ async def signout():
         return response
     except HTTPException as e:
         return e
+
+@app.get('seller/{username}')
+async def get_seller_page(username: str, token: str = Depends(validate_token)):
+    return 'hello world'

@@ -49,7 +49,7 @@ export default function Login () {
         <div className="flex flex-col items-center space-y-14 w-full h-screen">
             <NavBar/>
             <h1 className='title'>Login</h1>
-            <form method='post' className="grow form-control w-full max-w-xs space-y-2.5" onSubmit={handleSubmit}>
+            <form method='post' className="grow form-control w-full max-w-xs space-y-2" onSubmit={handleSubmit}>
                 {message && color && <Alert message={message} color={color} />}
                 <label className="label" htmlFor="email">
                     <span className="label-text">Email</span>

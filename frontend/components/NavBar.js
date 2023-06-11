@@ -22,9 +22,7 @@ export default function NavBar() {
         
         // validate jwt
         const response = await fetch("http://127.0.0.1:8000/validate-token", requestOptions)
-           
-        const data = await response.json()
-        
+                   
         // if user is not authenticated (or expired), redirect to login
         if (response.status == 200) {
           setAuthenticated(true)
@@ -34,21 +32,19 @@ export default function NavBar() {
       }
     }
     validate()
-  })
+  }, [])
 
-  
-  
   const navigation = [
-    { name: 'Dashboard', href: '#', current: true },
-    { name: 'Team', href: '#', current: false },
-    { name: 'Projects', href: '#', current: false },
-    { name: 'Calendar', href: '#', current: false },
+    { name: 'Dashboard', href: '/', current: true },
+    { name: 'Team', href: '/', current: false },
+    { name: 'Projects', href: '/', current: false },
+    { name: 'Calendar', href: '/', current: false },
     ...(authenticated ? [{ name: 'Sign Out', href: '/signout', current: false}] :
     [{ name: 'Login', href: '/login', current: false}])
   ]
 
   return (
-    <Disclosure as="nav" className="bg-white">
+    <Disclosure as="nav" className="bg-white w-full">
       {({ open }) => (
         <>
           <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -102,6 +98,7 @@ export default function NavBar() {
                 </button>
 
                 {/* Profile dropdown */}
+                {authenticated && 
                 <Menu as="div" className="relative ml-3">
                   <div>
                     <Menu.Button className="flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
@@ -126,7 +123,7 @@ export default function NavBar() {
                       <Menu.Item>
                         {({ active }) => (
                           <a
-                            href="#"
+                            href="/account"
                             className={classNames(active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700')}
                           >
                             Your Profile
@@ -156,6 +153,7 @@ export default function NavBar() {
                     </Menu.Items>
                   </Transition>
                 </Menu>
+              }
               </div>
             </div>
           </div>

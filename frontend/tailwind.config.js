@@ -25,6 +25,11 @@ module.exports = {
             'font-size': '2.25rem',
             'line-height': '2.5rem',
             'font-weight': '500'
+          }, 
+          'h1': {
+            'font-size': '2.25rem',
+            'line-height': '2.5rem',
+            'font-weight': '500'
           }
         },
       },
