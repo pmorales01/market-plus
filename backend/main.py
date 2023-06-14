@@ -10,7 +10,7 @@ from pymongo.errors import DuplicateKeyError, OperationFailure
 from typing import Annotated
 from dotenv import load_dotenv
 from pymongo import MongoClient
-import os, jwt, sys
+import os, jwt, sys, re
 
 app = FastAPI()
 
@@ -46,7 +46,7 @@ class User(BaseModel):
     password: str = Form(...) #remove min_length, max_length override @validator's
 
     @validator('username')
-    def username_lengh(cls, v):
+    def username_length(cls, v):
         if len(v) < 5: # username is shorter than 5 characters
             raise ValueError('username must be between 5-10 characters long!')
         elif len(v) > 10: # username is longer than 10 characters
@@ -65,6 +65,40 @@ class User(BaseModel):
 class UserLogin(BaseModel):
     email: str = Form(...)
     password: str = Form(...)
+
+class Seller(BaseModel):
+    name: str = Form(...), 
+    email: str = Form(...), 
+    address: str = Form(...), 
+    city: str = Form(...), 
+    state: str = Form(...),
+    zipcode: str = Form(...)
+
+    @validator('name')
+    def validate_name(cls, v):
+        # check if organization name is the correct length
+        if len(v) < 3:
+            raise ValueError('Organization name must be between 5-15 characters long!')
+        elif len(v) > 15:
+            raise ValueError('Organization name must be between 5-15 characters long!')
+
+        # check if org name doesn't contain any spaces
+        if bool(re.search(r"\s", v)):
+            raise ValueError('Organization name cannot contain any spaces!')
+
+        return v
+    
+    @validator('zipcode')
+    def validate_zipcode(cls, v):
+        # check if zipcode is not 5 digits
+        if len(v) != 5:
+            raise ValueError('Zipcode must be 5 digits!')
+        
+        # check if zipcode contains any characters other than 0-9 
+        if bool(re.search(r"\D", v)):
+            raise ValueError('Zipcode must only contain digits!')
+
+        return v
 
 # GET request made to the index page
 @app.get('/')
@@ -159,8 +193,6 @@ async def signup(
 async def validate_token(request: Request):
     try: 
         try:
-            sys.tracebacklimit = 0
-
             # get the cookie from the request
             cookie = request.headers.get('Cookie')
 
@@ -213,6 +245,29 @@ async def signout():
     except HTTPException as e:
         return e
 
-@app.get('seller/{username}')
+@app.post('/seller/signup', response_model=None)
+async def seller_signup(response: Response,
+    name: str = Form(...), 
+    email: str = Form(...), 
+    address: str = Form(...), 
+    city: str = Form(...), 
+    state: str = Form(...),
+    zipcode: str = Form(...),
+    token: str = Depends(validate_token)):
+    try:
+        seller = Seller(name=name, email=email, address=address, city=city, state=state, zipcode=zipcode)
+    except ValidationError as e:
+        errors = [] # store ValueErrors
+        
+        # add each ValueError to the list
+        for error in e.errors():
+            errors.append(error['msg'])
+
+        # return a 400 status code and errors
+        raise HTTPException(status_code=400, detail=errors)
+        
+    return {'message' : 'success'}
+
+@app.get('/seller/{username}')
 async def get_seller_page(username: str, token: str = Depends(validate_token)):
     return 'hello world'
