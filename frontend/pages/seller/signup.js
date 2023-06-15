@@ -93,7 +93,7 @@ export default function seller_signup() {
             <div className="flex flex-col items-center space-y-14 w-full h-screen">
                 <NavBar/>
                 <h1 className="title">Seller Sign Up</h1>
-                {message && <Alert message={message} color='bg-red-200'/>}
+                {message && <Alert message={message}/>}
                 <form method='post' className="grow form-control space-y-1.5 w-1/2 flex items-center" onSubmit={handleSubmit}>
                     <p className="w-2/3">
                         <span className='text-red-500'>* </span> 
