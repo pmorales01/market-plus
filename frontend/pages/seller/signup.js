@@ -1,5 +1,6 @@
 import Footer from '/components/Footer'
 import NavBar from '/components/NavBar'
+import Alert from '/components/Alert'
 import SelectList from '/components/SelectList'
 
 import { useState, useEffect } from 'react'
@@ -40,12 +41,38 @@ export default function seller_signup() {
     const handleSubmit = async (event) => {
         event.preventDefault()
 
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json")
+
+        // FormData object to get the login form's values
+        const formData = new FormData()
+
+        formData.append('name', document.getElementById('name').value)
+        formData.append('email', document.getElementById('email').value)
+        const address = document.getElementById('street').value + ' ' + document.getElementById('address2').value
+        formData.append('address', address)
+        formData.append('city', document.getElementById('city').value)
+        formData.append('state', document.getElementById('state').value)
+        formData.append('zipcode', document.getElementById('zipcode').value)
+
         try {
             var requestOptions = {
                 method: 'POST',
-                credentials: 'include'
+                credentials: 'include',
+                body: formData,
+                redirect: 'follow'
             }
-           
+
+            // make a POST request to create a seller profile
+            const response = await fetch("http://127.0.0.1:8000/seller/signup/", requestOptions)
+
+            const data = await response.json()
+
+            if (response.status == 200){ // successful request
+            } else { // bad request
+                setMessage(data.detail)
+            }
+
         } catch {
             console.log(error)
         }
@@ -66,19 +93,19 @@ export default function seller_signup() {
             <div className="flex flex-col items-center space-y-14 w-full h-screen">
                 <NavBar/>
                 <h1 className="title">Seller Sign Up</h1>
+                {message && <Alert message={message} color='bg-red-200'/>}
                 <form method='post' className="grow form-control space-y-1.5 w-1/2 flex items-center" onSubmit={handleSubmit}>
-                    { message && color && <Alert message={message} color={color} /> }
                     <p className="w-2/3">
                         <span className='text-red-500'>* </span> 
                         Required Fields 
                     </p>
-                    <label className="label w-2/3" htmlFor="organization">
+                    <label className="label w-2/3" htmlFor="name">
                         <span className="label-text min-w-min">
                             Organization Name
                             <span className="label-text-alt text-red-500"> * </span>
                         </span>
                     </label>
-                    <input type="text" id="organization" name="organization" autoComplete='on' className="input input-bordered input-sm w-2/3" required></input>
+                    <input type="text" id="name" name="name" autoComplete='on' className="input input-bordered input-sm w-2/3" required></input>
                     <label className="label w-2/3" htmlFor="email">
                         <span className="label-text min-w-min">
                             Organization Email
