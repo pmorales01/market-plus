@@ -67,6 +67,7 @@ class UserLogin(BaseModel):
     password: str = Form(...)
 
 class Seller(BaseModel):
+    username: str = (...),
     name: str = Form(...), 
     email: str = Form(...), 
     address: str = Form(...), 
@@ -255,7 +256,38 @@ async def seller_signup(response: Response,
     zipcode: str = Form(...),
     token: str = Depends(validate_token)):
     try:
-        seller = Seller(name=name, email=email, address=address, city=city, state=state, zipcode=zipcode)
+        seller = Seller(username=token['username'], name=name, email=email, address=address, city=city, state=state, zipcode=zipcode)
+
+        collection = db["sellers"]
+
+        error_msgs = []
+
+        # check if current user already has a seller account
+        user_result = await collection.find_one({'username' : seller.username})
+
+        if user_result:
+            error_msgs.append('You already are a registered seller!')
+            raise DuplicateKeyError('You already are a registered seller!')
+
+
+        # check if the user's store name is already in use
+        name_result = await collection.find_one({'name' : seller.name})
+
+        if name_result:
+            error_msgs.append('Organization name already exists!')
+            raise DuplicateKeyError('Organization name already exists!')
+
+
+        # check if the user's email is already in use
+        email_result = await collection.find_one({'email' : seller.email})
+
+        if email_result:
+            error_msgs.append('Email already exists!')
+            raise DuplicateKeyError('Email already exists!')
+
+        # insert record
+        result = await collection.insert_one(dict(seller))
+
     except ValidationError as e:
         errors = [] # store ValueErrors
         
@@ -265,6 +297,9 @@ async def seller_signup(response: Response,
 
         # return a 400 status code and errors
         raise HTTPException(status_code=400, detail=errors)
+    
+    except DuplicateKeyError:
+        raise HTTPException(status_code=409, detail=error_msgs)
         
     return {'message' : 'success'}
 

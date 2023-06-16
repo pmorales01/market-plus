@@ -76,11 +76,9 @@ export default function seller_signup() {
                 setVisible(true)
             }
 
-        } catch {
+        } catch (error) {
             console.log(error)
         }
-
-        
     }
 
     function updatePopup() {
