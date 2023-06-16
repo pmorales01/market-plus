@@ -9,7 +9,7 @@ import { useRouter } from 'next/router'
 
 export default function Login () {
     const [message, setMessage] = useState('')
-    const [color, setColor] = useState('')
+    const [visible, setVisible] = useState(false)
     const router = useRouter()
 
     const handleSubmit = async (event) => {
@@ -36,7 +36,7 @@ export default function Login () {
             const data = await response.json()
             if (response.status != 200) {
                 setMessage(data.detail)
-                setColor('bg-red-200')
+                setVisible(true)
             } else if (response.status == 200) {
                 router.push('/account')
             }
@@ -45,12 +45,16 @@ export default function Login () {
         }
     }
 
+    function updatePopup() {
+        setVisible(false)
+    }
+
     return (
         <div className="flex flex-col items-center space-y-14 w-full h-screen">
             <NavBar/>
             <h1 className='title'>Login</h1>
             <form method='post' className="grow form-control w-full max-w-xs space-y-2" onSubmit={handleSubmit}>
-                {message && color && <Alert message={message} color={color} />}
+                {message && visible && <Alert message={message} onClick={updatePopup} />}
                 <label className="label" htmlFor="email">
                     <span className="label-text">Email</span>
                     <span className="label-text-alt text-red-500">Required * </span>
