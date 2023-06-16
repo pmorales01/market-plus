@@ -9,6 +9,8 @@ import { useRouter } from 'next/router'
 export default function seller_signup() {
     const [message, setMessage] = useState('')
     const [authenticated, setAuthenticated] = useState(false)
+    const [visible, setVisible] = useState(false)
+
     const router = useRouter()
 
     useEffect(() => {
@@ -71,11 +73,18 @@ export default function seller_signup() {
             if (response.status == 200){ // successful request
             } else { // bad request
                 setMessage(data.detail)
+                setVisible(true)
             }
 
         } catch {
             console.log(error)
         }
+
+        
+    }
+
+    function updatePopup() {
+        setVisible(false)
     }
 
     if (authenticated) {
@@ -93,7 +102,7 @@ export default function seller_signup() {
             <div className="flex flex-col items-center space-y-14 w-full h-screen">
                 <NavBar/>
                 <h1 className="title">Seller Sign Up</h1>
-                {message && <Alert message={message}/>}
+                {message && visible && <Alert message={message} onClick={updatePopup}/>}
                 <form method='post' className="grow form-control space-y-1.5 w-1/2 flex items-center" onSubmit={handleSubmit}>
                     <p className="w-2/3">
                         <span className='text-red-500'>* </span> 
