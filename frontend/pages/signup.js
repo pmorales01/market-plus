@@ -8,9 +8,7 @@ import { useRouter } from 'next/router'
 export default function signup () {
     // tracks message of the alert box
     const [message, setMessage] = useState('')
-
-    // tracks color of the alert box
-    const [color, setColor] = useState('')
+    const [visible, setVisible] = useState(false)
 
     const router = useRouter()
 
@@ -44,15 +42,19 @@ export default function signup () {
             // get the response from HTTP request and create an <Alert/>
             const data = await response.json()
 
-             if (response.status == 200){ // successful request
+             if (response.status == 200) { // successful request
                 router.push('/account')
             } else { // bad request
                 setMessage(data.detail)
-                setColor('bg-red-200')
+                setVisible(true)
             }
         } catch (error) {
             console.log("Error")
         }
+    }
+
+    function updatePopup() {
+        setVisible(false)
     }
 
     return (
@@ -60,7 +62,7 @@ export default function signup () {
             <NavBar/>
             <h1 className='title'>Sign Up</h1>
             <form method='post' className="grow form-control w-full max-w-xs space-y-1.5" onSubmit={handleSubmit}>
-                { message && color && <Alert message={message} color={color} /> }
+                { message && visible && <Alert message={message} onClick={updatePopup}/>}
                 <p className="self-start">
                     <span className='text-red-500'>* </span> 
                     Required Fields 
@@ -70,8 +72,7 @@ export default function signup () {
                         <span className="label-text">
                             First Name
                             <span className="label-text-alt text-red-500"> * </span>
-                        </span>
-                       
+                        </span> 
                     </label>
                     <input type="text" id="fname" name="fname" autoComplete='on' className="input input-bordered input-sm w-full max-w-xs" required></input>
                     <label className='label' htmlFor='lname'>
