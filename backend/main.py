@@ -86,6 +86,10 @@ class Seller(BaseModel):
         # check if org name doesn't contain any spaces
         if bool(re.search(r"\s", v)):
             raise ValueError('Organization name cannot contain any spaces!')
+        
+        # check if name contains digits or symbols
+        if len(re.findall('[^a-zA-Z]+', v)):
+            raise ValueError('Organization name can only contain letters a-z or A-Z')
 
         return v
     

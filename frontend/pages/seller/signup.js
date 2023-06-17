@@ -71,6 +71,7 @@ export default function seller_signup() {
             const data = await response.json()
 
             if (response.status == 200){ // successful request
+                router.push('/account')
             } else { // bad request
                 setMessage(data.detail)
                 setVisible(true)
