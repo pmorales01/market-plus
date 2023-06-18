@@ -51,7 +51,7 @@ export default function seller_signup() {
 
         formData.append('name', document.getElementById('name').value)
         formData.append('email', document.getElementById('email').value)
-        const address = document.getElementById('street').value + ' ' + document.getElementById('address2').value
+        const address = (document.getElementById('street').value + ' ' + document.getElementById('address2').value).trim()
         formData.append('address', address)
         formData.append('city', document.getElementById('city').value)
         formData.append('state', document.getElementById('state').value)

@@ -273,14 +273,12 @@ async def seller_signup(response: Response,
             error_msgs.append('You already are a registered seller!')
             raise DuplicateKeyError('You already are a registered seller!')
 
-
         # check if the user's store name is already in use
-        name_result = await collection.find_one({'name' : seller.name})
-
-        if name_result:
+        name_result = await collection.find({'name' : {'$regex' : seller.name, '$options': 'i'}}).to_list(length=100)
+    
+        if len(name_result) > 0:
             error_msgs.append('Organization name already exists!')
             raise DuplicateKeyError('Organization name already exists!')
-
 
         # check if the user's email is already in use
         email_result = await collection.find_one({'email' : seller.email})
