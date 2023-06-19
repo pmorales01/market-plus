@@ -290,6 +290,7 @@ async def seller_signup(response: Response,
         # insert record
         result = await collection.insert_one(dict(seller))
 
+        return {"message" : "Seller account successfuly created!"}
     except ValidationError as e:
         errors = [] # store ValueErrors
         
@@ -305,6 +306,29 @@ async def seller_signup(response: Response,
         
     return {'message' : 'success'}
 
-@app.get('/seller/{username}')
-async def get_seller_page(username: str, token: str = Depends(validate_token)):
-    return 'hello world'
+@app.get('/account/seller-status')
+async def is_seller(token: str = Depends(validate_token)):
+    try:
+        collection = db["sellers"]
+
+        # check if current user already has a seller account
+        result = await collection.find_one({'username' : token['username']})
+        
+        if result is None:
+            raise OperationFailure('User is not a seller!')
+        
+        return {'username' : result['username'], 'store-name': result['name']}
+    except OperationFailure:
+        raise HTTPException(status_code=404, detail=["User is not a seller!"])
+
+@app.get('/seller/stores/{store}')
+async def get_store(store: str):
+    return "Visiting store"
+
+@app.put('/seller/{store}/edit')
+async def store_edit(store: str, token: str = Depends(validate_token)):
+    return 'editing store'
+
+@app.post('/products/create')
+async def create_item(token: str = Depends(validate_token)):
+    return "created product"
