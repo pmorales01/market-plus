@@ -7,6 +7,8 @@ import Link from 'next/link';
 export default function account() {
     const [authenticated, setAuthenticated] = useState(false)
     const [data, setData] = useState({name : '', username : ''})
+    const [isSeller, setIsSeller] = useState(true)
+
     const router = useRouter()
 
     useEffect(() => {
@@ -35,8 +37,26 @@ export default function account() {
             } catch (error) {
                 console.log(error)
             }
+
+            try {
+                var requestOptions = {
+                    method: 'GET',
+                    credentials: 'include'
+                }; 
+                
+                // fetch user data and check if user is a seller
+                const response = await fetch("http://127.0.0.1:8000/account/seller-status", requestOptions)
+               
+                // user is not a seller
+                if (response.status != 200) {
+                    setIsSeller(false)
+                }  
+            } catch (error) {
+                console.log(error)
+            }
         }
 
+        
         authenticate()
     }, [])
 
@@ -81,20 +101,35 @@ export default function account() {
                             <p>Click the button to watch on Jetflix app.</p>
                         </div>
                     </div>
-                    <div className="card card-side bg-base-100 h-36 border border-2">
-                        <figure>
-                            <svg className='bg-sky-100'  width="200px" height="150px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                <path clipRule="evenodd" fillRule="evenodd" d="M6 3.75A2.75 2.75 0 018.75 1h2.5A2.75 2.75 0 0114 3.75v.443c.572.055 1.14.122 1.706.2C17.053 4.582 18 5.75 18 7.07v3.469c0 1.126-.694 2.191-1.83 2.54-1.952.599-4.024.921-6.17.921s-4.219-.322-6.17-.921C2.694 12.73 2 11.665 2 10.539V7.07c0-1.321.947-2.489 2.294-2.676A41.047 41.047 0 016 4.193V3.75zm6.5 0v.325a41.622 41.622 0 00-5 0V3.75c0-.69.56-1.25 1.25-1.25h2.5c.69 0 1.25.56 1.25 1.25zM10 10a1 1 0 00-1 1v.01a1 1 0 001 1h.01a1 1 0 001-1V11a1 1 0 00-1-1H10z" />
-                                <path d="M3 15.055v-.684c.126.053.255.1.39.142 2.092.642 4.313.987 6.61.987 2.297 0 4.518-.345 6.61-.987.135-.041.264-.089.39-.142v.684c0 1.347-.985 2.53-2.363 2.686a41.454 41.454 0 01-9.274 0C3.985 17.585 3 16.402 3 15.055z" />
-                            </svg>
-                        </figure>
-                        <div className="card-body">
-                            <h2 className="card-title">Become a Seller</h2>
-                            <p>
-                                <Link className='link' href='/seller/signup'>Become a Seller</Link>
-                            </p>
+                    {isSeller ? (
+                        <div className="card card-side bg-base-100 h-36 border border-2">
+                            <figure className="w-[186px] bg-sky-100">
+                                <img src='/images/logo.png' className="object-fit" alt={`${data.name}'s logo.`}/>
+                            </figure>
+                            <div className="card-body">
+                                <h2 className="card-title">Store Settings</h2>
+                                <ul>
+                                    <li><Link className='link' href='/products/create'>Create a Product</Link></li>
+                                    <li><Link className='link' href='/products/view'>View My Products</Link></li>
+                                </ul>
+                            </div>
                         </div>
-                    </div>
+                    ) : (
+                        <div className="card card-side bg-base-100 h-36 border border-2">
+                            <figure>
+                                <svg className='bg-sky-100'  width="200px" height="150px" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                    <path clipRule="evenodd" fillRule="evenodd" d="M6 3.75A2.75 2.75 0 018.75 1h2.5A2.75 2.75 0 0114 3.75v.443c.572.055 1.14.122 1.706.2C17.053 4.582 18 5.75 18 7.07v3.469c0 1.126-.694 2.191-1.83 2.54-1.952.599-4.024.921-6.17.921s-4.219-.322-6.17-.921C2.694 12.73 2 11.665 2 10.539V7.07c0-1.321.947-2.489 2.294-2.676A41.047 41.047 0 016 4.193V3.75zm6.5 0v.325a41.622 41.622 0 00-5 0V3.75c0-.69.56-1.25 1.25-1.25h2.5c.69 0 1.25.56 1.25 1.25zM10 10a1 1 0 00-1 1v.01a1 1 0 001 1h.01a1 1 0 001-1V11a1 1 0 00-1-1H10z" />
+                                    <path d="M3 15.055v-.684c.126.053.255.1.39.142 2.092.642 4.313.987 6.61.987 2.297 0 4.518-.345 6.61-.987.135-.041.264-.089.39-.142v.684c0 1.347-.985 2.53-2.363 2.686a41.454 41.454 0 01-9.274 0C3.985 17.585 3 16.402 3 15.055z" />
+                                </svg>
+                            </figure>
+                            <div className="card-body">
+                                <h2 className="card-title">Become a Seller</h2>
+                                <p>
+                                    <Link className='link' href='/seller/signup'>Become a Seller</Link>
+                                </p>
+                            </div>
+                        </div>
+                    )}
                 </div>
                 <Footer/>
             </div>
