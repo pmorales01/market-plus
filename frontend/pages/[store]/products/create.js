@@ -5,13 +5,23 @@ export default function create_product() {
     return (
         <div className="flex flex-col items-center space-y-14 w-full h-screen">
             <NavBar/>
-            <div className='flex flex-row bg-blue-300 w-11/12'>
+            <div className='flex flex-row w-11/12 h-fit bg-blue-600'>
                 <div className='w-2/3 flex flex-row'>
-                    <div className='w-1/4'>
-                        <img src='/images/lock.svg' className='object-fit' />
+                    <div className='flex flex-col items-center w-1/4 bg-green-200 space-y-3'>
+                        <div className='bg-slate-200 w-36 h-36 border-dashed border-2 border-black'>
+                        </div>
+                        <div className='bg-slate-200 w-36 h-36'>
+                        </div>
+                        <div className='bg-slate-200 w-36 h-36'>
+                        </div>
+                        <div className='bg-slate-200 w-36 h-36'>
+                        </div>
+                        <div className='bg-slate-200 w-36 h-36'>
+                        </div>
                     </div>
-                    <div className='w-3/4'>
-                        <img src='/images/logo.png' className='object-fit' />
+                    <div className='w-3/4 flex justify-center items-center'>
+                        <div className='bg-slate-200 w-5/6 h-5/6 border-solid border-2 border-black'>
+                        </div>
                     </div>
                 </div>
                 <div className='w-1/3'>
