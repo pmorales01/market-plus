@@ -321,14 +321,14 @@ async def is_seller(token: str = Depends(validate_token)):
     except OperationFailure:
         raise HTTPException(status_code=404, detail=["User is not a seller!"])
 
-@app.get('/seller/stores/{store}')
+@app.get('/stores/{store}')
 async def get_store(store: str):
     return "Visiting store"
 
-@app.put('/seller/{store}/edit')
+@app.put('/{store}/edit')
 async def store_edit(store: str, token: str = Depends(validate_token)):
     return 'editing store'
 
-@app.post('/products/create')
-async def create_item(token: str = Depends(validate_token)):
+@app.post('/{store}/products/create')
+async def create_item(store: str, token: str = Depends(validate_token)):
     return "created product"

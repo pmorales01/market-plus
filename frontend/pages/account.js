@@ -8,6 +8,7 @@ export default function account() {
     const [authenticated, setAuthenticated] = useState(false)
     const [data, setData] = useState({name : '', username : ''})
     const [isSeller, setIsSeller] = useState(true)
+    const [store, setStore] = useState('')
 
     const router = useRouter()
 
@@ -48,9 +49,12 @@ export default function account() {
                 const response = await fetch("http://127.0.0.1:8000/account/seller-status", requestOptions)
                
                 // user is not a seller
-                if (response.status != 200) {
+                if (response.status == 200) {
+                    const seller_data = await response.json()
+                    setStore(seller_data['store-name'])
+                } else {
                     setIsSeller(false)
-                }  
+                }
             } catch (error) {
                 console.log(error)
             }
@@ -106,11 +110,12 @@ export default function account() {
                             <figure className="w-[186px] bg-sky-100">
                                 <img src='/images/logo.png' className="object-fit" alt={`${data.name}'s logo.`}/>
                             </figure>
-                            <div className="card-body">
+                            <div className="card-body pt-3">
                                 <h2 className="card-title">Store Settings</h2>
                                 <ul>
-                                    <li><Link className='link' href='/products/create'>Create a Product</Link></li>
-                                    <li><Link className='link' href='/products/view'>View My Products</Link></li>
+                                    <li><Link className='link' href={`${store}/products/create`}>Create a Product</Link></li>
+                                    <li><Link className='link' href={`${store}/products/view`}>View My Products</Link></li>
+                                    <li><Link className='link' href={`${store}/edit`}>Edit Store Page</Link></li>
                                 </ul>
                             </div>
                         </div>
