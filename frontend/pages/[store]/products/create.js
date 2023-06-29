@@ -23,8 +23,7 @@ export default function create_product() {
             const image = document.createElement('img')
             image.src = e.target.src
             preview.appendChild(image)
-            console.log(e.currentTarget)
-        }
+         }
     }
 
     const dragOverHandler = ((event) => {
@@ -46,20 +45,10 @@ export default function create_product() {
             button.appendChild(image)
         })
         reader.readAsDataURL(file);
-
-        console.log(event.currentTarget)
     })
 
-    const handleHover = ((event) => {
-        event.currentTarget.setAttribute('fill', 'red')
-    })
-
-    const handleMouseLeave = ((event) => {
-        event.currentTarget.setAttribute('fill', 'black')
-    })
-
-    const addImage = ((event) => {
-
+    const handleClick = ((event) => {
+        console.log("creating new image holder")
     })
 
     return (
@@ -73,9 +62,7 @@ export default function create_product() {
                         </button>
                         <button className='bg-base-200 w-32 h-32 border hover:border-black' onClick={toggle}>
                         </button>
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-1/4 w-1/4" viewBox="0 0 448 512" onMouseOver={handleHover} onMouseLeave={handleMouseLeave}>
-                            <path d="M64 32C28.7 32 0 60.7 0 96V416c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64H64zM200 344V280H136c-13.3 0-24-10.7-24-24s10.7-24 24-24h64V168c0-13.3 10.7-24 24-24s24 10.7 24 24v64h64c13.3 0 24 10.7 24 24s-10.7 24-24 24H248v64c0 13.3-10.7 24-24 24s-24-10.7-24-24z"/>
-                        </svg>
+                        <button className="btn hover:bg-red-500 text-4xl" onClick={handleClick}>+</button>
                     </div>
                     <div className='w-3/4 flex justify-center items-center' id="image-preview">
                         <div className='bg-slate-200 w-11/12 h-11/12 border-solid border-black'>
