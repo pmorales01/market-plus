@@ -1,8 +1,13 @@
 import NavBar from '/components/NavBar'
 import Footer from '/components/Footer'
+import ImageDisplay from '/components/ImageDisplay'
+import { useState } from 'react'
 
 export default function create_product() {
-    const toggle = (e) => {        
+    const [hasImageDisplays, setHasImageDisplays] = useState(false)
+    const [ImageDisplays, setImageDisplays] = useState([])
+
+    const toggle = (e) => {    
         const buttons = document.getElementById('images').children
         // deselect all the buttons
         for (let i = 0; i < buttons.length; i++) {
@@ -26,30 +31,16 @@ export default function create_product() {
          }
     }
 
-    const dragOverHandler = ((event) => {
-        event.preventDefault()
-    })
-
-    const dropHandler = ((event) => {
-        event.preventDefault()
-        console.log(event.dataTransfer.files[0]);
-        const file = event.dataTransfer.files[0]
-        const button = event.currentTarget
-
-        const reader = new FileReader()
-        reader.addEventListener("load", (e) => {
-            const image = document.createElement('img')
-            image.src = e.target.result
-            image.classList = 'aspect-square'
-            button.replaceChild(image, button.firstChild)
-            button.appendChild(image)
-        })
-        reader.readAsDataURL(file);
-    })
-
     const handleClick = ((event) => {
-        console.log("creating new image holder")
+        setHasImageDisplays(true)
+        setImageDisplays([...ImageDisplays, {'id' : Math.floor(Math.random() * 101)}])
+        console.log(ImageDisplays)
     })
+
+    function deleteImageDisplay (id) {
+        console.log(ImageDisplays)
+        setImageDisplays(ImageDisplays.filter((display) => display.id !== id));
+    }
 
     return (
         <div className="flex flex-col items-center space-y-14 w-full h-screen">
@@ -57,11 +48,13 @@ export default function create_product() {
             <div className='flex flex-row w-11/12 h-fit bg-blue-600'>
                 <div className='w-2/3 flex flex-row'>
                     <div id="images" className='flex flex-col items-center w-1/4 bg-green-200 space-y-3'>
-                        <button className='bg-base-200 w-32 h-32 border hover:border-black flex justify-center' onClick={toggle} id="drop-zone" onDrop={dropHandler} onDragOver={dragOverHandler}>
-                            <img src="/svgs/upload.svg" className="aspect-square" />
-                        </button>
                         <button className='bg-base-200 w-32 h-32 border hover:border-black' onClick={toggle}>
                         </button>
+                        {hasImageDisplays && ImageDisplays.map((item, index) => {
+                            return (
+                                <ImageDisplay key={item.id} id={item.id} passedFunction={deleteImageDisplay}/>
+                            )
+                        })}
                         <button className="btn hover:bg-red-500 text-4xl" onClick={handleClick}>+</button>
                     </div>
                     <div className='w-3/4 flex justify-center items-center' id="image-preview">

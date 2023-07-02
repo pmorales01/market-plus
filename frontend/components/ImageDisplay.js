@@ -1,7 +1,7 @@
 "use client"
 
-export default function ImageDisplay() {
-    const toggle = (e) => {        
+export default function ImageDisplay({id, image='/svgs/upload.svg', passedFunction}) {
+    const toggle = (e) => {    
         const buttons = document.getElementById('images').children
         // deselect all the buttons
         for (let i = 0; i < buttons.length; i++) {
@@ -22,7 +22,7 @@ export default function ImageDisplay() {
             const image = document.createElement('img')
             image.src = e.target.src
             preview.appendChild(image)
-         }
+        }
     }
 
     const dragOverHandler = ((event) => {
@@ -46,9 +46,19 @@ export default function ImageDisplay() {
         reader.readAsDataURL(file);
     })
 
+    function handleClick() {
+        console.log("id = " + id)
+        passedFunction(id)
+    }
+
     return (
-        <button className='bg-base-200 w-32 h-32 border hover:border-black flex justify-center' onClick={toggle} id="drop-zone" onDrop={dropHandler} onDragOver={dragOverHandler}>
-            <img src="/svgs/upload.svg" className="aspect-square" />
-        </button>
+        <div className="bg-red-200 relative">
+            <button className="btn rounded-full w-fit h-fit absolute top-0 left-0" onClick={handleClick}>
+                <span className="text-xs">x</span>
+            </button>
+            <button className='bg-base-200 w-32 h-32 border hover:border-black flex justify-center' onClick={toggle} id="drop-zone" onDrop={dropHandler} onDragOver={dragOverHandler}>
+                <img src={image} className="aspect-square" />
+            </button>
+        </div>
     )
 }
