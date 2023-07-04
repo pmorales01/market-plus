@@ -4,23 +4,60 @@ import ImageDisplay from '/components/ImageDisplay'
 import { useState } from 'react'
 
 export default function create_product() {
-    const catergories = ['Appliances', 'Arts & Crafts', 'Automotive Accessories', 'Automotive Parts', 'Books', 'Clothing','Electronics', 'Music', 'Trading Cards', 'Video Games']
+    const categories = ['Appliances', 'Arts & Crafts', 'Automotive Accessories', 'Automotive Parts', 'Books', 'Clothing','Electronics', 'Music', 'Trading Cards', 'Video Games']
+    const [showList, setShowList] = useState(false)
+    const [showSelected, setShowSelected] = useState(false)
+    const [selected, setSelected] = useState([])
+
+    const showCategories = ((event) => {
+        setShowList(true)
+    })
+
+    const hideCategories = ((event) => {
+        setShowList(false)
+    }) 
+
+    const addCategory = ((event) => {
+        console.log(event.target.textContent)
+        event.target.setAttribute("disabled", "")
+        setSelected([...selected, event.target.textContent])
+        setShowSelected(true)
+    })
+
+    const removeCategory = ((event) => {
+        const selectedCategory = event.target.textContent
+        setSelected(selected.filter((category) => selectedCategory !== category))
+        document.getElementById(`cat-${selectedCategory.split(" ").join("")}`).removeAttribute('disabled')
+    })
+
     return (
         <div className="flex flex-col items-center space-y-14 w-full h-screen">
             <NavBar/>
             <div className="flex w-10/12 h-fit">
                 <form method='post' className="grow form-control max-w-full space-y-2">
                     <div className="flex flex-row space-x-2">
-                        <label for="item-name">Item Name</label>
+                        <label htmlFor="item-name">Item Name</label>
                         <input type="text" id="item-name" name="item-name" required />
                     </div>
                     <h2 className="text-xl">Category (Select all that Apply)</h2>
-                    <div className='flex flex-row flex-wrap space-x-2 gap-y-2'>
-                        {catergories.map((category, index) => {
-                            return (
-                                <button key={index} className='btn rounded-full bg-neutral-200 text-zinc-500 capitalize hover:text-white'>{category}</button>
-                            )
-                        })}
+                    {showSelected && (
+                        <div className='flex flex-row flex-wrap space-x-2 gap-y-2'>
+                            {selected.map((category, index) => {
+                                return (
+                                    <button key={index} className='btn rounded-full bg-neutral-200 text-zinc-500 capitalize hover:text-white disabled:bg-slate-300' onClick={removeCategory}>{category}</button>
+                                )
+                            })}
+                        </div>
+                    )}
+                    <div>
+                        <input type="text" onClick={showCategories} />
+                        {showList && (
+                            <ul>
+                            {categories.map((category, index) => (
+                                <li key={index}><button id={`cat-${category.split(" ").join("")}`} onClick={addCategory} className="hover:bg-blue-200">{category}</button></li>
+                            ))}
+                            </ul>
+                        )}
                     </div>
                 </form>
             </div>
