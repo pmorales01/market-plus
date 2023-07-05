@@ -1,20 +1,26 @@
 import NavBar from '/components/NavBar'
 import Footer from '/components/Footer'
-import ImageDisplay from '/components/ImageDisplay'
 import { useState } from 'react'
 
 export default function create_product() {
     const categories = ['Appliances', 'Arts & Crafts', 'Automotive Accessories', 'Automotive Parts', 'Books', 'Clothing','Electronics', 'Music', 'Trading Cards', 'Video Games']
-    const [showList, setShowList] = useState(false)
     const [showSelected, setShowSelected] = useState(false)
+
+    // tracks which categories the user selected
     const [selected, setSelected] = useState([])
 
-    const showCategories = ((event) => {
-        setShowList(true)
+    const showCategories = (() => {  
+        const list = document.getElementById('cat-list')
+
+        // unhide list if hidden
+        if (list.hasAttribute('hidden')) {
+            list.removeAttribute("hidden")
+        }
     })
 
-    const hideCategories = ((event) => {
-        setShowList(false)
+    const handleBlur = (() => {
+        // hide the list if user clicks outside of it 
+        document.getElementById('cat-list').setAttribute("hidden", "")
     }) 
 
     const addCategory = ((event) => {
@@ -25,8 +31,13 @@ export default function create_product() {
     })
 
     const removeCategory = ((event) => {
+        // category to remove from selected list 
         const selectedCategory = event.target.textContent
+
+        // unselect the category (remove from user's selected list)
         setSelected(selected.filter((category) => selectedCategory !== category))
+
+        // make the category from the cateogry list clickable again 
         document.getElementById(`cat-${selectedCategory.split(" ").join("")}`).removeAttribute('disabled')
     })
 
@@ -50,9 +61,9 @@ export default function create_product() {
                         </div>
                     )}
                     <div>
-                        <input type="text" onClick={showCategories} />
-                        {showList && (
-                            <ul>
+                        <input type="text" onClick={showCategories}/>
+                        {(
+                            <ul id="cat-list" onBlur={handleBlur} hidden>
                             {categories.map((category, index) => (
                                 <li key={index}><button id={`cat-${category.split(" ").join("")}`} onClick={addCategory} className="hover:bg-blue-200">{category}</button></li>
                             ))}
