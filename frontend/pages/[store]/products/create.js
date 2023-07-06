@@ -24,8 +24,8 @@ export default function create_product() {
     }) 
 
     const addCategory = ((event) => {
-        console.log(event.target.textContent)
         event.target.setAttribute("disabled", "")
+        event.target.style.background = "grey"
         setSelected([...selected, event.target.textContent])
         setShowSelected(true)
     })
@@ -38,7 +38,29 @@ export default function create_product() {
         setSelected(selected.filter((category) => selectedCategory !== category))
 
         // make the category from the cateogry list clickable again 
-        document.getElementById(`cat-${selectedCategory.split(" ").join("")}`).removeAttribute('disabled')
+        const category = document.getElementById(`cat-${selectedCategory.split(" ").join("")}`)
+        category.removeAttribute('disabled')
+
+        // remove grey background
+        category.style.background = 'none'
+    })
+
+    const handleSearch = ((event) => {
+        const search = event.target.value
+        const items = document.getElementById('cat-list').children
+        const regex = new RegExp(search, 'i')
+
+        for (let i = 0; i < items.length; ++i) {
+            if (regex.test(items[i].textContent)) {
+                items[i].style.display = ""
+            } else {
+                items[i].style.display = "none"
+            }
+        }
+    })
+
+    const handleClickAway = ((event) => {
+        //
     })
 
     return (
@@ -60,10 +82,13 @@ export default function create_product() {
                             })}
                         </div>
                     )}
-                    <div>
-                        <input type="text" onClick={showCategories}/>
+                    <div className='w-48'>
+                        <div className='w-fit h-fit flex flex-row items-center'>
+                            <input type="text" onClick={showCategories} className="border border-2 h-10 text-xl" onChange={handleSearch} onBlur={handleClickAway}/>
+                            <p className="text-4xl bg-slate-300 text-center w-8">&#x2315;</p>
+                        </div>
                         {(
-                            <ul id="cat-list" onBlur={handleBlur} hidden>
+                            <ul id="cat-list" onBlur={handleBlur} hidden className='h-40 w-max overflow-y-auto p-4'> 
                             {categories.map((category, index) => (
                                 <li key={index}><button id={`cat-${category.split(" ").join("")}`} onClick={addCategory} className="hover:bg-blue-200">{category}</button></li>
                             ))}
