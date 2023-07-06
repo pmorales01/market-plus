@@ -25,7 +25,6 @@ export default function create_product() {
 
     const addCategory = ((event) => {
         event.target.setAttribute("disabled", "")
-        event.target.style.background = "grey"
         setSelected([...selected, event.target.textContent])
         setShowSelected(true)
     })
@@ -40,9 +39,6 @@ export default function create_product() {
         // make the category from the cateogry list clickable again 
         const category = document.getElementById(`cat-${selectedCategory.split(" ").join("")}`)
         category.removeAttribute('disabled')
-
-        // remove grey background
-        category.style.background = 'none'
     })
 
     const handleSearch = ((event) => {
@@ -90,7 +86,7 @@ export default function create_product() {
                         {(
                             <ul id="cat-list" onBlur={handleBlur} hidden className='h-40 w-max overflow-y-auto p-4'> 
                             {categories.map((category, index) => (
-                                <li key={index}><button id={`cat-${category.split(" ").join("")}`} onClick={addCategory} className="hover:bg-blue-200">{category}</button></li>
+                                <li key={index}><button id={`cat-${category.split(" ").join("")}`} onClick={addCategory} className="hover:bg-blue-200 w-full text-left disabled:bg-slate-300">{category}</button></li>
                             ))}
                             </ul>
                         )}
