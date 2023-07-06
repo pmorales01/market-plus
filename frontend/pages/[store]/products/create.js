@@ -84,7 +84,7 @@ export default function create_product() {
                             <p className="text-4xl bg-slate-300 text-center w-8">&#x2315;</p>
                         </div>
                         {(
-                            <ul id="cat-list" onBlur={handleBlur} hidden className='h-40 w-max overflow-y-auto p-4'> 
+                            <ul id="cat-list" onBlur={handleBlur} hidden className='h-40 w-60 overflow-y-auto p-4 bg-stone-50 border-16'> 
                             {categories.map((category, index) => (
                                 <li key={index}><button id={`cat-${category.split(" ").join("")}`} onClick={addCategory} className="hover:bg-blue-200 w-full text-left disabled:bg-slate-300">{category}</button></li>
                             ))}
