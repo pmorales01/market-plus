@@ -30,6 +30,8 @@ export default function create_product() {
     })
 
     const removeCategory = ((event) => {
+        event.preventDefault()
+
         // category to remove from selected list 
         const selectedCategory = event.target.textContent
 
@@ -68,7 +70,7 @@ export default function create_product() {
                         <label htmlFor="item-name">Item Name</label>
                         <input type="text" id="item-name" name="item-name" required />
                     </div>
-                    <h2 className="text-xl">Category (Select all that Apply)</h2>
+                    <h2>Category (Select all that Apply)</h2>
                     {showSelected && (
                         <div className='flex flex-row flex-wrap space-x-2 gap-y-2'>
                             {selected.map((category, index) => {
@@ -90,6 +92,28 @@ export default function create_product() {
                             ))}
                             </ul>
                         )}
+                    </div>
+                    <div>
+                        <h2>Condition</h2>
+                        <fieldset>
+                            <input type="radio" id="New" name="condition" value="New"/>
+                            <label htmlFor="New"> New</label>
+                            <br/>
+                            <input type="radio" id="Like-New" name="condition" value="Like New"/>
+                            <label htmlFor="Like-New"> Like New</label>
+                            <br/>
+                            <input type="radio" id="Good" name="condition" value="Good"/>
+                            <label htmlFor="Good"> Good</label>
+                            <br/>
+                            <input type="radio" id="Used" name="condition" value="Used"/>
+                            <label htmlFor="Used"> Used</label>
+                            <br/>
+                            <input type="radio" id="Acceptable" name="condition" value="Acceptable"/>
+                            <label htmlFor="Acceptable"> Acceptable</label>
+                            <br/>
+                            <input type="radio" id="Poor" name="condition" value="Poor"/>
+                            <label htmlFor="Poor"> Poor</label>
+                        </fieldset>
                     </div>
                 </form>
             </div>
