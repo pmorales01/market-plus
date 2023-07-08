@@ -5,6 +5,7 @@ import { useState } from 'react'
 export default function create_product() {
     const categories = ['Appliances', 'Arts & Crafts', 'Automotive Accessories', 'Automotive Parts', 'Books', 'Clothing','Electronics', 'Music', 'Trading Cards', 'Video Games']
     const [showSelected, setShowSelected] = useState(false)
+    const [charLength, setCharLength] = useState(0)
 
     // tracks which categories the user selected
     const [selected, setSelected] = useState([])
@@ -57,8 +58,8 @@ export default function create_product() {
         }
     })
 
-    const handleClickAway = ((event) => {
-        //
+    const handleTextarea = ((event) => {
+        setCharLength(event.target.value.length)
     })
 
     return (
@@ -68,7 +69,7 @@ export default function create_product() {
                 <form method='post' className="grow form-control max-w-full space-y-2">
                     <div className="flex flex-row space-x-2">
                         <label htmlFor="item-name">Item Name</label>
-                        <input type="text" id="item-name" name="item-name" required />
+                        <input type="text" id="item-name" name="item-name" className="border border-2" required />
                     </div>
                     <h2>Category (Select all that Apply)</h2>
                     {showSelected && (
@@ -82,7 +83,7 @@ export default function create_product() {
                     )}
                     <div className='w-48'>
                         <div className='w-fit h-fit flex flex-row items-center'>
-                            <input type="text" onClick={showCategories} className="border border-2 h-10 text-xl" onChange={handleSearch} onBlur={handleClickAway}/>
+                            <input type="text" onClick={showCategories} className="border border-2 h-10 text-xl" onChange={handleSearch}/>
                             <p className="text-4xl bg-slate-300 text-center w-8">&#x2315;</p>
                         </div>
                         {(
@@ -95,7 +96,7 @@ export default function create_product() {
                     </div>
                     <div>
                         <h2>Condition</h2>
-                        <fieldset>
+                        <fieldset id="condition-radio">
                             <input type="radio" id="New" name="condition" value="New"/>
                             <label htmlFor="New"> New</label>
                             <br/>
@@ -114,6 +115,13 @@ export default function create_product() {
                             <input type="radio" id="Poor" name="condition" value="Poor"/>
                             <label htmlFor="Poor"> Poor</label>
                         </fieldset>
+                        <br/>
+                        <label htmlFor="condition-desc">Condition Description</label>
+                        <br/>
+                        <div className='w-80'>
+                            <textarea className="border border-2 w-full" id="condition-desc" name="condition-desc" onChange={handleTextarea} maxLength="250" required></textarea>
+                            <p className='text-right'>{charLength}/250 Characters</p>
+                        </div>
                     </div>
                 </form>
             </div>
