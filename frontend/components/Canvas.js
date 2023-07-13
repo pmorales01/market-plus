@@ -1,4 +1,5 @@
 "use client"
+import EditPopUp from '/components/EditPopUp'
 import { useState } from 'react'
 
 function getRandomNumber() {
@@ -7,8 +8,13 @@ function getRandomNumber() {
     return Math.floor(x * y) + 1
 }
 
+
 export default function Canvas ()  {
     const [children, setChildren] = useState({})
+    const [isEditing, setEditing] = useState(false)
+    const [top, setTop] = useState(0)
+    const [type, setType] = useState()
+    const [value, setValue] = useState()
 
     const handleDragStart = ((event) => {
         event.dataTransfer.setData("data", event.target.value);
@@ -21,6 +27,10 @@ export default function Canvas ()  {
 
     const handleDragOver = ((event) => {
         event.preventDefault()
+    })
+
+    const handle = ((event) => {
+        setEditing(true)
     })
 
     const handleDrop = ((event) => {
@@ -42,7 +52,7 @@ export default function Canvas ()  {
                 key : {
                     'type' : type,
                     'data' : {
-                        'item' : 'Click to edit'
+                        'item' : 'Click to edit item'
                     },
                 }
             })
@@ -52,6 +62,7 @@ export default function Canvas ()  {
 
         for (const child in children) {
             const element = document.createElement(children[child].type)
+            setType(element.tagName)
             if (element.tagName === 'P') {
                 element.innerHTML = children[child].data
             } else if (element.tagName === 'UL') {
@@ -62,8 +73,25 @@ export default function Canvas ()  {
                 }
                 element.classList.add('list-disc', 'px-6')
             }
+            element.addEventListener('click', (event) => {
+                setTop(event.currentTarget.getBoundingClientRect().y)
+                console.log(event.currentTarget)
+                setEditing(true)
+                setValue(event.target.innerHTML)
+                console.log(value)
+            })
+            element.classList.add('relative')
             canvas.appendChild(element)
         }
+    })
+    
+    const onCancel = ((event) => {
+        console.log(event.target)
+        console.log(currentEvent.currentTarget)
+    })
+
+    const handleUpdate = ((value) => {
+        console.log("updaing..." + value)
     })
 
     return (
@@ -72,7 +100,8 @@ export default function Canvas ()  {
                 <input type="image" id="bold-btn" onDragStart={handleDragStart} value="p" onDrag={handleDrag} draggable="true" src="/svgs/paragraph.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
                 <input type="image" id="bold-btn" onDragStart={handleDragStart} value="ul" onDrag={handleDrag} draggable="true" src="/svgs/list-ul.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
             </div>
-            <div id="canvas"  className="border border-2 border-black w-full h-96 p-6" onDragOver={handleDragOver} onDrop={handleDrop}>
+            <div id="canvas"  className="border border-2 border-black w-full h-96 p-6 relative" onDragOver={handleDragOver} onDrop={handleDrop}>
+                {isEditing && <EditPopUp top={top} type={type} editValue={value} onCancel={onCancel} onSave={handleUpdate}/>}
             </div>
         </div>
     )
