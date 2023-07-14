@@ -1,6 +1,7 @@
 "use client"
 import EditPopUp from '/components/EditPopUp'
 import { useState } from 'react'
+import { ReactDOM } from 'react'
 
 function getRandomNumber() {
     const x = Math.floor(Math.random() * 100) + 1
@@ -10,11 +11,12 @@ function getRandomNumber() {
 
 
 export default function Canvas ()  {
-    const [children, setChildren] = useState({})
+    const [children, setChildren] = useState([])
     const [isEditing, setEditing] = useState(false)
     const [top, setTop] = useState(0)
     const [type, setType] = useState()
     const [value, setValue] = useState()
+    const [id, setID] = useState()
 
     const handleDragStart = ((event) => {
         event.dataTransfer.setData("data", event.target.value);
@@ -29,59 +31,37 @@ export default function Canvas ()  {
         event.preventDefault()
     })
 
-    const handle = ((event) => {
+    const handleClick = ((event) => {
+        setTop(event.currentTarget.getBoundingClientRect().y)
         setEditing(true)
+        setValue(event.target.innerHTML)
+        setID(event.currentTarget.id)
     })
 
     const handleDrop = ((event) => {
         event.preventDefault()
 
-        const key = getRandomNumber().toString()
+        const id = getRandomNumber()
         const type = event.dataTransfer.getData("data")
-        console.log(type)
-        
+
         if (type === 'p') {
-            setChildren({...children, 
-                key : {
+            setChildren([...children, 
+                {
+                    'id' : id,
                     'type' : type,
                     'data' : 'Click to edit',
                 }
-            })
+            ])
         } else if (type === 'ul') {
-            setChildren({...children, 
-                key : {
+            setChildren([...children, 
+                {
+                    'id' : id,
                     'type' : type,
-                    'data' : {
+                    'data' : [{
                         'item' : 'Click to edit item'
-                    },
+                    }],
                 }
-            })
-        }
-        
-        const canvas = document.getElementById('canvas')
-
-        for (const child in children) {
-            const element = document.createElement(children[child].type)
-            setType(element.tagName)
-            if (element.tagName === 'P') {
-                element.innerHTML = children[child].data
-            } else if (element.tagName === 'UL') {
-                for (const item in children[child].data) {
-                    const li = document.createElement('li')
-                    li.innerHTML = children[child].data.item                 
-                    element.appendChild(li)
-                }
-                element.classList.add('list-disc', 'px-6')
-            }
-            element.addEventListener('click', (event) => {
-                setTop(event.currentTarget.getBoundingClientRect().y)
-                console.log(event.currentTarget)
-                setEditing(true)
-                setValue(event.target.innerHTML)
-                console.log(value)
-            })
-            element.classList.add('relative')
-            canvas.appendChild(element)
+            ])
         }
     })
     
@@ -90,8 +70,22 @@ export default function Canvas ()  {
         console.log(currentEvent.currentTarget)
     })
 
-    const handleUpdate = ((value) => {
-        console.log("updaing..." + value)
+    const handleUpdate = ((value, id) => {
+        console.log("updaing..." + id)
+        console.log("i have " + value)
+        setChildren(children.map(child => {
+            if (child.id == id) {
+                return {
+                    ...child,
+                    'data' : [
+                        ...child.data, 
+                        {'item': value}
+                    ]
+                }
+            }
+        }))
+
+        console.log(children)
     })
 
     return (
@@ -101,7 +95,26 @@ export default function Canvas ()  {
                 <input type="image" id="bold-btn" onDragStart={handleDragStart} value="ul" onDrag={handleDrag} draggable="true" src="/svgs/list-ul.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
             </div>
             <div id="canvas"  className="border border-2 border-black w-full h-96 p-6 relative" onDragOver={handleDragOver} onDrop={handleDrop}>
-                {isEditing && <EditPopUp top={top} type={type} editValue={value} onCancel={onCancel} onSave={handleUpdate}/>}
+                {
+                    children.map(child => 
+                        {if (child.type === 'p') {
+                            return (
+                                <p id={child.id} key={child.id} onClick={handleClick} className='relative'>{child.data}</p>
+                            )
+                        } else if (child.type === 'ul') {
+                            return (
+                                <ul id={child.id} key={child.id} className='relative'>
+                                    { child.data.map((key, index) => {
+                                        return (
+                                            <li key={index} onClick={handleClick} className='list-disc px-6'>{key['item']}</li>
+                                        )
+                                    })}
+                                </ul>
+                            )
+                        }}
+                    )
+                }
+                {isEditing && <EditPopUp top={top} type={type} editValue={value} id={id} onCancel={onCancel} onSave={handleUpdate}/>}
             </div>
         </div>
     )
