@@ -1,7 +1,6 @@
 "use client"
 import EditPopUp from '/components/EditPopUp'
 import { useState } from 'react'
-import { ReactDOM } from 'react'
 
 function getRandomNumber() {
     const x = Math.floor(Math.random() * 100) + 1
@@ -36,6 +35,7 @@ export default function Canvas ()  {
         setEditing(true)
         setValue(event.target.innerHTML)
         setID(event.currentTarget.id)
+        console.log("id set = " + id)
     })
 
     const handleDrop = ((event) => {
@@ -58,7 +58,8 @@ export default function Canvas ()  {
                     'id' : id,
                     'type' : type,
                     'data' : [{
-                        'item' : 'Click to edit item'
+                        'id': `${id}-${getRandomNumber()}`,
+                        'item': 'Click to edit item'
                     }],
                 }
             ])
@@ -71,21 +72,56 @@ export default function Canvas ()  {
     })
 
     const handleUpdate = ((value, id) => {
-        console.log("updaing..." + id)
-        console.log("i have " + value)
+        console.log("updating..." + id)
+        console.log("value = " + value)
+        
+        // setChildren(children.map(child => {
+        //     if (child.id == id) {
+        //         return {
+        //             ...child,
+        //             data : [
+        //                 ...child.data, 
+        //                 {
+        //                     id: getRandomNumber(),
+        //                     item: value
+        //                 }
+        //             ]
+        //         }
+        //     }
+        // }))
+
+        console.log("looking for " + id)
         setChildren(children.map(child => {
-            if (child.id == id) {
-                return {
-                    ...child,
-                    'data' : [
-                        ...child.data, 
-                        {'item': value}
-                    ]
+            const [childID, itemID] = id.split('-')
+            if (childID == child.id) {
+                if (child.type === 'p') {
+                   return {
+                        ...child,
+                        data : value
+                    } 
+                } else if (child.type === 'ul') {
+                    const updatedItems = child.data.map(item => {
+                        if (itemID == item.id) {
+                            return {
+                                ...item,
+                                'item': value
+                            }
+                        }
+                        return {...item}
+                    })
+
+                    return {
+                        ...child, 
+                        data : updatedItems
+                    }
+
+
                 }
             }
         }))
 
         console.log(children)
+        console.log("end of update")
     })
 
     return (
@@ -97,21 +133,23 @@ export default function Canvas ()  {
             <div id="canvas"  className="border border-2 border-black w-full h-96 p-6 relative" onDragOver={handleDragOver} onDrop={handleDrop}>
                 {
                     children.map(child => 
-                        {if (child.type === 'p') {
-                            return (
-                                <p id={child.id} key={child.id} onClick={handleClick} className='relative'>{child.data}</p>
-                            )
-                        } else if (child.type === 'ul') {
-                            return (
-                                <ul id={child.id} key={child.id} className='relative'>
-                                    { child.data.map((key, index) => {
-                                        return (
-                                            <li key={index} onClick={handleClick} className='list-disc px-6'>{key['item']}</li>
-                                        )
-                                    })}
-                                </ul>
-                            )
-                        }}
+                        {   
+                            if (child.type === 'p') {
+                                return (
+                                    <p id={child.id} key={child.id} onClick={handleClick} className='relative'>{child.data}</p>
+                                )
+                            } else if (child.type === 'ul') {
+                                return (
+                                    <ul id={child.id} key={child.id} className='relative'>
+                                        { child.data.map(item => {
+                                            return (
+                                                <li key={item['id']} id={item['id']} onClick={handleClick} className='list-disc px-6'>{item['item']}</li>
+                                            )
+                                        })}
+                                    </ul>
+                                )
+                            }
+                        }
                     )
                 }
                 {isEditing && <EditPopUp top={top} type={type} editValue={value} id={id} onCancel={onCancel} onSave={handleUpdate}/>}
