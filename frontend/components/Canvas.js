@@ -64,18 +64,35 @@ export default function Canvas ()  {
             ])
         }
     })
+
+    const handleNewItem = ((elementID) => {
+        const [parentID, itemID] = elementID.split('-')
+        setChildren(children.map(parent => {
+            if (parentID == parent.id) {
+                return {
+                    ...parent,
+                    data: [
+                    ...parent.data,
+                    { 
+                        'id': `${parentID}-${getRandomNumber()}`,
+                        'item': 'Click to edit item'
+                    }]
+                }
+            }
+            return {...parent}
+        }))
+    })
     
-    const onCancel = ((event) => {
-        console.log(event.target)
-        console.log(currentEvent.currentTarget)
+    const onCancel = (() => {
+        setEditing(false)
     })
 
-    const handleUpdate = ((value, id) => {
+    const handleUpdate = ((value, elementID) => {
         setChildren(children.map(child => {
             // get the ids of the current element in the form of 
             // [child id, item id] where child id is the parent element (<p>, <ul>)
             // and item is the child of the parent element (<li>)
-            const [childID, itemID] = id.split('-')
+            const [childID, itemID] = elementID.split('-')
 
             if (childID == child.id) {
                 // if child is a <p>, change only the <p>'s content
@@ -111,6 +128,23 @@ export default function Canvas ()  {
         }))
     })
 
+    const handleDelete = ((elementID) => {
+        console.log("child id = " + elementID)
+        setChildren(children.filter(child => {
+            const [childID, itemID] = elementID.split('-')
+            if (child.type === 'p') {
+                return child.id != childID
+            }
+            // } else if (child.type === 'ul') {
+            //     if (child.data.length !== 1) {
+            //         child.data.filter(item => item.id != itemID)
+            //     }
+            // }
+        }))
+
+        setEditing(false)
+    })
+
     return (
         <div className="w-full">
             <div id="menu" className="bg-red-200">
@@ -139,7 +173,7 @@ export default function Canvas ()  {
                         }
                     )
                 }
-                {isEditing && <EditPopUp top={top} editValue={value} id={id} onCancel={onCancel} onSave={handleUpdate}/>}
+                {isEditing && <EditPopUp top={top} editValue={value} id={id} onDelete={handleDelete} onCancel={onCancel} onSave={handleUpdate} onAddItem={handleNewItem}/>}
             </div>
         </div>
     )

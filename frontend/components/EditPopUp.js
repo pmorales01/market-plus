@@ -1,15 +1,18 @@
 "use client"
 import { useState } from 'react'
 
-export default function EditPopUp({top, type, editValue, onSave}) {
+export default function EditPopUp({top, id, editValue, onSave, onCancel, onDelete, onAddItem}) {
     const [value, setValue] = useState(editValue)
 
-    function handleCancel () {
-    }
+    const handleCancel = ((event) => {
+        event.preventDefault()
+        onCancel()
+    })
 
-    function handleNewItem () {
-
-    }
+    const  handleNewItem = ((event) => {
+        event.preventDefault()
+        onAddItem(id)
+    })
 
     const handleEdit = ((event) => {
         setValue(event.target.value)
@@ -17,8 +20,12 @@ export default function EditPopUp({top, type, editValue, onSave}) {
 
     const handleSave = ((event) => {
         event.preventDefault()
-        console.log(event.target.value)
-        onSave(value)
+        onSave(value, id)
+    })
+
+    const handleDelete = ((event) => {
+        event.preventDefault()
+        onDelete(id)
     })
 
     return (
@@ -30,7 +37,7 @@ export default function EditPopUp({top, type, editValue, onSave}) {
             <button className="btn btn-primary" onClick={handleCancel}>Cancel</button>
             <button className="btn btn-primary" onClick={handleSave}>Save</button>
             <button className="btn btn-primary" onClick={handleNewItem}>Add Item</button>
-            <button className="btn btn-primary">Delete</button>
+            <button className="btn btn-primary" onClick={handleDelete}>Delete</button>
             </div>
         </div>
         </div>
