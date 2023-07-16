@@ -72,56 +72,41 @@ export default function Canvas ()  {
     })
 
     const handleUpdate = ((value, id) => {
-        console.log("updating..." + id)
-        console.log("value = " + value)
-        
-        // setChildren(children.map(child => {
-        //     if (child.id == id) {
-        //         return {
-        //             ...child,
-        //             data : [
-        //                 ...child.data, 
-        //                 {
-        //                     id: getRandomNumber(),
-        //                     item: value
-        //                 }
-        //             ]
-        //         }
-        //     }
-        // }))
-
-        console.log("looking for " + id)
         setChildren(children.map(child => {
+            // get the ids of the current element in the form of 
+            // [child id, item id] where child id is the parent element (<p>, <ul>)
+            // and item is the child of the parent element (<li>)
             const [childID, itemID] = id.split('-')
+
             if (childID == child.id) {
+                // if child is a <p>, change only the <p>'s content
                 if (child.type === 'p') {
                    return {
                         ...child,
                         data : value
                     } 
                 } else if (child.type === 'ul') {
-                    const updatedItems = child.data.map(item => {
-                        if (itemID == item.id) {
+                    // if child is <ul>, look for the <li> matching the itemID
+                     const updatedItems = child.data.map(item => {
+                        const ids = item.id.split('-')
+                        // only change the <li>'s value
+                        if (itemID == ids[1]) {
                             return {
                                 ...item,
                                 'item': value
                             }
                         }
+                        // if itemID does not match, do not edit any <li>'s
                         return {...item}
                     })
-
+                    // update the <ul> with the new <li> value
                     return {
                         ...child, 
                         data : updatedItems
                     }
-
-
                 }
             }
         }))
-
-        console.log(children)
-        console.log("end of update")
     })
 
     return (
