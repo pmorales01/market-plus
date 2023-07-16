@@ -13,7 +13,6 @@ export default function Canvas ()  {
     const [children, setChildren] = useState([])
     const [isEditing, setEditing] = useState(false)
     const [top, setTop] = useState(0)
-    const [type, setType] = useState()
     const [value, setValue] = useState()
     const [id, setID] = useState()
 
@@ -31,11 +30,11 @@ export default function Canvas ()  {
     })
 
     const handleClick = ((event) => {
+        console.log(event.target.innerHTML)
         setTop(event.currentTarget.getBoundingClientRect().y)
-        setEditing(true)
+        setEditing(!isEditing)
         setValue(event.target.innerHTML)
         setID(event.currentTarget.id)
-        console.log("id set = " + id)
     })
 
     const handleDrop = ((event) => {
@@ -87,7 +86,7 @@ export default function Canvas ()  {
                     } 
                 } else if (child.type === 'ul') {
                     // if child is <ul>, look for the <li> matching the itemID
-                     const updatedItems = child.data.map(item => {
+                    const updatedItems = child.data.map(item => {
                         const ids = item.id.split('-')
                         // only change the <li>'s value
                         if (itemID == ids[1]) {
@@ -106,6 +105,9 @@ export default function Canvas ()  {
                     }
                 }
             }
+
+            // return element that does not match ID
+            return {...child}
         }))
     })
 
@@ -128,7 +130,7 @@ export default function Canvas ()  {
                                     <ul id={child.id} key={child.id} className='relative'>
                                         { child.data.map(item => {
                                             return (
-                                                <li key={item['id']} id={item['id']} onClick={handleClick} className='list-disc px-6'>{item['item']}</li>
+                                                <li key={item.id} id={item.id} onClick={handleClick} className='list-disc px-6'>{item.item}</li>
                                             )
                                         })}
                                     </ul>
@@ -137,7 +139,7 @@ export default function Canvas ()  {
                         }
                     )
                 }
-                {isEditing && <EditPopUp top={top} type={type} editValue={value} id={id} onCancel={onCancel} onSave={handleUpdate}/>}
+                {isEditing && <EditPopUp top={top} editValue={value} id={id} onCancel={onCancel} onSave={handleUpdate}/>}
             </div>
         </div>
     )
