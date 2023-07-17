@@ -1,7 +1,7 @@
 "use client"
 import { useState } from 'react'
 
-export default function EditPopUp({top, id, editValue, onSave, onCancel, onDelete, onAddItem}) {
+export default function EditPopUp({top, type, id, editValue, onSave, onCancel, onDelete, onAddItem}) {
     const [value, setValue] = useState(editValue)
 
     const handleCancel = ((event) => {
@@ -25,7 +25,7 @@ export default function EditPopUp({top, id, editValue, onSave, onCancel, onDelet
 
     const handleDelete = ((event) => {
         event.preventDefault()
-        onDelete(id)
+        onDelete(id, type)
     })
 
     return (

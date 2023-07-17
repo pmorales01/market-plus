@@ -15,6 +15,7 @@ export default function Canvas ()  {
     const [top, setTop] = useState(0)
     const [value, setValue] = useState()
     const [id, setID] = useState()
+    const [type, setType] = useState()
 
     const handleDragStart = ((event) => {
         event.dataTransfer.setData("data", event.target.value);
@@ -30,11 +31,11 @@ export default function Canvas ()  {
     })
 
     const handleClick = ((event) => {
-        console.log(event.target.innerHTML)
         setTop(event.currentTarget.getBoundingClientRect().y)
         setEditing(!isEditing)
         setValue(event.target.innerHTML)
         setID(event.currentTarget.id)
+        setType(event.target.tagName.toLowerCase())
     })
 
     const handleDrop = ((event) => {
@@ -66,9 +67,11 @@ export default function Canvas ()  {
     })
 
     const handleNewItem = ((elementID) => {
+        // parentID is the 'id' of a <ul>
         const [parentID, itemID] = elementID.split('-')
         setChildren(children.map(parent => {
             if (parentID == parent.id) {
+                // if parent id matches with <ul>, add <li>
                 return {
                     ...parent,
                     data: [
@@ -79,6 +82,7 @@ export default function Canvas ()  {
                     }]
                 }
             }
+            // copy the other elements 
             return {...parent}
         }))
     })
@@ -128,19 +132,36 @@ export default function Canvas ()  {
         }))
     })
 
-    const handleDelete = ((elementID) => {
-        console.log("child id = " + elementID)
-        setChildren(children.filter(child => {
-            const [childID, itemID] = elementID.split('-')
-            if (child.type === 'p') {
-                return child.id != childID
-            }
-            // } else if (child.type === 'ul') {
-            //     if (child.data.length !== 1) {
-            //         child.data.filter(item => item.id != itemID)
-            //     }
-            // }
-        }))
+    const handleDelete = ((elementID, elementType) => {
+        // delete the selected <p> 
+        if (elementType === 'p') {
+            setChildren(children.filter(child => {
+                return child.id != elementID
+             }))
+        } else if (elementType === 'ul' || elementType === 'li') {
+            setChildren(children.filter(child => {
+                // childID = id of <ul>
+                const [childID, itemID] = elementID.split('-')
+                if (childID == child.id) {
+                    // if there is more than one <li> in <ul>, then delete the matching <li>
+                    if (child.data.length > 1) {
+                        const newData = child.data.filter(item => {
+                            return item.id != elementID
+                        })
+
+                        return {
+                            ...child,
+                            data: newData
+                        }
+                    } 
+                    // delete <ul> since there are no <li> left
+                    return child.id != childID
+                } else {
+                    // copy the other <ul>
+                    return {...child}
+                }
+            }))
+        }
 
         setEditing(false)
     })
@@ -173,7 +194,7 @@ export default function Canvas ()  {
                         }
                     )
                 }
-                {isEditing && <EditPopUp top={top} editValue={value} id={id} onDelete={handleDelete} onCancel={onCancel} onSave={handleUpdate} onAddItem={handleNewItem}/>}
+                {isEditing && <EditPopUp top={top} type={type} editValue={value} id={id} onDelete={handleDelete} onCancel={onCancel} onSave={handleUpdate} onAddItem={handleNewItem}/>}
             </div>
         </div>
     )
