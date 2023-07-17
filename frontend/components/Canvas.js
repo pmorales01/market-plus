@@ -130,6 +130,7 @@ export default function Canvas ()  {
             // return element that does not match ID
             return {...child}
         }))
+        setEditing(false)
     })
 
     const handleDelete = ((elementID, elementType) => {
@@ -139,7 +140,7 @@ export default function Canvas ()  {
                 return child.id != elementID
              }))
         } else if (elementType === 'ul' || elementType === 'li') {
-            setChildren(children.filter(child => {
+            setChildren(children.map(child => {
                 // childID = id of <ul>
                 const [childID, itemID] = elementID.split('-')
                 if (childID == child.id) {
@@ -154,15 +155,14 @@ export default function Canvas ()  {
                             data: newData
                         }
                     } 
-                    // delete <ul> since there are no <li> left
-                    return child.id != childID
-                } else {
+                    // delete <ul> since there are no <li> left, return null then filter
+                    return null
+                }
                     // copy the other <ul>
                     return {...child}
-                }
-            }))
+            }).filter(child => child))
         }
-
+        console.log(children)
         setEditing(false)
     })
 
