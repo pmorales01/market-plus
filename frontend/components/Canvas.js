@@ -44,7 +44,7 @@ export default function Canvas ()  {
         const id = getRandomNumber()
         const type = event.dataTransfer.getData("data")
 
-        if (type === 'p') {
+        if (type === 'p' || type === 'h2') {
             setChildren([...children, 
                 {
                     'id' : id,
@@ -85,6 +85,7 @@ export default function Canvas ()  {
             // copy the other elements 
             return {...parent}
         }))
+        setEditing(false)
     })
     
     const onCancel = (() => {
@@ -100,7 +101,7 @@ export default function Canvas ()  {
 
             if (childID == child.id) {
                 // if child is a <p>, change only the <p>'s content
-                if (child.type === 'p') {
+                if (child.type === 'p' || child.type === 'h2') {
                    return {
                         ...child,
                         data : value
@@ -135,7 +136,7 @@ export default function Canvas ()  {
 
     const handleDelete = ((elementID, elementType) => {
         // delete the selected <p> 
-        if (elementType === 'p') {
+        if (elementType === 'p' || elementType === 'h2') {
             setChildren(children.filter(child => {
                 return child.id != elementID
              }))
@@ -168,8 +169,9 @@ export default function Canvas ()  {
 
     return (
         <div className="w-full">
-            <div id="menu" className="bg-red-200">
+            <div id="menu" className="bg-red-200 flex justify-evenly">
                 <input type="image" id="bold-btn" onDragStart={handleDragStart} value="p" onDrag={handleDrag} draggable="true" src="/svgs/paragraph.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
+                <input type="image" id="bold-btn" onDragStart={handleDragStart} value="h2" onDrag={handleDrag} draggable="true" src="/svgs/heading.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
                 <input type="image" id="bold-btn" onDragStart={handleDragStart} value="ul" onDrag={handleDrag} draggable="true" src="/svgs/list-ul.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
             </div>
             <div id="canvas"  className="border border-2 border-black w-full h-96 p-6 relative" onDragOver={handleDragOver} onDrop={handleDrop}>
@@ -179,6 +181,10 @@ export default function Canvas ()  {
                             if (child.type === 'p') {
                                 return (
                                     <p id={child.id} key={child.id} onClick={handleClick} className='relative'>{child.data}</p>
+                                )
+                            } else if (child.type === 'h2') {
+                                return (
+                                    <h2 id={child.id} key={child.id} onClick={handleClick} className='relative'>{child.data}</h2>
                                 )
                             } else if (child.type === 'ul') {
                                 return (
