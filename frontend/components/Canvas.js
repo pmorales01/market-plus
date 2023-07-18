@@ -195,6 +195,21 @@ export default function Canvas ()  {
         reader.readAsDataURL(file)
     })
 
+    const deleteImage = ((event) => {
+        event.preventDefault()
+        
+        const imgID = event.target.getAttribute('data-id')
+
+        setChildren(children.filter(child => {
+            if (child.id == imgID) {
+                return child.id != imgID
+            }
+            return child
+        }))
+
+        console.log(children)
+    })
+
     return (
         <div className="w-full">
             <div id="menu" className="bg-red-200 flex justify-evenly">
@@ -228,7 +243,7 @@ export default function Canvas ()  {
                             } else if (child.type === 'img') {
                                 return (
                                     <div key={child.id}>
-                                        <button data-id={child.id} className='bg-[#EFEFEF] rounded border-solid border-2 border-inherit w-6'>x</button>
+                                        <button data-id={child.id} className='bg-[#EFEFEF] rounded border-solid border-2 border-inherit w-6' onClick={deleteImage}>x</button>
                                         <input className='block' id={child.id} type='file' accept="image/png, image/jpeg" onChange={handleImageUpload} />
                                         <div className='flex justify-center'>
                                             <img src={child.src} className='aspect-auto'/>
