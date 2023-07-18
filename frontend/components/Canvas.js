@@ -63,6 +63,13 @@ export default function Canvas ()  {
                     }],
                 }
             ])
+        } else if (type === 'img') {
+            setChildren([...children, 
+            {   
+                'id' : id,
+                'type' : 'img',
+                'src' : '',
+            }])
         }
     })
 
@@ -167,12 +174,34 @@ export default function Canvas ()  {
         setEditing(false)
     })
 
+    const handleImageUpload = ((event) => {
+        // get image
+        const file = event.target.files[0];
+
+        // read and load the image
+        const reader = new FileReader()
+        reader.onload = () => {
+            // set the image's source
+            setChildren(children.map(child => {
+                if (child.id == event.target.id) {
+                    return {
+                        ...child, 
+                        src: reader.result
+                    }
+                }
+                return child
+            }))
+        }
+        reader.readAsDataURL(file)
+    })
+
     return (
         <div className="w-full">
             <div id="menu" className="bg-red-200 flex justify-evenly">
                 <input type="image" id="bold-btn" onDragStart={handleDragStart} value="p" onDrag={handleDrag} draggable="true" src="/svgs/paragraph.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
                 <input type="image" id="bold-btn" onDragStart={handleDragStart} value="h2" onDrag={handleDrag} draggable="true" src="/svgs/heading.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
                 <input type="image" id="bold-btn" onDragStart={handleDragStart} value="ul" onDrag={handleDrag} draggable="true" src="/svgs/list-ul.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
+                <input type="image" id="bold-btn" onDragStart={handleDragStart} value="img" onDrag={handleDrag} draggable="true" src="/svgs/image.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
             </div>
             <div id="canvas"  className="border border-2 border-black w-full h-96 p-6 relative" onDragOver={handleDragOver} onDrop={handleDrop}>
                 {
@@ -195,6 +224,16 @@ export default function Canvas ()  {
                                             )
                                         })}
                                     </ul>
+                                )
+                            } else if (child.type === 'img') {
+                                return (
+                                    <div key={child.id}>
+                                        <button data-id={child.id} className='bg-[#EFEFEF] rounded border-solid border-2 border-inherit w-6'>x</button>
+                                        <input className='block' id={child.id} type='file' accept="image/png, image/jpeg" onChange={handleImageUpload} />
+                                        <div className='flex justify-center'>
+                                            <img src={child.src} className='aspect-auto'/>
+                                        </div>
+                                    </div>
                                 )
                             }
                         }
