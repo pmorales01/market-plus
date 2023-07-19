@@ -278,8 +278,29 @@ export default function Canvas ()  {
     })
 
     const deleteImageFromGroup = ((event) => {
+        event.preventDefault()
+        const parentID = event.target.getAttribute('parent-id')
+        const imgID = event.target.getAttribute('data-id')
+        
+        setChildren(children.map(child => {
+            if (child.id == parentID) {
+                // if more than 1 image is part of the group, only delete it
+                if (child.images.length > 1) {
+                    const newData = child.images.filter(image => {
+                        return image.id != imgID
+                    })
 
-    })
+                    return {
+                        ...child,
+                        images : newData
+                    }
+                }
+                // delete the entire image group since one image remains
+                return null
+            }
+            return child
+        }).filter(child => child))
+    })  
 
     return (
         <div className="w-full">
@@ -330,7 +351,7 @@ export default function Canvas ()  {
                                         {child.images.map(image => {
                                             return (
                                                 <div key={image.id}>
-                                                    <button parent-id={child.id} data-id={image.id} className='bg-[#EFEFEF] rounded border-solid border-2 border-inherit w-6' onClick={deleteImage}>x</button>
+                                                    <button parent-id={child.id} data-id={image.id} className='bg-[#EFEFEF] rounded border-solid border-2 border-inherit w-6' onClick={deleteImageFromGroup}>x</button>
                                                     <input className='block' parent-id={child.id} id={image.id} type='file' accept="image/png, image/jpeg" onChange={handleGroupImageUpload} />
                                                     <img src={image.src} className='aspect-auto'/>
                                                 </div>
