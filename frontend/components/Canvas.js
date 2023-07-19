@@ -225,7 +225,7 @@ export default function Canvas ()  {
         event.preventDefault()
         const parentID = event.target.getAttribute('parent-id')
         setChildren(children.map(child => {
-            if (child.id == parentID) {
+            if (child.id == parentID && child.images.length <= 16) {
                 return {
                     ...child,
                     images : [
@@ -319,18 +319,18 @@ export default function Canvas ()  {
                         {   
                             if (child.type === 'p') {
                                 return (
-                                    <p id={child.id} key={child.id} onClick={handleClick} className='relative'>{child.data}</p>
+                                    <p id={child.id} key={child.id} onClick={handleClick} className='relative cursor-pointer'>{child.data}</p>
                                 )
                             } else if (child.type === 'h2') {
                                 return (
-                                    <h2 id={child.id} key={child.id} onClick={handleClick} className='relative'>{child.data}</h2>
+                                    <h2 id={child.id} key={child.id} onClick={handleClick} className='relative cursor-pointer'>{child.data}</h2>
                                 )
                             } else if (child.type === 'ul') {
                                 return (
                                     <ul id={child.id} key={child.id} className='relative'>
                                         { child.data.map(item => {
                                             return (
-                                                <li key={item.id} id={item.id} onClick={handleClick} className='list-disc px-6'>{item.item}</li>
+                                                <li key={item.id} id={item.id} onClick={handleClick} className='list-disc px-6 cursor-pointer'>{item.item}</li>
                                             )
                                         })}
                                     </ul>
@@ -347,17 +347,21 @@ export default function Canvas ()  {
                                 )
                             } else if (child.type === 'multi-img') {
                                 return (
-                                    <div key={child.id}>
+                                    <div key={child.id} className='flex flex-row flex-wrap justify-center'>
                                         {child.images.map(image => {
                                             return (
                                                 <div key={image.id}>
-                                                    <button parent-id={child.id} data-id={image.id} className='bg-[#EFEFEF] rounded border-solid border-2 border-inherit w-6' onClick={deleteImageFromGroup}>x</button>
+                                                    <div className='flex flex-row'>
+                                                        <input type="image" parent-id={child.id} data-id={image.id} src="/svgs/xmark.svg" className='bg-[#EFEFEF] rounded border-solid border-2 border-inherit w-6' onClick={deleteImageFromGroup}/>
+                                                    </div>
                                                     <input className='block' parent-id={child.id} id={image.id} type='file' accept="image/png, image/jpeg" onChange={handleGroupImageUpload} />
-                                                    <img src={image.src} className='aspect-auto'/>
+                                                    <img src={image.src} className='aspect-auto w-48 h-auto m-2'/>
                                                 </div>
                                             )
                                         })}
-                                        <button parent-id={child.id} onClick={addImageToGroup}>Add +</button>
+                                        {child.images.length <= 15 ? (
+                                            <input type='image' src="/svgs/circle-plus.svg" parent-id={child.id} className='w-6' onClick={addImageToGroup}/>
+                                        ) : <></>}
                                     </div>
                                 )
                             }
