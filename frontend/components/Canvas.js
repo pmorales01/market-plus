@@ -67,9 +67,19 @@ export default function Canvas ()  {
             setChildren([...children, 
             {   
                 'id' : id,
-                'type' : 'img',
+                'type' : type,
                 'src' : '',
             }])
+        } else if (type === 'multi-img') {
+            setChildren([...children,
+                {
+                    'id' : id,
+                    'type' : type,
+                    'images' : [
+                        {'id' : `${getRandomNumber()}`, 'src' : ''}
+                    ]
+                }
+            ])
         }
     })
 
@@ -201,6 +211,7 @@ export default function Canvas ()  {
         const imgID = event.target.getAttribute('data-id')
 
         setChildren(children.filter(child => {
+            // delete the image with the matching ID
             if (child.id == imgID) {
                 return child.id != imgID
             }
@@ -210,13 +221,76 @@ export default function Canvas ()  {
         console.log(children)
     })
 
+    const addImageToGroup = ((event) => {
+        event.preventDefault()
+        const parentID = event.target.getAttribute('parent-id')
+        setChildren(children.map(child => {
+            if (child.id == parentID) {
+                return {
+                    ...child,
+                    images : [
+                        ...child.images,
+                        {
+                            'id' : `${getRandomNumber()}`, 
+                            'src' : ''
+                        }
+                    ]
+                }
+            }
+            return child
+        }))
+    })
+
+    const handleGroupImageUpload = ((event) => {
+        event.preventDefault()
+        const parentID = event.target.getAttribute('parent-id')
+        const imgID = event.target.id
+       
+        // get image
+        const file = event.target.files[0];
+
+        // read and load the image
+        const reader = new FileReader()
+        reader.onload = () => {
+            setChildren(children.map(child => {
+                if (child.id == parentID) {
+                    // set the image's new src
+                    const newData = child.images.map(image => {
+                        if (image.id == imgID) {
+                            return {
+                                ...image,
+                                src : reader.result
+                            }
+                        }
+                        return image
+                    })
+                    
+                    // return the element with the updated array of images
+                    return {
+                        ...child,
+                        images : newData
+                    }
+                }
+                return child
+            }))
+        }
+        reader.readAsDataURL(file)
+    })
+
+    const deleteImageFromGroup = ((event) => {
+
+    })
+
     return (
         <div className="w-full">
             <div id="menu" className="bg-red-200 flex justify-evenly">
-                <input type="image" id="bold-btn" onDragStart={handleDragStart} value="p" onDrag={handleDrag} draggable="true" src="/svgs/paragraph.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
-                <input type="image" id="bold-btn" onDragStart={handleDragStart} value="h2" onDrag={handleDrag} draggable="true" src="/svgs/heading.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
-                <input type="image" id="bold-btn" onDragStart={handleDragStart} value="ul" onDrag={handleDrag} draggable="true" src="/svgs/list-ul.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
-                <input type="image" id="bold-btn" onDragStart={handleDragStart} value="img" onDrag={handleDrag} draggable="true" src="/svgs/image.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
+                <input type="image" onDragStart={handleDragStart} value="p" onDrag={handleDrag} draggable="true" src="/svgs/paragraph.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
+                <input type="image" onDragStart={handleDragStart} value="h2" onDrag={handleDrag} draggable="true" src="/svgs/heading.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
+                <input type="image" onDragStart={handleDragStart} value="ul" onDrag={handleDrag} draggable="true" src="/svgs/list-ul.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
+                <input type="image" onDragStart={handleDragStart} value="img" onDrag={handleDrag} draggable="true" src="/svgs/image.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
+                <input type="image" onDragStart={handleDragStart} value="multi-img" onDrag={handleDrag} draggable="true" src="/svgs/multi-image.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
+
+                <input type="image" src="/svgs/eye.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100"/>
             </div>
             <div id="canvas"  className="border border-2 border-black w-full h-96 p-6 relative" onDragOver={handleDragOver} onDrop={handleDrop}>
                 {
@@ -248,6 +322,21 @@ export default function Canvas ()  {
                                         <div className='flex justify-center'>
                                             <img src={child.src} className='aspect-auto'/>
                                         </div>
+                                    </div>
+                                )
+                            } else if (child.type === 'multi-img') {
+                                return (
+                                    <div key={child.id}>
+                                        {child.images.map(image => {
+                                            return (
+                                                <div key={image.id}>
+                                                    <button parent-id={child.id} data-id={image.id} className='bg-[#EFEFEF] rounded border-solid border-2 border-inherit w-6' onClick={deleteImage}>x</button>
+                                                    <input className='block' parent-id={child.id} id={image.id} type='file' accept="image/png, image/jpeg" onChange={handleGroupImageUpload} />
+                                                    <img src={image.src} className='aspect-auto'/>
+                                                </div>
+                                            )
+                                        })}
+                                        <button parent-id={child.id} onClick={addImageToGroup}>Add +</button>
                                     </div>
                                 )
                             }
