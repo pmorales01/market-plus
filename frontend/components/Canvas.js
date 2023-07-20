@@ -80,6 +80,20 @@ export default function Canvas ()  {
                     ]
                 }
             ])
+        } else if (type === 'carousel') {
+            setChildren([...children,
+                {
+                    'id' : id, 
+                    'type' : type,
+                    'items' : [
+                        {
+                            'id' : `${getRandomNumber()}`,
+                            'src' : '',
+                            'text' : 'Click me to edit!'
+                        }
+                    ]
+                }
+            ])
         }
     })
 
@@ -225,7 +239,7 @@ export default function Canvas ()  {
         event.preventDefault()
         const parentID = event.target.getAttribute('parent-id')
         setChildren(children.map(child => {
-            if (child.id == parentID && child.images.length <= 16) {
+            if (child.id == parentID && child.images.length <= 15) {
                 return {
                     ...child,
                     images : [
@@ -302,6 +316,92 @@ export default function Canvas ()  {
         }).filter(child => child))
     })  
 
+    const handleCarouselImageUpload = ((event) => {
+        event.preventDefault()
+        const parentID = event.target.getAttribute('parent-id')
+        const imgID = event.target.id
+       
+        // get image
+        const file = event.target.files[0];
+
+        // read and load the image
+        const reader = new FileReader()
+        reader.onload = () => {
+            setChildren(children.map(child => {
+                if (child.id == parentID) {
+                    // set the image's new src
+                    const newData = child.items.map(image => {
+                        if (image.id == imgID) {
+                            return {
+                                ...image,
+                                src : reader.result
+                            }
+                        }
+                        return image
+                    })
+                    
+                    // return the element with the updated array of images
+                    return {
+                        ...child,
+                        items : newData
+                    }
+                }
+                return child
+            }))
+        }
+        reader.readAsDataURL(file)
+    })
+
+    const addImageToCarousel = ((event) => {
+        event.preventDefault()
+        const parentID = event.target.getAttribute('parent-id')
+
+        // only allow more image uploads if total # of images is less than 6
+        setChildren(children.map(child => {
+            if (child.id == parentID && child.items.length <= 5) {
+                return {
+                    ...child,
+                    items : [
+                        ...child.items,
+                        {
+                            'id' : `${getRandomNumber()}`,
+                            'src' : '',
+                            'text' : 'Click me to edit!'
+                        }
+                    ]
+                }
+            }
+            return child
+        }))
+    })
+
+    const updateCarouselText = ((event) => {
+        event.preventDefault()
+        const parentID = event.target.getAttribute('parent-id')
+        const imgID = event.target.getAttribute('elem-id')
+       
+        setChildren(children.map(child => {
+            if (child.id == parentID) {
+                const newData = child.items.map(image => {
+                    if (image.id == imgID) {
+                        return {
+                            ...image,
+                            text : event.target.value
+                        }
+                    }
+                    return image
+                })
+                
+                // return the element with the updated text
+                return {
+                    ...child,
+                    items : newData
+                }
+            }
+            return child
+        }))
+    })
+
     return (
         <div className="w-full">
             <div id="menu" className="bg-red-200 flex justify-evenly">
@@ -310,6 +410,7 @@ export default function Canvas ()  {
                 <input type="image" onDragStart={handleDragStart} value="ul" onDrag={handleDrag} draggable="true" src="/svgs/list-ul.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
                 <input type="image" onDragStart={handleDragStart} value="img" onDrag={handleDrag} draggable="true" src="/svgs/image.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
                 <input type="image" onDragStart={handleDragStart} value="multi-img" onDrag={handleDrag} draggable="true" src="/svgs/multi-image.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
+                <input type="image" onDragStart={handleDragStart} value="carousel" onDrag={handleDrag} draggable="true" src="/svgs/arrows-left-right.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
 
                 <input type="image" src="/svgs/eye.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100"/>
             </div>
@@ -362,6 +463,23 @@ export default function Canvas ()  {
                                         {child.images.length <= 15 ? (
                                             <input type='image' src="/svgs/circle-plus.svg" parent-id={child.id} className='w-6' onClick={addImageToGroup}/>
                                         ) : <></>}
+                                    </div>
+                                )
+                            } else if (child.type === 'carousel') {
+                                return (
+                                    <div key={child.id}>
+                                        <div className="carousel rounded-box h-96">
+                                            {child.items.map(item => {
+                                                return (
+                                                    <div key={item.id} className="carousel-item w-96 bg-red-700 flex flex-col justify-center relative">
+                                                        <input className='block' parent-id={child.id} id={item.id} type='file' accept="image/png, image/jpeg" onChange={handleCarouselImageUpload} />
+                                                        <img src={item.src} className='aspect-auto'/>
+                                                        <textarea parent-id={child.id} elem-id={item.id} value={item.text} className='absolute bottom-0 left-0 resize-none w-full' onChange={updateCarouselText}>{item.text}</textarea>
+                                                    </div> 
+                                                )
+                                            })}
+                                        </div>
+                                        <input type='image' src="/svgs/circle-plus.svg" parent-id={child.id} className='w-6' onClick={addImageToCarousel}/>
                                     </div>
                                 )
                             }
