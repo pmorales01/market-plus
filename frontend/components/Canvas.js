@@ -400,7 +400,34 @@ export default function Canvas ()  {
             }
             return child
         }))
+
+        console.log(children)
     })
+
+    const deleteImageFromCarousel = ((event) => {
+        event.preventDefault()
+        const parentID = event.target.getAttribute('parent-id')
+        const itemID = event.target.getAttribute('data-id')
+        
+        setChildren(children.map(child => {
+            if (child.id == parentID) {
+                // if more than 1 item (<img> and <textbox>) is part of the carousel, delete it
+                if (child.items.length > 1) {
+                    const newData = child.items.filter(item => {
+                        return item.id != itemID
+                    })
+
+                    return {
+                        ...child,
+                        items : newData
+                    }
+                }
+                // delete the entire carousel if one item remaining
+                return null
+            }
+            return child
+        }).filter(child => child))
+    })  
 
     return (
         <div className="w-full">
@@ -467,11 +494,14 @@ export default function Canvas ()  {
                                 )
                             } else if (child.type === 'carousel') {
                                 return (
-                                    <div key={child.id}>
+                                    <div key={child.id} className='flex flex-row space-x-4'>
                                         <div className="carousel rounded-box h-96">
                                             {child.items.map(item => {
                                                 return (
                                                     <div key={item.id} className="carousel-item w-96 bg-red-700 flex flex-col justify-center relative">
+                                                        <div className='flex flex-row'>
+                                                            <input type="image" parent-id={child.id} data-id={item.id} src="/svgs/xmark.svg" className='bg-[#EFEFEF] rounded border-solid border-2 border-inherit w-6' onClick={deleteImageFromCarousel}/>
+                                                        </div>  
                                                         <input className='block' parent-id={child.id} id={item.id} type='file' accept="image/png, image/jpeg" onChange={handleCarouselImageUpload} />
                                                         <img src={item.src} className='aspect-auto'/>
                                                         <textarea parent-id={child.id} elem-id={item.id} value={item.text} className='absolute bottom-0 left-0 resize-none w-full' onChange={updateCarouselText}>{item.text}</textarea>
@@ -479,7 +509,9 @@ export default function Canvas ()  {
                                                 )
                                             })}
                                         </div>
-                                        <input type='image' src="/svgs/circle-plus.svg" parent-id={child.id} className='w-6' onClick={addImageToCarousel}/>
+                                        {child.items.length <= 5 ? (
+                                            <input type='image' src="/svgs/circle-plus.svg" parent-id={child.id} className='w-9' onClick={addImageToCarousel}/>
+                                        ) : <></>}
                                     </div>
                                 )
                             }
