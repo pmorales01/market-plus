@@ -94,6 +94,13 @@ export default function Canvas ()  {
                     ]
                 }
             ])
+        } else if (type === 'img-text') {
+            setChildren([...children, {
+                'id' : id,
+                'type' : type,
+                'src' : '',
+                'text' : 'Click to edit!'
+            }])
         }
     })
 
@@ -429,6 +436,54 @@ export default function Canvas ()  {
         }).filter(child => child))
     })  
 
+    const handleImageTextUpload = ((event) => {
+        event.preventDefault()
+        const parentID = event.target.getAttribute('parent-id')
+       
+        // get image
+        const file = event.target.files[0];
+
+        // read and load the image
+        const reader = new FileReader()
+        reader.onload = () => {
+            setChildren(children.map(child => {
+                if (child.id == parentID) {
+                    return {
+                        ...child,
+                        src : reader.result
+                    }
+                }
+                return child
+            }))
+        }
+        reader.readAsDataURL(file)
+    })
+
+    const handleImgTextChange = ((event) => {
+        const parent = event.target.getAttribute('parent-id')
+
+        setChildren(children.map(child => {
+            if (child.id == parent) {
+                return {
+                    ...child, 
+                    text : event.target.value
+                }
+            }
+            return child
+        }))
+    })
+
+    const deleteImgText = ((event) => {
+        parent = event.target.getAttribute('parent-id')
+
+        setChildren(children.filter(child => {
+            if (parent == child.id) {
+                return child.id != parent
+            }
+            return child
+        }))
+    })
+
     return (
         <div className="w-full">
             <div id="menu" className="bg-red-200 flex justify-evenly">
@@ -438,6 +493,7 @@ export default function Canvas ()  {
                 <input type="image" onDragStart={handleDragStart} value="img" onDrag={handleDrag} draggable="true" src="/svgs/image.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
                 <input type="image" onDragStart={handleDragStart} value="multi-img" onDrag={handleDrag} draggable="true" src="/svgs/multi-image.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
                 <input type="image" onDragStart={handleDragStart} value="carousel" onDrag={handleDrag} draggable="true" src="/svgs/arrows-left-right.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
+                <input type="image" onDragStart={handleDragStart} value="img-text" onDrag={handleDrag} draggable="true" src="/svgs/image-text-right.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
 
                 <input type="image" src="/svgs/eye.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100"/>
             </div>
@@ -458,7 +514,7 @@ export default function Canvas ()  {
                                     <ul id={child.id} key={child.id} className='relative'>
                                         { child.data.map(item => {
                                             return (
-                                                <li key={item.id} id={item.id} onClick={handleClick} className='list-disc px-6 cursor-pointer'>{item.item}</li>
+                                                <li key={item.id} id={item.id} onClick={handleClick} className='list-disc cursor-pointer'>{item.item}</li>
                                             )
                                         })}
                                     </ul>
@@ -498,7 +554,7 @@ export default function Canvas ()  {
                                         <div className="carousel rounded-box h-96">
                                             {child.items.map(item => {
                                                 return (
-                                                    <div key={item.id} className="carousel-item w-96 bg-red-700 flex flex-col justify-center relative">
+                                                    <div key={item.id} className="carousel-item w-96 flex flex-col justify-center relative">
                                                         <div className='flex flex-row'>
                                                             <input type="image" parent-id={child.id} data-id={item.id} src="/svgs/xmark.svg" className='bg-[#EFEFEF] rounded border-solid border-2 border-inherit w-6' onClick={deleteImageFromCarousel}/>
                                                         </div>  
@@ -512,6 +568,19 @@ export default function Canvas ()  {
                                         {child.items.length <= 5 ? (
                                             <input type='image' src="/svgs/circle-plus.svg" parent-id={child.id} className='w-9' onClick={addImageToCarousel}/>
                                         ) : <></>}
+                                    </div>
+                                )
+                            } else if (child.type === 'img-text') {
+                                return (
+                                    <div key={child.id} className='grid grid-cols-2 gap-4'>
+                                        <div className='h-6 col-span-2'>
+                                            <input type="image" parent-id={child.id} src="/svgs/xmark.svg" className='bg-[#EFEFEF] rounded border-solid border-2 border-inherit w-6' onClick={deleteImgText}/>
+                                        </div>
+                                        <div className='col-span-1'>
+                                            <input parent-id={child.id} type='file' accept="image/png, image/jpeg" onChange={handleImageTextUpload} />
+                                            <img src={child.src} className='aspect-auto'/>
+                                        </div>  
+                                        <textarea parent-id={child.id} value={child.text} className='col-span-1 resize-none w-full h-48 p-1' onChange={handleImgTextChange}>{child.text}</textarea>
                                     </div>
                                 )
                             }
