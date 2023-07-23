@@ -94,7 +94,7 @@ export default function Canvas ()  {
                     ]
                 }
             ])
-        } else if (type === 'img-text') {
+        } else if (type === 'img-text' || type == 'img-right-text-left') {
             setChildren([...children, {
                 'id' : id,
                 'type' : type,
@@ -471,6 +471,7 @@ export default function Canvas ()  {
             }
             return child
         }))
+        console.log(children)
     })
 
     const deleteImgText = ((event) => {
@@ -494,6 +495,7 @@ export default function Canvas ()  {
                 <input type="image" onDragStart={handleDragStart} value="multi-img" onDrag={handleDrag} draggable="true" src="/svgs/multi-image.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
                 <input type="image" onDragStart={handleDragStart} value="carousel" onDrag={handleDrag} draggable="true" src="/svgs/arrows-left-right.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
                 <input type="image" onDragStart={handleDragStart} value="img-text" onDrag={handleDrag} draggable="true" src="/svgs/image-text-right.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
+                <input type="image" onDragStart={handleDragStart} value="img-right-text-left" onDrag={handleDrag} draggable="true" src="/svgs/image-right-text-left.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
 
                 <input type="image" src="/svgs/eye.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100"/>
             </div>
@@ -581,6 +583,19 @@ export default function Canvas ()  {
                                             <img src={child.src} className='aspect-auto'/>
                                         </div>  
                                         <textarea parent-id={child.id} value={child.text} className='col-span-1 resize-none w-full h-48 p-1' onChange={handleImgTextChange}>{child.text}</textarea>
+                                    </div>
+                                )
+                            } else if (child.type === 'img-right-text-left') {
+                                return (
+                                    <div key={child.id} className='grid grid-cols-2 gap-4'>
+                                        <div className='h-6 col-span-2'>
+                                            <input type="image" parent-id={child.id} src="/svgs/xmark.svg" className='bg-[#EFEFEF] rounded border-solid border-2 border-inherit w-6' onClick={deleteImgText}/>
+                                        </div>
+                                        <textarea parent-id={child.id} value={child.text} className='col-span-1 resize-none w-full h-48 p-1' onChange={handleImgTextChange}>{child.text}</textarea>
+                                        <div className='col-span-1'>
+                                            <input parent-id={child.id} type='file' accept="image/png, image/jpeg" onChange={handleImageTextUpload} />
+                                            <img src={child.src} className='aspect-auto'/>
+                                        </div>  
                                     </div>
                                 )
                             }
