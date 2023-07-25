@@ -1,11 +1,15 @@
 import NavBar from '/components/NavBar'
 import Footer from '/components/Footer'
+import Canvas from '/components/Canvas'
+import Listing from '/components/Listing'
 import { useState } from 'react'
 
 export default function create_product() {
     const categories = ['Appliances', 'Arts & Crafts', 'Automotive Accessories', 'Automotive Parts', 'Books', 'Clothing','Electronics', 'Music', 'Trading Cards', 'Video Games']
     const [showSelected, setShowSelected] = useState(false)
     const [charLength, setCharLength] = useState(0)
+    const [children, setChildren] = useState([])
+    const [previewVisible, setPreviewVisible] = useState(false)
 
     // tracks which categories the user selected
     const [selected, setSelected] = useState([])
@@ -62,11 +66,25 @@ export default function create_product() {
         setCharLength(event.target.value.length)
     })
 
+    const handlePreview = (event) => {
+        event.preventDefault()
+        setPreviewVisible(true)
+    }
+
+    const closePreview = (event) => {
+        event.preventDefault()
+        setPreviewVisible(!previewVisible)
+    }
+
+
     return (
         <div className="flex flex-col items-center space-y-14 w-full h-screen">
             <NavBar/>
             <div className="flex w-10/12 h-fit">
                 <form method='post' className="grow form-control max-w-full space-y-2">
+                    <div className='sticky top-0 flex justify-end z-10 mr-2'>
+                        <input type="image" src="/svgs/eye.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" onClick={handlePreview}/>
+                    </div>
                     <div className="flex flex-row space-x-2">
                         <label htmlFor="item-name">Item Name</label>
                         <input type="text" id="item-name" name="item-name" className="border border-2" required />
@@ -122,7 +140,27 @@ export default function create_product() {
                             <textarea className="border border-2 w-full" id="condition-desc" name="condition-desc" onChange={handleTextarea} maxLength="250" required></textarea>
                             <p className='text-right'>{charLength}/250 Characters</p>
                         </div>
+                        <div>
+                            <h2>Description</h2>
+                            <Canvas children={children} setChildren={setChildren}/>
+                        </div>
                     </div>
+                    <h1>hello</h1>
+                    {previewVisible && 
+                        <div className="fixed z-50 h-screen w-screen top-0 left-0 overflow-auto" id="popup">
+                            <div className="-translate-x-1/2 card w-11/12 bg-base-100 shadow-xl inset-1/2">
+                                <div className="card-body">
+                                <h2 className="card-title self-center">Preview</h2>
+                                <Listing children={children}/>
+                                <div className="card-actions justify-center">
+                                    <button className="btn btn-primary" onClick={closePreview}>
+                                        <span className="capitalize">Close</span>
+                                    </button>
+                                </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
                 </form>
             </div>
             <Footer/>
