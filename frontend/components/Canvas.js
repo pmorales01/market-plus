@@ -2,7 +2,7 @@
 import EditPopUp from '/components/EditPopUp'
 import { useState } from 'react'
 
-function getRandomNumber() {
+export function getRandomNumber() {
     const x = Math.floor(Math.random() * 100) + 1
     const y = Math.floor(Math.random() * 100) + 1
     return Math.floor(x * y) + 1
@@ -222,7 +222,10 @@ export default function Canvas ({children, setChildren})  {
                 return child
             }))
         }
-        reader.readAsDataURL(file)
+        
+        if (file) {
+            reader.readAsDataURL(file)
+        }
     })
 
     const deleteImage = ((event) => {
@@ -294,7 +297,9 @@ export default function Canvas ({children, setChildren})  {
                 return child
             }))
         }
-        reader.readAsDataURL(file)
+        if (file) {
+            reader.readAsDataURL(file)
+        }
     })
 
     const deleteImageFromGroup = ((event) => {
@@ -355,7 +360,9 @@ export default function Canvas ({children, setChildren})  {
                 return child
             }))
         }
-        reader.readAsDataURL(file)
+        if (file) {
+            reader.readAsDataURL(file)
+        }
     })
 
     const addImageToCarousel = ((event) => {
@@ -455,7 +462,9 @@ export default function Canvas ({children, setChildren})  {
                 return child
             }))
         }
-        reader.readAsDataURL(file)
+        if (file) {
+            reader.readAsDataURL(file)
+        }
     })
 
     const handleImgTextChange = ((event) => {
