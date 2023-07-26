@@ -10,6 +10,7 @@ export default function create_product() {
     const [charLength, setCharLength] = useState(0)
     const [children, setChildren] = useState([])
     const [previewVisible, setPreviewVisible] = useState(false)
+    const [productImages, setProductImages] = useState(0)
 
     // tracks which categories the user selected
     const [selected, setSelected] = useState([])
@@ -89,16 +90,33 @@ export default function create_product() {
                         <label htmlFor="item-name">Item Name</label>
                         <input type="text" id="item-name" name="item-name" className="border border-2" required />
                     </div>
-                    <h2>Category (Select all that Apply)</h2>
-                    {showSelected && (
-                        <div className='flex flex-row flex-wrap space-x-2 gap-y-2'>
-                            {selected.map((category, index) => {
-                                return (
-                                    <button key={index} className='btn rounded-full bg-neutral-200 text-zinc-500 capitalize hover:text-white disabled:bg-slate-300' onClick={removeCategory}>{category}</button>
-                                )
-                            })}
+                    
+                    <div className='flex flex-col'>
+                        <h2 className='my-4'>Upload Product Images</h2>
+                        <div className='flex flex-col w-1/2 border-4 self-center items-center space-y-4 p-8'>
+                            <label className='h-8 flex items-center justify-center px-4 border rounded-lg bg-blue-500 text-white w-2/5'>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className='object-contain h-5 mr-2' fill='white'>
+                                    <path d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/>
+                                </svg>
+                                <span>Upload Image</span>
+                                <input type="file" className="hidden" accept="image/png, image/jpeg" />
+                            </label>
+                            <p className='text-lg'>{productImages} Images Selected</p>
                         </div>
-                    )}
+                        
+                    </div>
+                    <div>
+                        <h2>Category (Select all that Apply)</h2>
+                        {showSelected && (
+                            <div className='flex flex-row flex-wrap space-x-2 gap-y-2'>
+                                {selected.map((category, index) => {
+                                    return (
+                                        <button key={index} className='btn rounded-full bg-neutral-200 text-zinc-500 capitalize hover:text-white disabled:bg-slate-300' onClick={removeCategory}>{category}</button>
+                                    )
+                                })}
+                            </div>
+                        )}
+                    </div>
                     <div className='w-48'>
                         <div className='w-fit h-fit flex flex-row items-center'>
                             <input type="text" onClick={showCategories} className="border border-2 h-10 text-xl" onChange={handleSearch}/>
@@ -145,7 +163,6 @@ export default function create_product() {
                             <Canvas children={children} setChildren={setChildren}/>
                         </div>
                     </div>
-                    <h1>hello</h1>
                     {previewVisible && 
                         <div className="fixed z-50 h-screen w-screen top-0 left-0 overflow-auto" id="popup">
                             <div className="-translate-x-1/2 card w-11/12 bg-base-100 shadow-xl inset-1/2">

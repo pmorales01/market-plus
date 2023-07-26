@@ -9,8 +9,7 @@ function getRandomNumber() {
 }
 
 
-export default function Canvas ()  {
-    const [children, setChildren] = useState([])
+export default function Canvas ({children, setChildren})  {
     const [isEditing, setEditing] = useState(false)
     const [top, setTop] = useState(0)
     const [value, setValue] = useState()
@@ -487,19 +486,17 @@ export default function Canvas ()  {
 
     return (
         <div className="w-full">
-            <div id="menu" className="bg-red-200 flex justify-evenly">
+            <div id="menu" className="flex justify-start space-x-2 mt-4 mb-1 ml-1">
                 <input type="image" onDragStart={handleDragStart} value="p" onDrag={handleDrag} draggable="true" src="/svgs/paragraph.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
                 <input type="image" onDragStart={handleDragStart} value="h2" onDrag={handleDrag} draggable="true" src="/svgs/heading.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
                 <input type="image" onDragStart={handleDragStart} value="ul" onDrag={handleDrag} draggable="true" src="/svgs/list-ul.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
                 <input type="image" onDragStart={handleDragStart} value="img" onDrag={handleDrag} draggable="true" src="/svgs/image.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
                 <input type="image" onDragStart={handleDragStart} value="multi-img" onDrag={handleDrag} draggable="true" src="/svgs/multi-image.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
-                <input type="image" onDragStart={handleDragStart} value="carousel" onDrag={handleDrag} draggable="true" src="/svgs/arrows-left-right.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
+                <input type="image" onDragStart={handleDragStart} value="carousel" onDrag={handleDrag} draggable="true" src="/svgs/carousel.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
                 <input type="image" onDragStart={handleDragStart} value="img-text" onDrag={handleDrag} draggable="true" src="/svgs/image-text-right.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
                 <input type="image" onDragStart={handleDragStart} value="img-right-text-left" onDrag={handleDrag} draggable="true" src="/svgs/image-right-text-left.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" />
-
-                <input type="image" src="/svgs/eye.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100"/>
             </div>
-            <div id="canvas"  className="border border-2 border-black w-full h-96 p-6 relative" onDragOver={handleDragOver} onDrop={handleDrop}>
+            <div id="canvas"  className="border border-2 border-black w-full h-full p-6 relative" onDragOver={handleDragOver} onDrop={handleDrop}>
                 {
                     children.map(child => 
                         {   
