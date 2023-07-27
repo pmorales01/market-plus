@@ -1,6 +1,7 @@
 import NavBar from '/components/NavBar'
 import Footer from '/components/Footer'
 import Canvas from '/components/Canvas'
+import {getRandomNumber} from '../../../components/Canvas'
 import Listing from '/components/Listing'
 import { useState } from 'react'
 
@@ -10,7 +11,9 @@ export default function create_product() {
     const [charLength, setCharLength] = useState(0)
     const [children, setChildren] = useState([])
     const [previewVisible, setPreviewVisible] = useState(false)
-    const [productImages, setProductImages] = useState(0)
+    const [productImages, setProductImages] = useState([])
+    const [imageCount, setImageCount] = useState(0)
+    const MAX_IMAGE_COUNT = 6 // maximum # of product images
 
     // tracks which categories the user selected
     const [selected, setSelected] = useState([])
@@ -77,12 +80,62 @@ export default function create_product() {
         setPreviewVisible(!previewVisible)
     }
 
+    const handleProductImage = (event) => {
+        event.preventDefault()
+
+        if (imageCount == MAX_IMAGE_COUNT - 1) {
+            document.getElementById('product-image-upload').setAttribute('disabled', 'true')
+        }
+
+        // get image
+        const file = event.target.files[0];
+
+        // create an id 
+        const id = getRandomNumber()
+
+        // read and load the image
+        const reader = new FileReader()
+        reader.onload = () => {
+            setProductImages([
+                ...productImages,
+                {
+                    id: id,
+                    src: reader.result
+                }
+            ])
+        }
+
+        if (file) {
+            reader.readAsDataURL(file)
+        }
+
+        // increment image count
+        setImageCount(imageCount + 1)
+        console.log(productImages)
+    }
+
+    const deleteProductImage = (event) => {
+        const id = event.target.id
+        
+        // delete selected image
+        setProductImages(productImages.filter(image => image.id != id))
+        
+        // if upload button is disabled, enable again
+        if (MAX_IMAGE_COUNT == imageCount) {
+            document.getElementById('product-image-upload').removeAttribute('disabled')
+        }
+
+        // decrement image count
+        setImageCount(imageCount - 1)
+    }
+
 
     return (
         <div className="flex flex-col items-center space-y-14 w-full h-screen">
             <NavBar/>
             <div className="flex w-10/12 h-fit">
                 <form method='post' className="grow form-control max-w-full space-y-2">
+                    <h1 className='text-center'>Tell Us About Your Product</h1>
                     <div className='sticky top-0 flex justify-end z-10 mr-2'>
                         <input type="image" src="/svgs/eye.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" onClick={handlePreview}/>
                     </div>
@@ -93,17 +146,23 @@ export default function create_product() {
                     
                     <div className='flex flex-col'>
                         <h2 className='my-4'>Upload Product Images</h2>
-                        <div className='flex flex-col w-1/2 border-4 self-center items-center space-y-4 p-8'>
+                        <div className='flex flex-col w-4/5 border-2 self-center items-center space-y-4 p-8 shadow-xl rounded'>
                             <label className='h-8 flex items-center justify-center px-4 border rounded-lg bg-blue-500 text-white w-2/5'>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className='object-contain h-5 mr-2' fill='white'>
                                     <path d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/>
                                 </svg>
                                 <span>Upload Image</span>
-                                <input type="file" className="hidden" accept="image/png, image/jpeg" />
+                                <input type="file" id="product-image-upload" className="hidden" accept="image/png, image/jpeg"onChange={handleProductImage}/>
                             </label>
-                            <p className='text-lg'>{productImages} Images Selected</p>
+                            <p className='text-lg'>{imageCount} Images Selected</p>
+                            <div className={`grid grid-rows-${Math.ceil((imageCount % (MAX_IMAGE_COUNT + 1)) / 2)} grid-cols-2`}>
+                                {productImages.map(image => {
+                                    return (
+                                        <img src={image.src} key={image.id} id={image.id} className='aspect-auto' onClick={deleteProductImage}/>
+                                    )
+                                })}
+                            </div>
                         </div>
-                        
                     </div>
                     <div>
                         <h2>Category (Select all that Apply)</h2>
