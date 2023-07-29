@@ -89,6 +89,7 @@ export default function create_product() {
 
         // get image
         const file = event.target.files[0];
+        const filename = file['name']
 
         // create an id 
         const id = getRandomNumber()
@@ -100,7 +101,8 @@ export default function create_product() {
                 ...productImages,
                 {
                     id: id,
-                    src: reader.result
+                    src: reader.result,
+                    filename : filename
                 }
             ])
         }
@@ -111,7 +113,6 @@ export default function create_product() {
 
         // increment image count
         setImageCount(imageCount + 1)
-        console.log(productImages)
     }
 
     const deleteProductImage = (event) => {
@@ -129,6 +130,51 @@ export default function create_product() {
         setImageCount(imageCount - 1)
     }
 
+    const processTextarea = (event) => {
+        // find all instances of "* " and replace with bullet point
+        event.target.value = event.target.value.replace(/\* /g, '\u2022 ');
+    }
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') { // enter key pressed
+            event.preventDefault()
+            
+            const textarea = document.getElementById('product-description')
+            
+            const value = textarea.value
+            console.log(value)
+            
+            const lines = value.match(/\u2022(?=i)/g);
+            // get the most recent line 
+            console.log(textarea.selectionStart)
+            
+            // location of cursor where 'Enter' was pressed 
+            const startSelected = textarea.selectionStart
+
+            // split string in half where cursor was 
+            const first = value.substring(0, startSelected)
+            const second = value.substring(startSelected, value.length)
+            
+            const array = [...first.split(/(\u2022(?!\n).+)/g)].filter((item) => item.trim() !== '');
+            
+            console.log(array)
+            
+            const lastMatch = array.pop()
+            
+            const regex = /^\u2022.+/g
+            if (lastMatch === ' ' || lastMatch === '\n') {
+                textarea.value = first + '\n' + second
+            } else if (lastMatch === '\u2022 ') {
+                textarea.value = first + '\n' + second
+            } else if (regex.test(lastMatch)) {
+                console.log(lastMatch + " is bad ")
+                textarea.value = first + '\n\u2022 ' + second
+            } else {
+                textarea.value = first + '\n' + second
+            }
+        }
+    }
+
 
     return (
         <div className="flex flex-col items-center space-y-14 w-full h-screen">
@@ -139,14 +185,18 @@ export default function create_product() {
                     <div className='sticky top-0 flex justify-end z-10 mr-2'>
                         <input type="image" src="/svgs/eye.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" onClick={handlePreview}/>
                     </div>
-                    <div className="flex flex-row space-x-2">
-                        <label htmlFor="item-name">Item Name</label>
-                        <input type="text" id="item-name" name="item-name" className="border border-2" required />
+                    <div className="flex flex-col w-1/2 space-y-2">
+                        <label htmlFor="product-name">Product Name</label>
+                        <input type="text" id="product-name" name="product-name" className="border border-2" required />
+                        <label htmlFor="product-brand">Brand</label>
+                        <input type="text" id="product-brand" name="product-brand" className='border border-2' required />
+                        <label htmlFor='product-description'>Short Product Description</label>
+                        <textarea maxLength={1000} id="product-description" onChange={processTextarea} onKeyDown={handleKeyDown} className='p-4'></textarea>
                     </div>
                     
                     <div className='flex flex-col'>
                         <h2 className='my-4'>Upload Product Images</h2>
-                        <div className='flex flex-col w-4/5 border-2 self-center items-center space-y-4 p-8 shadow-xl rounded'>
+                        <div className='flex flex-col w-4/5 border-2 self-center items-center space-y-4 p-8 shadow-xl rounded my-8'>
                             <label className='h-8 flex items-center justify-center px-4 border rounded-lg bg-blue-500 text-white w-2/5'>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className='object-contain h-5 mr-2' fill='white'>
                                     <path d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/>
@@ -155,10 +205,13 @@ export default function create_product() {
                                 <input type="file" id="product-image-upload" className="hidden" accept="image/png, image/jpeg"onChange={handleProductImage}/>
                             </label>
                             <p className='text-lg'>{imageCount} Images Selected</p>
-                            <div className={`grid grid-rows-${Math.ceil((imageCount % (MAX_IMAGE_COUNT + 1)) / 2)} grid-cols-2`}>
+                            <div className={`grid grid-rows-${Math.ceil(imageCount / 2)} grid-cols-2 gap-8`}>
                                 {productImages.map(image => {
                                     return (
-                                        <img src={image.src} key={image.id} id={image.id} className='aspect-auto' onClick={deleteProductImage}/>
+                                        <div key={image.id}>
+                                            <img src={image.src}  id={image.id} className="max-w-full h-48" onClick={deleteProductImage}/>
+                                            <p className='text-center'>{image.filename}</p>
+                                        </div>
                                     )
                                 })}
                             </div>
@@ -214,11 +267,11 @@ export default function create_product() {
                         <label htmlFor="condition-desc">Condition Description</label>
                         <br/>
                         <div className='w-80'>
-                            <textarea className="border border-2 w-full" id="condition-desc" name="condition-desc" onChange={handleTextarea} maxLength="250" required></textarea>
-                            <p className='text-right'>{charLength}/250 Characters</p>
+                            <textarea className="border border-2 w-full" id="condition-desc" name="condition-desc" onChange={handleTextarea} maxLength="50" required></textarea>
+                            <p className='text-right'>{charLength}/50 Characters</p>
                         </div>
                         <div>
-                            <h2>Description</h2>
+                            <h2>Description <span className='text-sm'>(Describe your product in more detail)</span></h2>
                             <Canvas children={children} setChildren={setChildren}/>
                         </div>
                     </div>
