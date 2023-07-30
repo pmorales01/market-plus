@@ -141,13 +141,9 @@ export default function create_product() {
             
             const textarea = document.getElementById('product-description')
             
+            // <textarea> text 
             const value = textarea.value
-            console.log(value)
-            
-            const lines = value.match(/\u2022(?=i)/g);
-            // get the most recent line 
-            console.log(textarea.selectionStart)
-            
+                        
             // location of cursor where 'Enter' was pressed 
             const startSelected = textarea.selectionStart
 
@@ -155,22 +151,29 @@ export default function create_product() {
             const first = value.substring(0, startSelected)
             const second = value.substring(startSelected, value.length)
             
-            const array = [...first.split(/(\u2022(?!\n).+)/g)].filter((item) => item.trim() !== '');
+            // find matches that begins with • and don't have \n
+            const matches = [...first.split(/(\u2022(?!\n).+(?!\n))/g)].filter((item) => item.trim() !== '');
             
-            console.log(array)
-            
-            const lastMatch = array.pop()
-            
-            const regex = /^\u2022.+/g
-            if (lastMatch === ' ' || lastMatch === '\n') {
+            // get the last match (its where the cursor is)
+            const lastMatch = matches.pop()
+
+            // find matches that begin with "• " and don't have whitespace or \n
+            const regex = /^\u2022(?= [^\s\n])/g
+
+            if (lastMatch === ' ' || lastMatch === '\n') { // blank lines
                 textarea.value = first + '\n' + second
-            } else if (lastMatch === '\u2022 ') {
-                textarea.value = first + '\n' + second
+            } else if (lastMatch === '\u2022 ') { // "• ", exiting the bulleted list
+                textarea.value = textarea.value.replace(/\u2022\s$/, '')
             } else if (regex.test(lastMatch)) {
-                console.log(lastMatch + " is bad ")
+                // create a new bullet point on a new line
                 textarea.value = first + '\n\u2022 ' + second
+                // set the cursor to the right of the new bullet point
+                textarea.setSelectionRange(startSelected + 3, startSelected + 3)
             } else {
+                // create a new line 
                 textarea.value = first + '\n' + second
+                // set the cursor to the begining of the newline
+                textarea.setSelectionRange(startSelected + 1, startSelected + 1)
             }
         }
     }
