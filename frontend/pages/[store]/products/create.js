@@ -3,7 +3,8 @@ import Footer from '/components/Footer'
 import Canvas from '/components/Canvas'
 import {getRandomNumber} from '../../../components/Canvas'
 import Listing from '/components/Listing'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter } from 'next/router'
 
 export default function create_product() {
     const categories = ['Appliances', 'Arts & Crafts', 'Automotive Accessories', 'Automotive Parts', 'Books', 'Clothing','Electronics', 'Music', 'Trading Cards', 'Video Games']
@@ -17,6 +18,43 @@ export default function create_product() {
 
     // tracks which categories the user selected
     const [selected, setSelected] = useState([])
+
+    // tracks username and authentication
+    const [username, setUsername] = useState({})
+    const [authenticated, setAuthenticated] = useState(false)
+
+    const router = useRouter()
+
+    useEffect(() => {
+        const authenticate = async () => {
+            try {
+                var requestOptions = {
+                    method: 'GET',
+                    credentials: 'include'
+                }; 
+                
+                // fetch user data and check if user is authenticated
+                const response = await fetch("http://127.0.0.1:8000/account", requestOptions)
+               
+                // if user is not authenticated (or expired), redirect to login
+                if (response.status != 200) {
+                    router.push('/login')
+                    return
+                }  
+
+                const json_data = await response.json()
+
+                setUsername({username : json_data['username']})
+
+                setAuthenticated(true)
+
+            } catch (error) {
+                console.log(error)
+            }
+        }
+
+        authenticate()
+    }, [])
 
     const showCategories = (() => {  
         const list = document.getElementById('cat-list')
@@ -178,27 +216,57 @@ export default function create_product() {
         }
     }
 
+    const handleSubmit = async (event) => {
+        event.preventDefault()
 
-    return (
+        console.log("image count = " + productImages.length)
+        console.log("selected count = " + selected.length)
+        try {
+            const formData = new FormData()
+            formData.append('name', document.getElementById('product-name').value)
+            formData.append('brand', document.getElementById('product-brand').value)
+            formData.append('shortDesc', document.getElementById('product-description').value)
+            formData.append('productImages', productImages)
+            formData.append('categories', selected)
+            const fieldset = document.getElementById('condition-radio')
+            formData.append('condition', fieldset.querySelector('input:checked').value)
+            formData.append('conditionDesc', document.getElementById('condition-desc').value)
+            formData.append('description', children)
+
+            var requestOptions = {
+                method: 'POST',
+                credentials: 'include', 
+                body: formData,
+                redirect: 'follow'
+            }
+            
+        } catch (error) {
+            console.log("Unexpected Error: " + error)
+        }
+    }
+
+    if (authenticated) {
+        return (
         <div className="flex flex-col items-center space-y-14 w-full h-screen">
             <NavBar/>
             <div className="flex w-10/12 h-fit">
-                <form method='post' className="grow form-control max-w-full space-y-2">
+                <form method='post' className="grow form-control max-w-full space-y-2" onSubmit={handleSubmit}>
                     <h1 className='text-center'>Tell Us About Your Product</h1>
                     <div className='sticky top-0 flex justify-end z-10 mr-2'>
                         <input type="image" src="/svgs/eye.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" onClick={handlePreview}/>
                     </div>
                     <div className="flex flex-col w-1/2 space-y-2">
-                        <label htmlFor="product-name">Product Name</label>
-                        <input type="text" id="product-name" name="product-name" className="border border-2" required />
-                        <label htmlFor="product-brand">Brand</label>
-                        <input type="text" id="product-brand" name="product-brand" className='border border-2' required />
-                        <label htmlFor='product-description'>Short Product Description</label>
-                        <textarea maxLength={1000} id="product-description" onChange={processTextarea} onKeyDown={handleKeyDown} className='p-4'></textarea>
+                        <label htmlFor="product-name">Product Name<span className="text-rose-600"> *</span></label>
+                        <input type="text" id="product-name" name="product-name" className="border px-2" required />
+                        <label htmlFor="product-brand">Brand<span className="text-rose-600"> *</span></label>
+                        <input type="text" id="product-brand" name="product-brand" className="border px-2" required />
+                        <label htmlFor='product-color'>Color</label>
+                        <input type="text" id="product-color" name="product-color" className="border px-2" />
+                        <label htmlFor='product-description'>Short Product Description<span className="text-rose-600"> *</span> (max 1000 characters)</label>
+                        <textarea maxLength={1000} id="product-description" onChange={processTextarea} onKeyDown={handleKeyDown} className='resize-none	h-32 border p-2' required></textarea>
                     </div>
-                    
                     <div className='flex flex-col'>
-                        <h2 className='my-4'>Upload Product Images</h2>
+                        <h2 className='my-4'>Upload Product Images<span className="text-rose-600"> *</span></h2>
                         <div className='flex flex-col w-4/5 border-2 self-center items-center space-y-4 p-8 shadow-xl rounded my-8'>
                             <label className='h-8 flex items-center justify-center px-4 border rounded-lg bg-blue-500 text-white w-2/5'>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className='object-contain h-5 mr-2' fill='white'>
@@ -221,7 +289,7 @@ export default function create_product() {
                         </div>
                     </div>
                     <div>
-                        <h2>Category (Select all that Apply)</h2>
+                        <h2>Category<span className="text-rose-600"> *</span> (Select all that Apply)</h2>
                         {showSelected && (
                             <div className='flex flex-row flex-wrap space-x-2 gap-y-2'>
                                 {selected.map((category, index) => {
@@ -246,34 +314,34 @@ export default function create_product() {
                         )}
                     </div>
                     <div>
-                        <h2>Condition</h2>
+                        <h2>Condition<span className="text-rose-600"> *</span></h2>
                         <fieldset id="condition-radio">
-                            <input type="radio" id="New" name="condition" value="New"/>
+                            <input type="radio" id="New" name="condition" value="New" required/>
                             <label htmlFor="New"> New</label>
                             <br/>
-                            <input type="radio" id="Like-New" name="condition" value="Like New"/>
+                            <input type="radio" id="Like-New" name="condition" value="Like New" required/>
                             <label htmlFor="Like-New"> Like New</label>
                             <br/>
-                            <input type="radio" id="Good" name="condition" value="Good"/>
+                            <input type="radio" id="Good" name="condition" value="Good" required/>
                             <label htmlFor="Good"> Good</label>
                             <br/>
-                            <input type="radio" id="Used" name="condition" value="Used"/>
+                            <input type="radio" id="Used" name="condition" value="Used" required/>
                             <label htmlFor="Used"> Used</label>
                             <br/>
-                            <input type="radio" id="Acceptable" name="condition" value="Acceptable"/>
+                            <input type="radio" id="Acceptable" name="condition" value="Acceptable" required/>
                             <label htmlFor="Acceptable"> Acceptable</label>
                             <br/>
-                            <input type="radio" id="Poor" name="condition" value="Poor"/>
+                            <input type="radio" id="Poor" name="condition" value="Poor" required/>
                             <label htmlFor="Poor"> Poor</label>
                         </fieldset>
                         <br/>
-                        <label htmlFor="condition-desc">Condition Description</label>
+                        <label htmlFor="condition-desc">Condition Description<span className="text-rose-600"> *</span></label>
                         <br/>
                         <div className='w-80'>
                             <textarea className="border border-2 w-full" id="condition-desc" name="condition-desc" onChange={handleTextarea} maxLength="50" required></textarea>
                             <p className='text-right'>{charLength}/50 Characters</p>
                         </div>
-                        <div>
+                        <div className='my-8'>
                             <h2>Description <span className='text-sm'>(Describe your product in more detail)</span></h2>
                             <Canvas children={children} setChildren={setChildren}/>
                         </div>
@@ -293,9 +361,10 @@ export default function create_product() {
                             </div>
                         </div>
                     }
+                    <button className='h-10 px-4 border rounded-lg bg-blue-500 text-white w-1/3 hover:bg-rose-700 self-center mt-8'>Create Listing</button>
                 </form>
             </div>
             <Footer/>
         </div>
-    )
+    )}
 }
