@@ -1,6 +1,7 @@
 import NavBar from '/components/NavBar'
 import Footer from '/components/Footer'
 import Canvas from '/components/Canvas'
+import Alert from '/components/Alert'
 import {getRandomNumber} from '../../../components/Canvas'
 import Listing from '/components/Listing'
 import { useState, useEffect } from 'react'
@@ -22,6 +23,9 @@ export default function create_product() {
     // tracks username and authentication
     const [username, setUsername] = useState({})
     const [authenticated, setAuthenticated] = useState(false)
+
+    const [message, setMessage] = useState([])
+    const [visible, setVisible] = useState(false)
 
     const router = useRouter()
 
@@ -219,30 +223,40 @@ export default function create_product() {
     const handleSubmit = async (event) => {
         event.preventDefault()
 
-        console.log("image count = " + productImages.length)
-        console.log("selected count = " + selected.length)
-        try {
-            const formData = new FormData()
-            formData.append('name', document.getElementById('product-name').value)
-            formData.append('brand', document.getElementById('product-brand').value)
-            formData.append('shortDesc', document.getElementById('product-description').value)
-            formData.append('productImages', productImages)
-            formData.append('categories', selected)
-            const fieldset = document.getElementById('condition-radio')
-            formData.append('condition', fieldset.querySelector('input:checked').value)
-            formData.append('conditionDesc', document.getElementById('condition-desc').value)
-            formData.append('description', children)
+        if (productImages.length === 0) {
+            setMessage(['No product images uploaded!'])
+            setVisible(true)
+        } else if (selected.length === 0) {
+            setMessage(['No product categories were selected!'])
+            setVisible(true)
+        } else {
+            try {
+                const data = new FormData()
+                data.append('name', document.getElementById('product-name').value)
+                data.append('brand', document.getElementById('product-brand').value)
+                data.append('shortDesc', document.getElementById('product-description').value)
+                data.append('productImages', productImages)
+                data.append('categories', selected)
+                const fieldset = document.getElementById('condition-radio')
+                data.append('condition', fieldset.querySelector('input:checked').value)
+                data.append('conditionDesc', document.getElementById('condition-desc').value)
+                data.append('description', children)
 
-            var requestOptions = {
-                method: 'POST',
-                credentials: 'include', 
-                body: formData,
-                redirect: 'follow'
+                var requestOptions = {
+                    method: 'POST',
+                    credentials: 'include', 
+                    body: data,
+                    redirect: 'follow'
+                }
+                
+            } catch (error) {
+                console.log("Unexpected Error: " + error)
             }
-            
-        } catch (error) {
-            console.log("Unexpected Error: " + error)
         }
+    }
+
+    const updatePopup = () => {
+        setVisible(false)
     }
 
     if (authenticated) {
@@ -251,6 +265,7 @@ export default function create_product() {
             <NavBar/>
             <div className="flex w-10/12 h-fit">
                 <form method='post' className="grow form-control max-w-full space-y-2" onSubmit={handleSubmit}>
+                    {message && visible && <Alert message={message} onClick={updatePopup} />}
                     <h1 className='text-center'>Tell Us About Your Product</h1>
                     <div className='sticky top-0 flex justify-end z-10 mr-2'>
                         <input type="image" src="/svgs/eye.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" onClick={handlePreview}/>
