@@ -60,7 +60,7 @@ export default function account() {
             }
         }
 
-        
+
         authenticate()
     }, [])
 
@@ -137,13 +137,6 @@ export default function account() {
                     )}
                 </div>
                 <Footer/>
-            </div>
-        )
-    } else {
-        return (
-            <div className="flex flex-col justify-center items-center h-screen">
-                <h1 className="text-4xl text-sky-500">401 - Unauthorized</h1>
-                <img src="/images/lock.svg" className="object-scale-down h-48 w-96 " />
             </div>
         )
     }
