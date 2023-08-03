@@ -10,6 +10,7 @@ from pymongo.errors import DuplicateKeyError, OperationFailure
 from typing import Annotated
 from dotenv import load_dotenv
 from pymongo import MongoClient
+from models import Product
 import os, jwt, sys, re
 
 app = FastAPI()
@@ -306,7 +307,7 @@ async def seller_signup(response: Response,
         
     return {'message' : 'success'}
 
-@app.get('/account/seller-status')
+@app.get('/account/is-seller')
 async def is_seller(token: str = Depends(validate_token)):
     try:
         collection = db["sellers"]
@@ -315,9 +316,18 @@ async def is_seller(token: str = Depends(validate_token)):
         result = await collection.find_one({'username' : token['username']})
         
         if result is None:
-            raise OperationFailure('User is not a seller!')
-        
-        return {'username' : result['username'], 'store-name': result['name']}
+            raise OperationFailure('User is not a seller!') 
+
+        return {'username' : result['username'], 'name': result['name']}
+    except OperationFailure:
+        raise HTTPException(status_code=404, detail=["User is not a seller!"])
+
+@app.get('/account/authenticate-seller')
+async def authenticate_seller(store: str, seller: str = Depends(is_seller)):
+    try:
+        if (store != seller['name']):
+            raise HTTPException(status_code=401, detail="Access Denied")
+        return seller
     except OperationFailure:
         raise HTTPException(status_code=404, detail=["User is not a seller!"])
 
@@ -330,5 +340,8 @@ async def store_edit(store: str, token: str = Depends(validate_token)):
     return 'editing store'
 
 @app.post('/{store}/products/create')
-async def create_item(store: str, token: str = Depends(validate_token)):
-    return "created product"
+async def create_item(store: str, seller: str = Depends(authenticate_seller)):
+    try:
+        print(seller)
+    except OperationFailure:
+        raise HTTPException(status_code=401)

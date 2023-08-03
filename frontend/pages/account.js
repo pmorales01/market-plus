@@ -46,7 +46,7 @@ export default function account() {
                 }; 
                 
                 // fetch user data and check if user is a seller
-                const response = await fetch("http://127.0.0.1:8000/account/seller-status", requestOptions)
+                const response = await fetch("http://127.0.0.1:8000/account/is-seller", requestOptions)
                
                 // user is not a seller
                 if (response.status == 200) {

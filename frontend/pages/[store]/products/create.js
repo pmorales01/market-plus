@@ -234,6 +234,7 @@ export default function create_product() {
                 const data = new FormData()
                 data.append('name', document.getElementById('product-name').value)
                 data.append('brand', document.getElementById('product-brand').value)
+                data.append('price', document.getElementById('price').value)
                 data.append('shortDesc', document.getElementById('product-description').value)
                 data.append('productImages', productImages)
                 data.append('categories', selected)
@@ -248,6 +249,9 @@ export default function create_product() {
                     body: data,
                     redirect: 'follow'
                 }
+
+                // make a POST request
+                
                 
             } catch (error) {
                 console.log("Unexpected Error: " + error)
@@ -275,6 +279,11 @@ export default function create_product() {
                         <input type="text" id="product-name" name="product-name" className="border px-2" required />
                         <label htmlFor="product-brand">Brand<span className="text-rose-600"> *</span></label>
                         <input type="text" id="product-brand" name="product-brand" className="border px-2" required />
+                        <label htmlFor="price">Price<span className='text-rose-600'> *</span></label>
+                        <div className='flex flex-row'>
+                            <p className='w-12 bg-[#D2D2D2] h-full text-center font-bold rounded'>$</p>
+                            <input type="number" id="price" name="price" className='border px-2 w-1/4' min="0.01" max="10000" step="0.01" required/>
+                        </div>
                         <label htmlFor='product-color'>Color</label>
                         <input type="text" id="product-color" name="product-color" className="border px-2" />
                         <label htmlFor='product-description'>Short Product Description<span className="text-rose-600"> *</span> (max 1000 characters)</label>
