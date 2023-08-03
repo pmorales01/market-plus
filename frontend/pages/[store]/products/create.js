@@ -21,7 +21,7 @@ export default function create_product() {
     const [selected, setSelected] = useState([])
 
     // tracks username and authentication
-    const [username, setUsername] = useState({})
+    const [seller, setSeller] = useState({})
     const [authenticated, setAuthenticated] = useState(false)
 
     const [message, setMessage] = useState([])
@@ -37,18 +37,21 @@ export default function create_product() {
                     credentials: 'include'
                 }; 
                 
-                // fetch user data and check if user is authenticated
-                const response = await fetch("http://127.0.0.1:8000/account", requestOptions)
+                // get the seller's name
+                const store = window.location.pathname.match(/\/([^/]+)/)[1]
+
+                // fetch user data and check if user is an authenticated seller
+                const response = await fetch(`http://127.0.0.1:8000/account/authenticate-seller?store=${store}`, requestOptions)
                
-                // if user is not authenticated (or expired), redirect to login
+                // if user is not authenticated or access was denied, redirect to login
                 if (response.status != 200) {
-                    router.push('/login')
+                    router.push('/')
                     return
                 }  
 
                 const json_data = await response.json()
 
-                setUsername({username : json_data['username']})
+                setSeller({seller : json_data['name']})
 
                 setAuthenticated(true)
 

@@ -51,7 +51,7 @@ export default function account() {
                 // user is not a seller
                 if (response.status == 200) {
                     const seller_data = await response.json()
-                    setStore(seller_data['store-name'])
+                    setStore(seller_data['name'])
                 } else {
                     setIsSeller(false)
                 }
