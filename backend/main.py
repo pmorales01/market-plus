@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import timedelta, datetime
 from pydantic import BaseModel, Field, validator, ValidationError
 from pymongo.errors import DuplicateKeyError, OperationFailure
-from typing import Annotated
+from typing import Annotated, Optional
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from models import Product
@@ -340,7 +340,9 @@ async def store_edit(store: str, token: str = Depends(validate_token)):
     return 'editing store'
 
 @app.post('/{store}/products/create')
-async def create_item(store: str, seller: str = Depends(authenticate_seller)):
+async def create_item(store: str, 
+    product: Product,
+    seller: str = Depends(authenticate_seller)):
     try:
         print(seller)
     except OperationFailure:
