@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Form, HTTPException, Depends, Cookie, Request, Response
+from fastapi import FastAPI, Form, HTTPException, Depends, Cookie, Request, Response, File, UploadFile
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.responses import HTMLResponse, JSONResponse
@@ -7,7 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import timedelta, datetime
 from pydantic import BaseModel, Field, validator, ValidationError
 from pymongo.errors import DuplicateKeyError, OperationFailure
-from typing import Annotated, Optional
+from typing import Annotated, Optional, List
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from models import Product
@@ -326,7 +326,7 @@ async def is_seller(token: str = Depends(validate_token)):
 async def authenticate_seller(store: str, seller: str = Depends(is_seller)):
     try:
         if (store != seller['name']):
-            raise HTTPException(status_code=401, detail="Access Denied")
+            raise HTTPException(status_code=403, detail="Access Denied")
         return seller
     except OperationFailure:
         raise HTTPException(status_code=404, detail=["User is not a seller!"])
@@ -341,9 +341,19 @@ async def store_edit(store: str, token: str = Depends(validate_token)):
 
 @app.post('/{store}/products/create')
 async def create_item(store: str, 
-    product: Product,
+    name: str = Form(...),
+    brand: str = Form(...),
+    price: float = Form(...),
+    short_desc: str = Form(...),
+    category: List[str] = Form(...),
+    condition: str = Form(...),
+    condition_desc: str = Form(...),
+    description: List[str] = Form(...),
+    images: List[UploadFile] = File(...),
     seller: str = Depends(authenticate_seller)):
     try:
         print(seller)
+        print(len(images))
+
     except OperationFailure:
         raise HTTPException(status_code=401)

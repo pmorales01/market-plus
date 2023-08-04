@@ -147,7 +147,8 @@ export default function create_product() {
                 {
                     id: id,
                     src: reader.result,
-                    filename : filename
+                    filename : filename,
+                    file: file
                 }
             ])
         }
@@ -234,28 +235,36 @@ export default function create_product() {
             setVisible(true)
         } else {
             try {
+                const fieldset = document.getElementById('condition-radio')
+                
                 const data = new FormData()
                 data.append('name', document.getElementById('product-name').value)
                 data.append('brand', document.getElementById('product-brand').value)
                 data.append('price', document.getElementById('price').value)
-                data.append('shortDesc', document.getElementById('product-description').value)
-                data.append('productImages', productImages)
-                data.append('categories', selected)
-                const fieldset = document.getElementById('condition-radio')
+                data.append('short_desc', document.getElementById('product-description').value)
+                data.append('category', selected)
                 data.append('condition', fieldset.querySelector('input:checked').value)
-                data.append('conditionDesc', document.getElementById('condition-desc').value)
+                data.append('condition_desc', document.getElementById('condition-desc').value)
                 data.append('description', children)
-
+                
+                productImages.map(image => {
+                    data.append('images', image.file)
+                })
+                
                 var requestOptions = {
                     method: 'POST',
                     credentials: 'include', 
+                    headers: {
+                        'accept': 'application/json',
+                    },
                     body: data,
                     redirect: 'follow'
                 }
 
                 // make a POST request
+                const response = await fetch(`http://127.0.0.1:8000/${seller['seller']}/products/create`, requestOptions)
                 
-                
+                console.log(response)
             } catch (error) {
                 console.log("Unexpected Error: " + error)
             }
@@ -271,7 +280,7 @@ export default function create_product() {
         <div className="flex flex-col items-center space-y-14 w-full h-screen">
             <NavBar/>
             <div className="flex w-10/12 h-fit">
-                <form method='post' className="grow form-control max-w-full space-y-2" onSubmit={handleSubmit}>
+                <form method='post' encType="multipart/form-data" className="grow form-control max-w-full space-y-2" onSubmit={handleSubmit}>
                     {message && visible && <Alert message={message} onClick={updatePopup} />}
                     <h1 className='text-center'>Tell Us About Your Product</h1>
                     <div className='sticky top-0 flex justify-end z-10 mr-2'>
