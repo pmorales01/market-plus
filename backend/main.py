@@ -10,8 +10,9 @@ from pymongo.errors import DuplicateKeyError, OperationFailure
 from typing import Annotated, Optional, List
 from dotenv import load_dotenv
 from pymongo import MongoClient
+from bson import Binary
 from models import Product
-import os, jwt, sys, re
+import os, jwt, sys, re, uuid, base64
 
 app = FastAPI()
 
@@ -341,6 +342,7 @@ async def store_edit(store: str, token: str = Depends(validate_token)):
 
 @app.post('/{store}/products/create')
 async def create_item(store: str, 
+    request: Request,
     name: str = Form(...),
     brand: str = Form(...),
     price: float = Form(...),
@@ -353,7 +355,43 @@ async def create_item(store: str,
     seller: str = Depends(authenticate_seller)):
     try:
         print(seller)
-        print(len(images))
+        product = Product(
+            name=seller['name'],
+            brand=brand,
+            price=price,
+            short_desc=short_desc,
+            category=category,
+            condition=condition, 
+            condition_desc=condition_desc,
+            description=description,
+            images=images)
+
+        collection = db["products"]
+
+        error_msgs = []
+        print(images)
+        for image in images:
+            print(image.size)
+            print(image.filename)
+            print(image.file)
+
+        image = await images[0].read()
+
+        result = await collection.insert_one({'name': name, 'image' : Binary(image), 'id': str(uuid.uuid4())})
 
     except OperationFailure:
         raise HTTPException(status_code=401)
+
+@app.get('/products/{name}/{id}')
+async def get_product(name: str, id: str):
+    try:
+        collection = db['products']
+
+        name = name.replace("-", " ")  
+
+        result = await collection.find_one({'name' : name, 'id': id})
+
+        return {'image' : base64.b64encode(result['image']).decode("utf-8")}
+
+    except OperationFailure:
+        return {"msg" : 'error occured'}
