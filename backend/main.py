@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Form, HTTPException, Depends, Cookie, Request, Response, File, UploadFile
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.encoders import jsonable_encoder
 from fastapi.responses import HTMLResponse, JSONResponse
 from motor.motor_asyncio import AsyncIOMotorClient
 from fastapi.middleware.cors import CORSMiddleware
@@ -355,29 +356,35 @@ async def create_item(store: str,
     seller: str = Depends(authenticate_seller)):
     try:
         print(seller)
+
+        print(images)
         product = Product(
-            name=seller['name'],
+            name=name,
             brand=brand,
             price=price,
             short_desc=short_desc,
             category=category,
             condition=condition, 
             condition_desc=condition_desc,
-            description=description,
-            images=images)
+            description=description
+        )
 
+        data = dict(product)
+
+        img = []
+        
+        for image in images:
+            i =  await image.read()
+            img.append(Binary(i))
+
+        data['images'] = img
+        data['seller'] = seller['name']
+        data['id'] = str(uuid.uuid4())
         collection = db["products"]
 
         error_msgs = []
-        print(images)
-        for image in images:
-            print(image.size)
-            print(image.filename)
-            print(image.file)
 
-        image = await images[0].read()
-
-        result = await collection.insert_one({'name': name, 'image' : Binary(image), 'id': str(uuid.uuid4())})
+        result = await collection.insert_one(data)
 
     except OperationFailure:
         raise HTTPException(status_code=401)
@@ -391,7 +398,12 @@ async def get_product(name: str, id: str):
 
         result = await collection.find_one({'name' : name, 'id': id})
 
-        return {'image' : base64.b64encode(result['image']).decode("utf-8")}
+        images = []
+
+        for image in result['images']:
+            images.append(base64.b64encode(image).decode("utf-8"))
+
+        return {'name': result['name'], 'brand' : result['brand'], 'images': images}
 
     except OperationFailure:
         return {"msg" : 'error occured'}
