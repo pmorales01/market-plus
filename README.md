@@ -64,6 +64,11 @@ Switch to '/Backend'. If not activated, activate the virtual environment. Run th
 uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
+Open a new tab and run ```mongod```. (if you need more privileges, run ```sudo mongod```)
+```
+mongod
+````
+
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
