@@ -343,7 +343,7 @@ async def store_edit(store: str, token: str = Depends(validate_token)):
 
 @app.post('/{store}/products/create')
 async def create_item(store: str, 
-    request: Request,
+    color: Optional[str] = Form(None),
     name: str = Form(...),
     brand: str = Form(...),
     price: float = Form(...),
@@ -355,39 +355,52 @@ async def create_item(store: str,
     images: List[UploadFile] = File(...),
     seller: str = Depends(authenticate_seller)):
     try:
-        print(seller)
-
-        print(images)
         product = Product(
             name=name,
             brand=brand,
             price=price,
+            color=color,
             short_desc=short_desc,
             category=category,
             condition=condition, 
             condition_desc=condition_desc,
-            description=description
+            description=description,
         )
 
+        # create a dict from Product
         data = dict(product)
-
+        
+        # array to store uploaded images
         img = []
         
+        # for each image, read its content, and add its binary data to img
         for image in images:
             i =  await image.read()
             img.append(Binary(i))
 
+        # add the uploaded images (binary), seller name, and id to 'data'
         data['images'] = img
         data['seller'] = seller['name']
         data['id'] = str(uuid.uuid4())
+
+
         collection = db["products"]
 
-        error_msgs = []
-
-        result = await collection.insert_one(data)
-
+        # create a product by inserting it into the collection 
+        result = await collection.insert_one(dict(data))
+        
+        return {"message" : "Product listing successfuly created!"}
     except OperationFailure:
-        raise HTTPException(status_code=401)
+        raise HTTPException(status_code=401, detail=["Something went wrong! Operation Failure"])
+    except ValidationError as e:
+        errors = [] # list to store raised ValueError's
+        
+        # add each ValueError to the list
+        for error in e.errors():
+            errors.append(error['msg'])
+
+        # return a 400 status code and ValueErrors
+        raise HTTPException(status_code=400, detail=errors)
 
 @app.get('/products/{name}/{id}')
 async def get_product(name: str, id: str):
