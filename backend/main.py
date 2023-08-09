@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Form, HTTPException, Depends, Cookie, Request, Response, File, UploadFile
+from fastapi import FastAPI, Form, Body, HTTPException, Depends, Cookie, Request, Response, File, UploadFile
 from fastapi.responses import JSONResponse, RedirectResponse
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.encoders import jsonable_encoder
@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from datetime import timedelta, datetime
 from pydantic import BaseModel, Field, validator, ValidationError
 from pymongo.errors import DuplicateKeyError, OperationFailure
-from typing import Annotated, Optional, List
+from typing import Annotated, Optional, List, Dict
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from bson import Binary
@@ -342,7 +342,8 @@ async def store_edit(store: str, token: str = Depends(validate_token)):
     return 'editing store'
 
 @app.post('/{store}/products/create')
-async def create_item(store: str, 
+async def create_item(request: Request,
+    store: str, 
     color: Optional[str] = Form(None),
     name: str = Form(...),
     brand: str = Form(...),
@@ -351,7 +352,7 @@ async def create_item(store: str,
     category: List[str] = Form(...),
     condition: str = Form(...),
     condition_desc: str = Form(...),
-    description: List[str] = Form(...),
+    description: Optional[str] = Form(None),
     images: List[UploadFile] = File(...),
     seller: str = Depends(authenticate_seller)):
     try:
@@ -364,7 +365,7 @@ async def create_item(store: str,
             category=category,
             condition=condition, 
             condition_desc=condition_desc,
-            description=description,
+            description=description
         )
 
         # create a dict from Product
@@ -377,12 +378,11 @@ async def create_item(store: str,
         for image in images:
             i =  await image.read()
             img.append(Binary(i))
-
-        # add the uploaded images (binary), seller name, and id to 'data'
+        
+        # add the images (binary), seller name, and id to 'data'
         data['images'] = img
         data['seller'] = seller['name']
         data['id'] = str(uuid.uuid4())
-
 
         collection = db["products"]
 
@@ -410,13 +410,16 @@ async def get_product(name: str, id: str):
         name = name.replace("-", " ")  
 
         result = await collection.find_one({'name' : name, 'id': id})
-
+        
+         # product not found, raise operation failure error
+        if result is None:
+            raise OperationFailure('This product is not available.')
+                
         images = []
 
         for image in result['images']:
             images.append(base64.b64encode(image).decode("utf-8"))
 
-        return {'name': result['name'], 'brand' : result['brand'], 'images': images}
-
+        return {'name': result['name'], 'brand' : result['brand'], 'images': images, 'description': result['description']}
     except OperationFailure:
-        return {"msg" : 'error occured'}
+        raise HTTPException(status_code=404, detail="Page not found")

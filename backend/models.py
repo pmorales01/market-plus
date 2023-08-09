@@ -1,6 +1,6 @@
-from fastapi import Form, HTTPException, UploadFile
+from fastapi import Form, HTTPException, UploadFile, Body
 from pydantic import BaseModel, validator
-from typing import List, Optional
+from typing import List, Optional, Dict, Union
 
 class Product(BaseModel):
     name: str = Form(...)
@@ -11,7 +11,7 @@ class Product(BaseModel):
     category: List[str] = Form(...)
     condition: str = Form(...)
     condition_desc: str = Form(...)
-    description: List[str] = Form(...)
+    description: Optional[str] = Form(None)
 
     @validator('name')
     def name_length(cls, v):

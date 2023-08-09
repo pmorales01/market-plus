@@ -3,7 +3,7 @@ import Footer from '/components/Footer'
 import Canvas from '/components/Canvas'
 import Alert from '/components/Alert'
 import {getRandomNumber} from '../../../components/Canvas'
-import Listing from '/components/Listing'
+import Description from '/components/Description'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 
@@ -245,8 +245,7 @@ export default function create_product() {
                 data.append('category', selected)
                 data.append('condition', fieldset.querySelector('input:checked').value)
                 data.append('condition_desc', document.getElementById('condition-desc').value)
-                data.append('description', children)
-                
+                data.append('description', JSON.stringify(children))
                 productImages.map(image => {
                     data.append('images', image.file)
                 })
@@ -265,6 +264,10 @@ export default function create_product() {
                 const response = await fetch(`http://127.0.0.1:8000/${seller['seller']}/products/create`, requestOptions)
                 
                 console.log(response)
+
+                const json_data = await response.json()
+
+                console.log(json_data)
             } catch (error) {
                 console.log("Unexpected Error: " + error)
             }
@@ -387,7 +390,7 @@ export default function create_product() {
                             <div className="-translate-x-1/2 card w-11/12 bg-base-100 shadow-xl inset-1/2">
                                 <div className="card-body">
                                 <h2 className="card-title self-center">Preview</h2>
-                                <Listing children={children}/>
+                                <Description children={children}/>
                                 <div className="card-actions justify-center">
                                     <button className="btn btn-primary" onClick={closePreview}>
                                         <span className="capitalize">Close</span>

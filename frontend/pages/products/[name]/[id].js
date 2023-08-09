@@ -1,9 +1,12 @@
 "use client"
 import { useState, useEffect } from 'react'
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/router'
+import Description from '/components/Description'
 
 export default function Product () {
-    const [source, setSource] = useState('')
+    const [data, setData] = useState({'name' : '', 'brand': '', 'images' : [], 'description' : ''})
+    const router = useRouter()
+
     useEffect(() => {
         const getProduct = async () => {
             try {
@@ -16,8 +19,14 @@ export default function Product () {
                 const response = await fetch(`http://127.0.0.1:8000${path}`, requestOptions)
             
                 console.log(response)
+
+                if (response.status !== 200) {
+                    router.push('/')
+                    return
+                }
                 const json_data = await response.json()
-                setSource(json_data['image'])
+                console.log(json_data)
+                setData(json_data)
             } catch (error) {
                 console.log(error)
             }
@@ -28,8 +37,14 @@ export default function Product () {
 
     return (
         <div>
-        <h1>hello</h1>
-        <img src={`data:image/png;base64,${source}`} />
+        <h1>{data['name']}</h1>
+        {data['images'].map(image => {
+            return (
+                <img src={`data:image/png;base64,${image}`} />
+        )})}
+        <p>Brand {data['brand']}</p>
+        <p>Count {data['images'].length}</p>
+        {/* <Description children={data['description']}/> */}
         </div>
     )
 }
