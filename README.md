@@ -2,15 +2,72 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+Switch to '/backend'
 ```
+cd backend
+```
+
+Create a python virtual environment
+```
+python3 -m venv myenv
+```
+
+Activate the virtual environment
+```
+source myenv/bin/activate
+```
+
+Install the requirements from requirements.txt
+```
+pip install -r requirements.txt
+```
+
+Open a new tab. Navigate to the '/frontend' directory and install the dependencies from package.json
+```
+npm install
+```
+## MongoDB Connection
+In MongoDB Compass,
+1. Create a new database named 'market'
+2. Create a new collection named 'users'
+
+<p align="center">
+  <img src="https://github.com/pmorales01/market-plus/assets/103544215/0efba6f7-b1a8-4bbc-b009-08f19a1f1919"/>
+</p>
+
+4. Create a new collection named 'sellers'
+5. Create a new collection named 'products'
+6. Edit the connection string to ```mongodb://localhost:27017``` to use the database locally.
+
+<p align="center">
+  <img src="https://github.com/pmorales01/market-plus/assets/103544215/3426d26f-6f5b-4dd5-bb2f-0aa366c20eae"/>
+</p>
+
+7. Open a new tab. Run ```mongod``` to run the primary MongoDB daemon process.
+   
+## Secret Key
+To use JWT, a secret key is needed to encode access tokens. 
+1. Switch to the '/backend' directory.
+2. Create a file named '.env' in the root of the '/backend' folder.
+3. Declare a variable SECRET_KEY and assign it a string value (this is the secret key)
+
+```SECRET_KEY='MY_SECRET_KEY'```
+   
+## Running
+Open a new tab. Switch to '/frontend' and run the development server:
+```
+npm run dev
+```
+
+Switch to '/Backend'. If not activated, activate the virtual environment. Run the server.
+```
+uvicorn main:app --host 0.0.0.0 --port 8000
+```
+
+Open a new tab and run ```mongod```. (if you need more privileges, run ```sudo mongod```)
+```
+mongod
+````
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
