@@ -13,7 +13,7 @@ from dotenv import load_dotenv
 from pymongo import MongoClient
 from bson import Binary
 from models import Product
-import os, jwt, sys, re, uuid, base64
+import os, jwt, sys, re, uuid, base64, json
 
 app = FastAPI()
 
@@ -365,7 +365,6 @@ async def create_item(request: Request,
             category=category,
             condition=condition, 
             condition_desc=condition_desc,
-            description=description
         )
 
         # create a dict from Product
@@ -379,7 +378,8 @@ async def create_item(request: Request,
             i =  await image.read()
             img.append(Binary(i))
         
-        # add the images (binary), seller name, and id to 'data'
+        # add the description, images (binary), seller name, and id to 'data'
+        data['description'] = json.loads(description)
         data['images'] = img
         data['seller'] = seller['name']
         data['id'] = str(uuid.uuid4())

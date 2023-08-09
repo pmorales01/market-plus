@@ -11,7 +11,6 @@ class Product(BaseModel):
     category: List[str] = Form(...)
     condition: str = Form(...)
     condition_desc: str = Form(...)
-    description: Optional[str] = Form(None)
 
     @validator('name')
     def name_length(cls, v):
