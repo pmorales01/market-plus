@@ -2,6 +2,8 @@
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Description from '/components/Description'
+import Gallery from '/components/Gallery'
+import NavBar from '/components/NavBar'
 
 export default function Product () {
     const [data, setData] = useState({'name' : '', 'brand': '', 'images' : [], 'description' : ''})
@@ -36,15 +38,15 @@ export default function Product () {
     }, [])
 
     return (
-        <div>
-        <h1>{data['name']}</h1>
-        {data['images'].map(image => {
-            return (
-                <img src={`data:image/png;base64,${image}`} />
-        )})}
-        <p>Brand {data['brand']}</p>
-        <p>Count {data['images'].length}</p>
-        {/* <Description children={data['description']}/> */}
+        <div className="flex flex-col items-center space-y-14 w-full h-screen">
+            <NavBar/>
+            <div className='flex flex-row'>
+                <Gallery images={data['images']}/>
+                <h1>{data['name']}</h1>
+            </div> 
+            <p>Brand {data['brand']}</p>
+            <p>Count {data['images'].length}</p>
+            <Description children={data['description']}/>
         </div>
     )
 }

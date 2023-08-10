@@ -371,16 +371,17 @@ async def create_item(request: Request,
         data = dict(product)
         
         # array to store uploaded images
-        img = []
+        imgs = []
         
-        # for each image, read its content, and add its binary data to img
+        # for each image, read its content, and add its binary data and data type to imgs
         for image in images:
-            i =  await image.read()
-            img.append(Binary(i))
+            bytes_read = await image.read()
+            file_type = image.content_type
+            imgs.append({'bytes': Binary(bytes_read), 'type': file_type})
         
         # add the description, images (binary), seller name, and id to 'data'
         data['description'] = json.loads(description)
-        data['images'] = img
+        data['images'] = imgs
         data['seller'] = seller['name']
         data['id'] = str(uuid.uuid4())
 
@@ -416,9 +417,10 @@ async def get_product(name: str, id: str):
             raise OperationFailure('This product is not available.')
                 
         images = []
-
+        
+        # for each image retrieved, create a dictionary of bytes and data type
         for image in result['images']:
-            images.append(base64.b64encode(image).decode("utf-8"))
+            images.append({'bytes' : base64.b64encode(image['bytes']).decode("utf-8"), 'type' : image['type']})
 
         return {'name': result['name'], 'brand' : result['brand'], 'images': images, 'description': result['description']}
     except OperationFailure:
