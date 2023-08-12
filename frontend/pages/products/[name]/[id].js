@@ -40,7 +40,7 @@ export default function Product () {
     return (
         <div className="flex flex-col items-center space-y-14 w-full h-screen">
             <NavBar/>
-            <div className='flex flex-row'>
+            <div className='grid grid-rows-1 grid-cols-2'>
                 <Gallery images={data['images']}/>
                 <h1>{data['name']}</h1>
             </div> 
