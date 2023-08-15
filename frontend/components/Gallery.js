@@ -42,9 +42,41 @@ export default function Gallery({images=[]}) {
         setSource(input.children[0].src)
     }
 
-    const handleMouseMove = (event) => {
-        const rect = event.target.getBoundingClientRect()
-       
+    const handleHover = (event) => {
+        const magnifier = document.getElementById('magnifier')
+
+        // parent container
+        const parent = document.getElementById('image-display')
+        
+        // get the mouse's location of the page 
+        const mouseX = event.pageX
+        const mouseY = event.pageY
+
+        // left = mouse location (x) - left edge of container 
+        let newX = (mouseX - parent.offsetLeft) - (magnifier.offsetWidth / 2)
+        // top = mouse location (y) - top edge of container
+        let newY = (mouseY - parent.offsetTop) - (magnifier.offsetHeight / 2)
+
+        // out of bounds testing (magnifier's left and top edges are out of bounds)
+        if (newX < 0) { // left < parent container's left
+            newX = 0
+        } 
+        // left is past container's right edge
+        if (newX > parent.offsetWidth - magnifier.offsetWidth) { 
+            newX = parent.offsetWidth - magnifier.offsetWidth
+        } 
+        
+        if (newY < 0) { // top < parent container's top
+            newY = 0
+        } 
+        // top is past the max possible top magnifier can be without overflowing
+        if (newY > parent.offsetHeight - magnifier.offsetHeight) {
+            newY = parent.offsetHeight - magnifier.offsetHeight
+        }
+
+        // set the magnifier's position
+        magnifier.style.left = `${newX}px`
+        magnifier.style.top = `${newY}px`
     }
     
     return (
@@ -60,7 +92,7 @@ export default function Gallery({images=[]}) {
                 })}
             </div>
             {/* main image display */}
-            <div className="flex flex-row justify-center rounded w-4/5 relative" id="image-display" onMouseMove={handleMouseMove}>
+            <div className="flex flex-row justify-center rounded w-4/5 relative" id="image-display" onMouseMove={handleHover}>
                 <img src={source} className='max-w-full max-h-full'/>
                 <div id="magnifier"  className="w-1/3 h-1/3 bg-teal-50 opacity-30 z-50 absolute left-0">
                 </div>
