@@ -6,8 +6,8 @@ export default function Gallery({images=[]}) {
     // tracks the 'magnifier' element's visibility
     const [visible, setVisible]  = useState(false)
 
-    const [translateX, setTranslateX] = useState(0)
-    const [translateY, setTranslateY] = useState(0)
+    const [percentageX, setPercentageX] = useState(0)
+    const [percentageY, setPercentageY] = useState(0)
 
     // set the first image as the main dispaly
     useEffect(() => {
@@ -83,6 +83,14 @@ export default function Gallery({images=[]}) {
             // set the magnifier's position
             magnifier.style.left = `${newX}px`
             magnifier.style.top = `${newY}px`
+
+            // calculating translation percentage
+            const percentX = -(newX / parent.offsetWidth) * 100
+            const percentY = -(newY / parent.offsetHeight) * 100
+
+            // set the percentages
+            setPercentageX(percentX)
+            setPercentageY(percentY)
         }
     }
     
@@ -118,8 +126,8 @@ export default function Gallery({images=[]}) {
             </div>
             {visible &&
                 <div id="zoom-container" className='absolute right-10 z-50 bg-red-300 overflow-hidden'>
-                    <img src={source} alt="magnified image" className="origin-center h-96" style={{
-                        transform: `scale(2, 2)`
+                    <img src={source} id="zoomed-image" alt="magnified image" className="h-96 origin-top-left" style={{
+                        transform: `scale(3, 3) translate(${percentageX}%, ${percentageY}%)`
                     }} />
                 </div>
             }
