@@ -105,27 +105,28 @@ export default function Gallery({images=[]}) {
     }
 
     return (
-        <div className="flex flex-row w-96h-96 justify-evenly space-x-4">
+        <div className="flex flex-row md:w-72 lg:w-96 md:h-72 lg:h-96 justify-evenly space-x-4">
             {/* images available to select */}
-            <div className="flex flex-col space-y-2" id="image-gallery">
+            <div className="flex flex-col space-y-2 md:h-72 w-20 lg:h-96 overflow-y-scroll" id="image-gallery">
                 {images.map((image, index) => {
                     return (
-                        <div key={index} className="flex justify-center h-20 w-20 rounded-md border-2 border-slate-300 input-hover" onMouseEnter={handleMouseEnter}>
+                        <div key={index} className="flex justify-center h-20 w-full rounded-md border-2 border-slate-300 input-hover" onMouseEnter={handleMouseEnter}>
                             <input type="image" src={`data:${image['type']};base64,${image['bytes']}`} alt={`gallery image ${index}`} className="h-20 w-20 object-cover aspect-auto self-center rounded-md p-1" onClick={handleClick}/>
                         </div>
                     )
                 })}
             </div>
             {/* main image display */}
-            <div className="flex flex-row justify-center rounded w-4/5 relative" id="image-display" onMouseMove={handleHover} onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
+            <div className="flex flex-row justify-center rounded w-4/5 h-full relative" id="image-display" onMouseMove={handleHover} onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
                 <img src={source} className='max-w-full max-h-full'/>
                 {visible &&
-                    <div id="magnifier"  className="w-1/3 h-1/3 bg-teal-50 opacity-30 z-50 absolute left-0">
+                    <div id="magnifier"  className="w-1/3 h-1/3 bg-teal-50 opacity-20 z-50 absolute left-0 rounded">
                     </div>
                 }
             </div>
+            {/* zoom v */}
             {visible &&
-                <div id="zoom-container" className='absolute right-10 z-50 bg-red-300 overflow-hidden'>
+                <div id="zoom-container" className='absolute right-20 z-50 bg-red-300 overflow-hidden'>
                     <img src={source} id="zoomed-image" alt="magnified image" className="h-96 origin-top-left" style={{
                         transform: `scale(3, 3) translate(${percentageX}%, ${percentageY}%)`
                     }} />
