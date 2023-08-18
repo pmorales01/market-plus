@@ -422,6 +422,10 @@ async def get_product(name: str, id: str):
         for image in result['images']:
             images.append({'bytes' : base64.b64encode(image['bytes']).decode("utf-8"), 'type' : image['type']})
 
-        return {'name': result['name'], 'brand' : result['brand'], 'images': images, 'description': result['description']}
+        return {'name': result['name'], 'brand' : result['brand'], 
+            'short_desc': result['short_desc'], 'price': result['price'], 
+            'condition': result['condition'], 'condition_desc': result['condition_desc'],
+            'seller' : result['seller'],
+            'images': images, 'description': result['description']}
     except OperationFailure:
         raise HTTPException(status_code=404, detail="Page not found")

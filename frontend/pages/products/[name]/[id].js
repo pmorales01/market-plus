@@ -5,11 +5,12 @@ import Description from '/components/Description'
 import Gallery from '/components/Gallery'
 import NavBar from '/components/NavBar'
 import Link from 'next/link';
+import { clearPreviewData } from 'next/dist/server/api-utils'
 
 export default function Product () {
     const [data, setData] = useState({
         'name' : '', 'brand': '', 'images' : [], 'short_desc': '', 'price': 0, 
-        'description': []
+        'condition': '', 'condition_desc': '', 'description': []
     })
 
     const router = useRouter()
@@ -43,20 +44,23 @@ export default function Product () {
     }, [])
 
     return (
-        <div className="flex flex-col items-center space-y-14 w-screen h-screen">
+        <div className="flex flex-col space-y-14 w-screen h-screen">
             <NavBar/>
             <div className='grid sm:grid-cols-1 md:grid-cols-5 mx-7 gap-x-10'>
+                {/* Gallery should span 2 columns */}
                 <div className='md:col-span-2'>
-                <Gallery images={data['images']}/>
+                    <Gallery images={data['images']}/>
                 </div>
+                {/* Product name and description (short) */}
                 <div className='flex flex-col md:col-span-2'>
                     <h1>{data['name']}</h1>
                     <p><Link href="/" className='link link-hover text-blue-600'>{data['seller']}</Link></p>
                     <hr/>
-                    <p className='h-full'>{data['short_desc']}</p>
+                    <p className='h-full py-2'>{data['short_desc']}</p>
                     <hr/>
                 </div>
-                <div className='flex flex-col h-fit rounded border border-slate-300 p-1'>
+                {/* Add to Cart and Buy Options */}
+                <div className='flex flex-col h-fit rounded border border-slate-300 p-2'>
                     <p className="text-3xl">
                         <sup className="text-sm px-0.5">$</sup>
                         {parseInt(data['price'])}
@@ -65,18 +69,31 @@ export default function Product () {
                     <button className='h-10 w-11/12 px-4 border rounded-lg bg-blue-500 text-white font-semibold w-1/3 hover:bg-rose-700 self-center'>Add to Cart</button>
                 </div>
             </div>
-            <table className='table-fixed self-start'>
-                <tbody>
-                    <tr>
-                        <th>Brand</th>
-                        <td>{data['brand']}</td>
-                    </tr>
-                    <tr>
-                        <th>Color</th>
-                        <td>{data['brand']}</td>
-                    </tr>
-                </tbody>
-            </table>
+            <div className='flex flex-col mx-5 space-y-1'>
+                <p className='font-black text-2xl mx-2'>Overview</p>
+                <table className='table-fixed self-start border-separate border-spacing-x-2.5'>
+                    <tbody>
+                        <tr>
+                            <th>Brand</th>
+                            <td>{data['brand']}</td>
+                        </tr>
+                        {data['color'] === '' ? (
+                            <tr>
+                                <th>Color</th>
+                                <td>{data['color']}</td>
+                            </tr>
+                        ) : <></>}
+                        <tr>
+                            <th>Condition</th>
+                            <td>{data['condition']}</td>
+                        </tr>
+                        <tr>
+                            <th>Condition Description</th>
+                            <td>{data['condition_desc']}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
             <Description children={data['description']}/>
         </div>
     )

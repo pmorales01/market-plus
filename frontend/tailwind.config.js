@@ -33,6 +33,20 @@ module.exports = {
           'h2' : {
             'font-size': '1.875rem',
             'line-height': '2.25rem'
+          },
+          '.input-hover:hover': {
+            'border': 'solid #74c5f7'
+          },
+          '#image-gallery::-webkit-scrollbar': {
+            'width': '0',
+            'background': 'transparent'
+          },
+          'th': {
+            'text-align': 'left',
+          },
+          'td': {
+            'padding-left': '48px',
+
           }
         },
       },
