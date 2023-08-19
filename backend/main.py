@@ -12,7 +12,8 @@ from typing import Annotated, Optional, List, Dict
 from dotenv import load_dotenv
 from pymongo import MongoClient
 from bson import Binary
-from models import Product
+from uuid import UUID, uuid4
+from models import Product, GetProduct
 import os, jwt, sys, re, uuid, base64, json
 
 app = FastAPI()
@@ -37,7 +38,7 @@ app.add_middleware(
 )
 
 #Initialize MongoDB client
-mongo_client = AsyncIOMotorClient("mongodb://localhost:27017")
+mongo_client = AsyncIOMotorClient("mongodb://localhost:27017", uuidRepresentation='standard')
 db = mongo_client["market"]
 
 # User model
@@ -404,13 +405,13 @@ async def create_item(request: Request,
         raise HTTPException(status_code=400, detail=errors)
 
 @app.get('/products/{name}/{id}')
-async def get_product(name: str, id: str):
+async def get_product(name:str, id: UUID):
     try:
+        product = GetProduct(name=name, id=id)
+
         collection = db['products']
-
-        name = name.replace("-", " ")  
-
-        result = await collection.find_one({'name' : name, 'id': id})
+        print(product.name)
+        result = await collection.find_one({'name': {'$regex': re.escape(product.name), '$options': 'i'}, 'id': str(product.id)})
         
          # product not found, raise operation failure error
         if result is None:
@@ -429,3 +430,12 @@ async def get_product(name: str, id: str):
             'images': images, 'description': result['description']}
     except OperationFailure:
         raise HTTPException(status_code=404, detail="Page not found")
+    except ValidationError as e:
+        errors = [] # list to store raised ValueErrors
+        
+        # add each ValueError to the list
+        for error in e.errors():
+            errors.append(error['msg'])
+
+        # return a 400 status code and ValueErrors
+        raise HTTPException(status_code=400, detail=errors)
