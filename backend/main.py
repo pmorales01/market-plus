@@ -342,6 +342,30 @@ async def get_store(store: str):
 async def store_edit(store: str, token: str = Depends(validate_token)):
     return 'editing store'
 
+async def getAliasPath(name: str):
+    # split name by '-'
+    parts = name.split('-')
+
+    path = ''
+
+    # max length of name (path)
+    MAX_LENGTH = 30
+
+    # for each part, concatenate to path if total is <= 30 characters
+    for part in parts:
+        if part != '': # if part is not empty
+            # len(total path) + 1 char for '-' + len(new part)
+            if len(path) + 1 + len(part) <= MAX_LENGTH: # add if <= 30 characters
+                if path != '':
+                    path = path + '-' + part
+                else: # base case: '' + first part
+                    path = part
+            else: # stop adding parts, maximum length reached (or would exceed)
+                break
+
+    # return lowercase path name
+    return path.lower()
+
 @app.post('/{store}/products/create')
 async def create_item(request: Request,
     store: str, 
@@ -385,6 +409,7 @@ async def create_item(request: Request,
         data['images'] = imgs
         data['seller'] = seller['name']
         data['id'] = str(uuid.uuid4())
+        data['alias'] = getAliasPath(data['name'])
 
         collection = db["products"]
 
@@ -410,8 +435,8 @@ async def get_product(name:str, id: UUID):
         product = GetProduct(name=name, id=id)
 
         collection = db['products']
-        print(product.name)
-        result = await collection.find_one({'name': {'$regex': re.escape(product.name), '$options': 'i'}, 'id': str(product.id)})
+
+        result = await collection.find_one({'alias':  name, 'id': str(product.id)})
         
          # product not found, raise operation failure error
         if result is None:
