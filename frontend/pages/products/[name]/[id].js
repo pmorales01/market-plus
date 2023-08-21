@@ -5,7 +5,6 @@ import Description from '/components/Description'
 import Gallery from '/components/Gallery'
 import NavBar from '/components/NavBar'
 import Link from 'next/link';
-import { clearPreviewData } from 'next/dist/server/api-utils'
 
 export default function Product () {
     const [data, setData] = useState({
@@ -13,6 +12,11 @@ export default function Product () {
         'condition': '', 'condition_desc': '', 'description': []
     })
 
+    // successful response = 200 OK = true
+    const [successfulResponse, setSuccessfulResponse] = useState(false)
+    // data has been populated = true
+    const [hasLoaded, setHasLoaded] = useState(false)
+    
     const router = useRouter()
 
     useEffect(() => {
@@ -28,13 +32,21 @@ export default function Product () {
             
                 console.log(response)
 
-                if (response.status !== 200) {
+                // page not found, invalid path
+                if (response.status === 404) {
+                    return
+                } else if (response.status !== 200) { // reroute, other error occurred
                     router.push('/')
                     return
                 }
+
                 const json_data = await response.json()
+
                 console.log(json_data)
+
                 setData(json_data)
+                setSuccessfulResponse(true)
+                setHasLoaded(true)
             } catch (error) {
                 console.log(error)
             }
@@ -43,7 +55,8 @@ export default function Product () {
         getProduct()
     }, [])
 
-    return (
+    if (hasLoaded) { // response received
+    return successfulResponse ? ( // 200 OK returned 
         <div className="flex flex-col space-y-14 w-screen h-screen">
             <NavBar/>
             <div className='grid sm:grid-cols-1 md:grid-cols-5 mx-7 gap-x-10'>
@@ -96,5 +109,11 @@ export default function Product () {
             </div>
             <Description children={data['description']}/>
         </div>
-    )
+    ) : ( // 404 returned 
+        <div className="flex flex-col items-center space-y-14 w-full h-screen">
+        <NavBar/>
+            <h1>404 Page Not Found</h1>
+            <img className="h-1/3 w-1/3" src="/svgs/face-frown-open.svg"/>
+        </div>
+    )}
 }
