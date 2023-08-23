@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import Description from '/components/Description'
 import Gallery from '/components/Gallery'
 import NavBar from '/components/NavBar'
+import PageNotFound from '/components/PageNotFound'
 import Link from 'next/link';
 
 export default function Product () {
@@ -14,7 +15,7 @@ export default function Product () {
 
     // successful response = 200 OK = true
     const [successfulResponse, setSuccessfulResponse] = useState(false)
-    // data has been populated = true
+    // request to backend returned a response
     const [hasLoaded, setHasLoaded] = useState(false)
     
     const router = useRouter()
@@ -34,8 +35,10 @@ export default function Product () {
 
                 // page not found, invalid path
                 if (response.status === 404) {
+                    setHasLoaded(true)
                     return
                 } else if (response.status !== 200) { // reroute, other error occurred
+                    setHasLoaded(true)
                     router.push('/')
                     return
                 }
@@ -66,10 +69,10 @@ export default function Product () {
                 </div>
                 {/* Product name and description (short) */}
                 <div className='flex flex-col md:col-span-2'>
-                    <h1>{data['name']}</h1>
+                    <div className='text-2xl md:text-3xl'>{data['name']}</div>
                     <p><Link href="/" className='link link-hover text-blue-600'>{data['seller']}</Link></p>
                     <hr/>
-                    <p className='h-full py-2'>{data['short_desc']}</p>
+                    <p className='h-full py-2 whitespace-pre-line'>{data['short_desc']}</p>
                     <hr/>
                 </div>
                 {/* Add to Cart and Buy Options */}
@@ -79,7 +82,7 @@ export default function Product () {
                         {parseInt(data['price'])}
                         <sup className="text-sm">{data['price'].toFixed(2).split(".")[1]}</sup>
                     </p>
-                    <button className='h-10 w-11/12 px-4 border rounded-lg bg-blue-500 text-white font-semibold w-1/3 hover:bg-rose-700 self-center'>Add to Cart</button>
+                    <button className='h-10 w-11/12 px-4 border rounded-lg bg-blue-500 text-white font-semibold w-1/3 hover:bg-rose-700 self-center md:text-sm'>Add to Cart</button>
                 </div>
             </div>
             <div className='flex flex-col mx-5 space-y-1'>
@@ -110,10 +113,6 @@ export default function Product () {
             <Description children={data['description']}/>
         </div>
     ) : ( // 404 returned 
-        <div className="flex flex-col items-center space-y-14 w-full h-screen">
-        <NavBar/>
-            <h1>404 Page Not Found</h1>
-            <img className="h-1/3 w-1/3" src="/svgs/face-frown-open.svg"/>
-        </div>
+        <PageNotFound/>
     )}
 }

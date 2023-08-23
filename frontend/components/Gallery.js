@@ -6,6 +6,7 @@ export default function Gallery({images=[]}) {
     // tracks the 'magnifier' element's visibility
     const [visible, setVisible]  = useState(false)
 
+    // section of image to zoom in
     const [percentageX, setPercentageX] = useState(0)
     const [percentageY, setPercentageY] = useState(0)
 
@@ -120,14 +121,14 @@ export default function Gallery({images=[]}) {
             <div className="flex flex-row justify-center rounded w-4/5 h-full relative" id="image-display" onMouseMove={handleHover} onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
                 <img src={source} className='max-w-full max-h-full'/>
                 {visible &&
-                    <div id="magnifier"  className="w-1/3 h-1/3 bg-teal-50 opacity-20 z-50 absolute left-0 rounded">
+                    <div id="magnifier"  className="w-1/3 h-1/3 bg-teal-50 opacity-20 z-50 absolute left-0 rounded hidden md:max-xl:block ">
                     </div>
                 }
             </div>
-            {/* zoom v */}
+            {/* zoom */}
             {visible &&
-                <div id="zoom-container" className='absolute right-20 z-50 bg-red-300 overflow-hidden'>
-                    <img src={source} id="zoomed-image" alt="magnified image" className="h-96 origin-top-left" style={{
+                <div id="zoom-container" className='absolute right-1/4 z-50 overflow-hidden hidden md:max-xl:block'>
+                    <img src={source} id="zoomed-image" alt="magnified image" className="md:h-72 lg:h-96 origin-top-left" style={{
                         transform: `scale(3, 3) translate(${percentageX}%, ${percentageY}%)`
                     }} />
                 </div>
