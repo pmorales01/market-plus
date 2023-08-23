@@ -47,18 +47,19 @@ export default function edit() {
     return (
         <div className="flex flex-col items-center space-y-14 w-full h-screen">
             <NavBar/>
-            {products.map(() => {
+            {products.map((product) => {
+                const link = `/${product['seller']}/products/item/${product['alias']}/${product['id']}/edit`
                 return (
-                <div className="card w-96 bg-base-100 shadow-xl">
-                    <figure><img src="/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg" alt="Shoes" /></figure>
-                    <div className="card-body">
-                    <h2 className="card-title">Shoes!</h2>
-                    <p>If a dog chews shoes whose shoes does he choose?</p>
-                    <div className="card-actions justify-end">
-                        <button className="btn btn-primary" onClick={handleClick}>Edit</button>
+                    <div key={product['id']} className="card w-96 bg-base-100 shadow-xl">
+                        <figure><img src={`data:${product['image']['type']};base64,${product['image']['bytes']}`} alt="Shoes" /></figure>
+                        <div className="card-body">
+                            <h3 className="text-xl font-semibold truncate"><a href={link}>{product['name']}</a></h3>
+                            <p>If a dog chews shoes whose shoes does he choose?</p>
+                            <div className="card-actions justify-end">
+                                <button className="btn btn-primary" onClick={handleClick}>Edit</button>
+                            </div>
+                        </div>
                     </div>
-                    </div>
-                </div>
                 )
             })}
         </div>

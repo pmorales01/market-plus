@@ -344,22 +344,27 @@ async def store_edit(store: str, seller: str = Depends(authenticate_seller)):
         collection = db["products"]
         
         # seller is authenticated, find products with seller's name
-        result = await collection.find({'seller': seller['name']}, {'alias' : 1, 'id': 1}).to_list(length=100)
+        result = await collection.find({'seller': seller['name']}, {'alias' : 1, 'id': 1, 'name': 1, 'images': 1}).to_list(length=100)
         
         # no products retrieved
         if not result:
             raise HTTPException(status_code=404, detail="Products not found")
         
-        # for each product found, only return the alias and id
+        # for each product found, only return the alias, id, name
         products = []
         for product in result:
-            products.append({'alias' : product['alias'], 'id' : product['id']})
+            # get the first image of each product
+            image = product['images'][0]
+
+            products.append({'seller': seller['name'], 'name': product['name'], 'alias' : product['alias'], 'id' : product['id'], 
+                'image': {'bytes' : base64.b64encode(image['bytes']).decode("utf-8"), 'type' : image['type']}
+            })
         
         return products
     except OperationFailure as e:
         return {"Operation Error": e}
 
-@app.put('/{store}/products/edit/{name}/{id}')
+@app.put('/{store}/products/item/edit/{name}/{id}')
 async def edit_product(store: str, name: str, id: UUID, seller: str = Depends(authenticate_seller)):
     return {'store': store, 'name' : name, 'id': id}
 
