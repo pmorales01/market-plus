@@ -338,9 +338,30 @@ async def authenticate_seller(store: str, seller: str = Depends(is_seller)):
 async def get_store(store: str):
     return "Visiting store"
 
-@app.put('/{store}/edit')
-async def store_edit(store: str, token: str = Depends(validate_token)):
-    return 'editing store'
+@app.get('/{store}/products/edit')
+async def store_edit(store: str, seller: str = Depends(authenticate_seller)):
+    try:
+        collection = db["products"]
+        
+        # seller is authenticated, find products with seller's name
+        result = await collection.find({'seller': seller['name']}, {'alias' : 1, 'id': 1}).to_list(length=100)
+        
+        # no products retrieved
+        if not result:
+            raise HTTPException(status_code=404, detail="Products not found")
+        
+        # for each product found, only return the alias and id
+        products = []
+        for product in result:
+            products.append({'alias' : product['alias'], 'id' : product['id']})
+        
+        return products
+    except OperationFailure as e:
+        return {"Operation Error": e}
+
+@app.put('/{store}/products/edit/{name}/{id}')
+async def edit_product(store: str, name: str, id: UUID, seller: str = Depends(authenticate_seller)):
+    return {'store': store, 'name' : name, 'id': id}
 
 async def getAliasPath(name: str):
     # split name by '-'
