@@ -340,6 +340,8 @@ async def get_store(store: str):
 
 @app.get('/{store}/products/edit')
 async def store_edit(store: str, seller: str = Depends(authenticate_seller)):
+    """Returns a list of a seller's products that are available to edit, 
+    delete, duplicate"""
     try:
         collection = db["products"]
         
@@ -361,6 +363,35 @@ async def store_edit(store: str, seller: str = Depends(authenticate_seller)):
             })
         
         return products
+    except OperationFailure as e:
+        return {"Operation Error": e}
+
+@app.post('/{store}/products/{name}/{id}/clone')
+async def clone_product(store: str, name: str, id: UUID, seller: str=Depends(authenticate_seller)):
+    """Create a copy of the product that matches the store, name, and id."""
+    try:
+        collection = db['products']
+
+        # find record matching seller, name, and id
+        result = await collection.find_one({'seller': seller['name'], 'name': name, 'id': str(id)})
+
+        # record not found, cannot duplicate
+        if not result:
+            raise HTTPException(status_code=404, detail="Original Product Not Found")
+        
+        # create a dictionary from record
+        clone = dict(result)
+        
+        # set the new copy's id 
+        clone['id'] = str(uuid.uuid4())
+
+        # remove the ObjectId Field
+        clone.pop('_id')
+
+        # create the copy
+        clone_result = await collection.insert_one(clone)
+
+        return {"message": "Successfully created copy of product!"}
     except OperationFailure as e:
         return {"Operation Error": e}
 
