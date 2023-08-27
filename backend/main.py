@@ -395,6 +395,23 @@ async def clone_product(store: str, name: str, id: UUID, seller: str=Depends(aut
     except OperationFailure as e:
         return {"Operation Error": e}
 
+@app.post('/{store}/products/{name}/{id}/delete')
+async def delete_product(store: str, name: str, id: UUID, seller: str=Depends(authenticate_seller)):
+    try:
+        collection = db['products']
+
+        # delete the record with the matching seller, name, and id
+        result = await collection.delete_one({'seller': seller['name'], 'name': name, 'id': str(id)})
+
+        # if the delete count isn't one, somethign went wrong
+        if result.deleted_count != 1:
+            raise HTTPException(status_code=404, detail="Product not found or could not be deleted")
+
+        return "Product deleted successfully"
+
+    except OperationFailure as e:
+        return {"Operation Error": e}
+
 @app.put('/{store}/products/item/edit/{name}/{id}')
 async def edit_product(store: str, name: str, id: UUID, seller: str = Depends(authenticate_seller)):
     return {'store': store, 'name' : name, 'id': id}
