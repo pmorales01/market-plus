@@ -13,8 +13,8 @@ export default  function Alert({message, onClick}) {
 
     return (
         <div className="fixed z-50 h-screen w-screen top-0 left-0" id="popup">
-            <div className="-translate-x-1/2 card w-96 bg-base-100 shadow-xl inset-1/2">
-                <div className="card-body">
+            <div className="-translate-x-1/2 card w-96 bg-base-100 shadow-xl inset-1/2 rounded-none">
+                <div className="card-body ">
                 <h2 className="card-title self-center">Error!</h2>
                 {errors}
                 <div className="card-actions justify-center">

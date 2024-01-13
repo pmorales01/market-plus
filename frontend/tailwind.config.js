@@ -10,44 +10,42 @@ module.exports = {
     themes: [
       {
         light: {
-          ...require('daisyui/src/colors/themes')['[data-theme=light]'], 
-          primary: '#28BFF6',
-          secondary: '#F08590',
-          fontFamily: 'ui-monospace',
-          '.btn-primary:hover': {
-            'background-color': 'red'
+          '*' : {
+            'font-family': 'Montserrat, sans-serif',
           },
-          'span': {
-            'font-size': '14px'
+          '.btn-primary': {
+            'background-color': 'black',
+            'color': 'white',
+            'font': 'inherit',
+            'text-transform': 'none',
+          },
+          '.btn': {
+            'font-family': 'Montserrat, sans-serif',
+            'border-radius': '0px',
+            'letter-spacing': '.2em',
+            'font-size': '13px'
           },
           '.title': {
-            'color': '#F08590',
-            'font-size': '2.25rem',
-            'line-height': '2.5rem',
-            'font-weight': '500'
-          }, 
-          'h1': {
-            'font-size': '2.25rem',
-            'line-height': '2.5rem'
-          }, 
-          'h2' : {
-            'font-size': '1.875rem',
-            'line-height': '2.25rem'
+            'font-size': '20px',
+            'color': '#201e1f',
+            'text-transform': 'uppercase',
+            'letter-spacing': '.2em',
+            'line-height': '1.65',
           },
-          '.input-hover:hover': {
-            'border': 'solid #74c5f7'
+          'input' : {
+            'border-radius': '0px'
           },
-          '#image-gallery::-webkit-scrollbar': {
-            'width': '0',
-            'background': 'transparent'
+          'p' : {
+            'color': '#6a6a6a',
+            'font-size': '13px',
+            'font-weight': '500',
           },
-          'th': {
-            'text-align': 'left',
-          },
-          'td': {
-            'padding-left': '48px',
-
-          }
+        },
+        screens: {
+          'sm': '535px',
+          'md': '768px',
+          'lg': '1024px',
+          'xl': '1280px',
         },
       },
     ],
