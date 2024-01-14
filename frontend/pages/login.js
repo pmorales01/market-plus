@@ -50,24 +50,26 @@ export default function Login () {
     }
 
     return (
-        <div className="flex flex-col items-center space-y-14 w-full h-screen">
+        <div className="flex flex-col items-center space-y-12 w-full h-screen">
             <NavBar/>
             <h1 className='title'>Login</h1>
-            <form method='post' className="grow form-control w-full max-w-xs space-y-2" onSubmit={handleSubmit}>
+            <form method='post' className="grow form-control w-[400px] space-y-3" onSubmit={handleSubmit}>
                 {message && visible && <Alert message={message} onClick={updatePopup} />}
+                <p className='self-center'>Please enter your e-mail and password:</p>
                 <label className="label" htmlFor="email">
                     <span className="label-text">Email</span>
-                    <span className="label-text-alt text-red-500">Required * </span>
                 </label>
-                <input type="email" id="email" name="email" autoComplete='on' className="input input-bordered input-sm w-full max-w-xs" required></input>
+                <input type="email" id="email" name="email" autoComplete='on' className="input input-bordered input-sm w-full max-w-full" required></input>
                 <label className="label" htmlFor="password">
                     <span className="label-text">Password</span>
-                    <span className="label-text-alt text-red-500">Required * </span>
                 </label>
-                <input type="password" id="password" name="password" autoComplete='on' className="input input-bordered input-sm w-full max-w-xs" required></input>
-                <p><Link href="/signup" className='link link-hover'>New Customer?</Link></p>
+                <input type="password" id="password" name="password" autoComplete='on' className="input input-bordered input-sm w-full max-w-full" required></input>
+                <div className='flex justify-center space-x-1'>
+                    <p>Don't have an account?</p>
+                    <Link href="/signup" className='link link-hover'>Create one</Link>
+                </div>
                 <button className="btn btn-primary">
-                    Submit
+                    LOGIN
                 </button>
             </form>
             <Footer/>

@@ -29,17 +29,27 @@ module.exports = {
             'font-size': '20px',
             'color': '#201e1f',
             'text-transform': 'uppercase',
-            'letter-spacing': '.2em',
+            'letter-spacing': '.3em',
             'line-height': '1.65',
           },
+          '.label-text': {
+            'color': '#1c1b1b',
+          },
           'input' : {
-            'border-radius': '0px'
+            'border-radius': '0px',
+            'color': '#1c1b1b',
           },
           'p' : {
             'color': '#6a6a6a',
             'font-size': '13px',
             'font-weight': '500',
+            'font-style': 'normal'
           },
+          '.link' : {
+            'color': '#6a6a6a',
+            'font-size': '13px',
+            'font-weight': '500',
+          }
         },
         screens: {
           'sm': '535px',
