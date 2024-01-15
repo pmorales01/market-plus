@@ -32,12 +32,33 @@ module.exports = {
             'letter-spacing': '.3em',
             'line-height': '1.65',
           },
-          '.label-text': {
-            'color': '#1c1b1b',
+          '.input-container': {
+            position: 'relative',
+            margin: '20px',
           },
           'input' : {
             'border-radius': '0px',
-            'color': '#1c1b1b',
+            color: '#6a6a6a',
+            padding: '14px',
+            height: '42px',
+          },
+          'input:focus + label, input:not(:placeholder-shown) + label': {
+            top: '0',
+            'font-size': '12px',
+            'color': '#6a6a6a',
+            'background-color': 'white',
+            'padding': '0px 3px 0px 3px',
+          },
+          'label': {
+            position: 'absolute',
+            top: '50%',
+            left: '10px',
+            transform: 'translateY(-55%)',
+            'pointer-events': 'none',
+            transition: 'all 0.3s ease',
+            color: '#6a6a6a',
+            'font-size': '12px',
+            'font-weight': '500',
           },
           'p' : {
             'color': '#6a6a6a',

@@ -53,22 +53,26 @@ export default function Login () {
         <div className="flex flex-col items-center space-y-12 w-full h-screen">
             <NavBar/>
             <h1 className='title'>Login</h1>
-            <form method='post' className="grow form-control w-[400px] space-y-3" onSubmit={handleSubmit}>
+            <form method='post' className="grow form-control w-[400px]" onSubmit={handleSubmit}>
                 {message && visible && <Alert message={message} onClick={updatePopup} />}
-                <p className='self-center'>Please enter your e-mail and password:</p>
-                <label className="label" htmlFor="email">
-                    <span className="label-text">Email</span>
-                </label>
-                <input type="email" id="email" name="email" autoComplete='on' className="input input-bordered input-sm w-full max-w-full" required></input>
-                <label className="label" htmlFor="password">
-                    <span className="label-text">Password</span>
-                </label>
-                <input type="password" id="password" name="password" autoComplete='on' className="input input-bordered input-sm w-full max-w-full" required></input>
-                <div className='flex justify-center space-x-1'>
+                <p className='self-center mb-4'>Please enter your e-mail and password:</p>
+                <div className='input-container'>
+                    <input type="email" id="email" name="email" autoComplete='on' className="input input-bordered input-sm w-full max-w-full" placeholder=' ' required></input>
+                    <label className="label" htmlFor="email">
+                        <span>Email</span>
+                    </label>
+                </div>
+                <div className='input-container'>
+                    <input type="password" id="password" name="password" autoComplete='on' className="input input-bordered input-sm w-full max-w-full" placeholder=' ' required></input>
+                    <label className="label" htmlFor="password">
+                        <span>Password</span>
+                    </label>
+                </div>
+                <div className='flex justify-center space-x-1 mt-4'>
                     <p>Don't have an account?</p>
                     <Link href="/signup" className='link link-hover'>Create one</Link>
                 </div>
-                <button className="btn btn-primary">
+                <button className="btn btn-primary mt-4">
                     LOGIN
                 </button>
             </form>
