@@ -68,11 +68,12 @@ export default function Login () {
                         <span>Password</span>
                     </label>
                 </div>
+                
                 <div className='flex justify-center space-x-1 mt-4'>
                     <p>Don't have an account?</p>
                     <Link href="/signup" className='link link-hover'>Create one</Link>
                 </div>
-                <button className="btn btn-primary mt-4">
+                <button className="btn btn-primary m-5">
                     LOGIN
                 </button>
             </form>

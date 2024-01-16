@@ -61,51 +61,40 @@ export default function signup () {
         <div className="flex flex-col items-center space-y-14 w-full h-screen">
             <NavBar/>
             <h1 className='title'>Sign Up</h1>
-            <form method='post' className="grow form-control w-full max-w-xs space-y-1.5" onSubmit={handleSubmit}>
+            <form method='post' className="w-[500px] form-control space-y-7 p-4" onSubmit={handleSubmit}>
                 { message && visible && <Alert message={message} onClick={updatePopup}/>}
-                <p className="self-start">
-                    <span className='text-red-500'>* </span> 
-                    Required Fields 
-                </p>
-                <div className='grid grid-rows-2 grid-flow-col gap-4'>
+                <div className='input-container' style={{'margin-bottom': '0px'}}>
+                    <input type="text" id="fname" name="fname" autoComplete='on' className="input input-bordered input-sm w-full" placeholder='' required></input>
                     <label className='label' htmlFor='fname'>
-                        <span className="label-text">
-                            First Name
-                            <span className="label-text-alt text-red-500"> * </span>
-                        </span> 
+                        <span>First Name</span> 
                     </label>
-                    <input type="text" id="fname" name="fname" autoComplete='on' className="input input-bordered input-sm w-full max-w-xs" required></input>
-                    <label className='label' htmlFor='lname'>
-                        <span className="label-text">
-                            Last Name
-                            <span className="label-text-alt text-red-500"> * </span>
-                        </span>
-                    </label>
-                    <input type="text" id="lname" name="lname" autoComplete='on' className="input input-bordered input-sm w-full max-w-xs" required></input>
                 </div>
-                <label className="label" htmlFor="username">
-                    <span className="label-text">
-                        Username
-                        <span className="label-text-alt text-red-500"> * </span>
-                    </span>
-                </label>
-                <input type="text" id="username" name="username" autoComplete='on' className="input input-bordered input-sm w-full max-w-xs" required></input>
-                <label className="label" htmlFor="email">
-                    <span className="label-text">
-                        Email
-                        <span className="label-text-alt text-red-500"> * </span>
-                    </span>
-                </label>
-                <input type="email" id="email" name="email" autoComplete='on' className="input input-bordered input-sm w-full max-w-xs" required></input>
-                <label className="label" htmlFor="password">
-                    <span className="label-text">
-                        Password
-                        <span className="label-text-alt text-red-500"> * </span>
-                    </span>
-                </label>
-                <input type="password" id="password" name="password" className="input input-bordered input-sm w-full max-w-xs" required></input>
+                <div className='input-container'>
+                    <input type="text" id="lname" name="lname" autoComplete='on' className="input input-bordered input-sm w-full" placeholder='' required></input>
+                    <label className='label' htmlFor='lname'>
+                        <span>Last Name</span>
+                    </label>
+                </div>
+                <div className='input-container'>
+                    <input type="text" id="username" name="username" autoComplete='on' className="input input-bordered input-sm w-full" placeholder='' required></input>
+                    <label className="label" htmlFor="username">
+                        <span>Username</span>
+                    </label>
+                </div>
+                <div className='input-container'>
+                    <input type="email" id="email" name="email" autoComplete='on' className="input input-bordered input-sm w-full" placeholder='' required></input>
+                    <label className="label" htmlFor="email">
+                        <span>Email</span>
+                    </label>
+                </div>
+                <div className='input-container'>
+                    <input type="password" id="password" name="password" className="input input-bordered input-sm w-full" placeholder='' required></input>
+                    <label className="label" htmlFor="password">
+                        <span>Password</span>
+                    </label>
+                </div>
                 <br/>
-                <button className="btn btn-primary">
+                <button className="btn btn-primary m-5">
                     Submit
                 </button>
             </form>
