@@ -102,62 +102,46 @@ export default function seller_signup() {
                 <NavBar/>
                 <h1 className="title">Seller Sign Up</h1>
                 {message && visible && <Alert message={message} onClick={updatePopup}/>}
-                <form method='post' className="grow form-control space-y-1.5 w-1/2 flex items-center" onSubmit={handleSubmit}>
-                    <p className="w-2/3">
-                        <span className='text-red-500'>* </span> 
-                        Required Fields 
-                    </p>
-                    <label className="label w-2/3" htmlFor="name">
-                        <span className="label-text min-w-min">
+                <form method='post' className="w-[500px] form-control form-control flex items-center" onSubmit={handleSubmit}>
+                    <div className='input-container w-5/6'>
+                        <input type="text" id="name" name="name" autoComplete='on' className="input input-bordered input-sm w-full" placeholder='' required></input>
+                        <label className="label" htmlFor="name">
                             Organization Name
-                            <span className="label-text-alt text-red-500"> * </span>
-                        </span>
-                    </label>
-                    <input type="text" id="name" name="name" autoComplete='on' className="input input-bordered input-sm w-2/3" required></input>
-                    <label className="label w-2/3" htmlFor="email">
-                        <span className="label-text min-w-min">
-                            Organization Email
-                            <span className="label-text-alt text-red-500"> * </span>
-                        </span>
-                    </label>
-                    <input type="email" id="email" name="email" autoComplete='on' className="input input-bordered input-sm w-2/3" required></input>
-                    <p className="pt-3 w-2/3"><b>Shipping Address</b></p>
-                    <label className="label w-2/3" htmlFor="street">
-                        <span className="label-text min-w-min">
+                        </label>
+                    </div>
+                    <div className='input-container w-5/6'>
+                        <input type="email" id="email" name="email" autoComplete='on' className="input input-bordered input-sm w-full" placeholder='' required></input>
+                        <label className="label" htmlFor="email">
+                                Organization Email
+                        </label>
+                    </div>
+                    <div className='input-container w-5/6'>
+                        <input type="text" id="street" name="street" className="input input-bordered input-sm w-full" placeholder="" required></input>
+                        <label className="label" htmlFor="street">
                             Street Address
-                            <span className="label-text-alt text-red-500"> * </span>
-                        </span>
-                    </label>
-                    <input type="text" id="street" name="street" className="input input-bordered input-sm w-2/3" required></input>
-                    <label className="label w-2/3" htmlFor="address2">
-                        <span className="label-text min-w-min">
-                            Address Line 2
-                        </span>
-                    </label>
-                    <input type="text" id="address2" name="address2" className="input input-bordered input-sm w-2/3" placeholder="Apt, suite, etc."></input>
-                    <label className="label w-2/3" htmlFor="city">
-                        <span className="label-text min-w-min">
-                            City
-                            <span className="label-text-alt text-red-500"> * </span>
-                        </span>
-                    </label>
-                    <input type="text" id="city" name="city" className="input input-bordered input-sm w-2/3" required></input>
-                    <label className="label w-2/3" htmlFor="state">
-                        <span className="label-text min-w-min">
-                            State
-                            <span className="label-text-alt text-red-500"> * </span>
-                        </span>
-                    </label>
+                        </label>
+                    </div>
+                    <div className='input-container w-5/6'>
+                        <input type="text" id="address2" name="address2" className="input input-bordered input-sm w-full" placeholder=""></input>
+                        <label className="label" htmlFor="address2">
+                        Address Line 2
+                        </label>
+                    </div>
+                    <div className='input-container w-5/6'>
+                        <input type="text" id="city" name="city" className="input input-bordered input-sm w-full" placeholder="" required></input>
+                        <label className="label" htmlFor="city">
+                        City
+                        </label>
+                    </div>
                     <SelectList items={states} name={'state'}/>
-                    <label className="label w-2/3" htmlFor="zipcode">
-                        <span className="label-text min-w-min">
+                    <div className='input-container w-5/6'>
+                        <input type="text" id="zipcode" name="zipcode" className="input input-bordered input-sm w-full" placeholder="" required></input>
+                        <label className="label" htmlFor="zipcode">
                             Zipcode
-                            <span className="label-text-alt text-red-500"> * </span>
-                        </span>
-                    </label>
-                    <input type="text" id="zipcode" name="zipcode" className="input input-bordered input-sm w-2/3" required></input>
+                        </label>
+                    </div>
                     <br/>
-                    <button className="btn btn-primary w-1/2">
+                    <button className="btn btn-primary w-5/6">
                         <span className="capitalize">Submit</span>
                     </button>
                 </form>
