@@ -36,7 +36,7 @@ module.exports = {
             position: 'relative',
             margin: '20px',
           },
-          'input' : {
+          '.input-container input' : {
             'border-radius': '0px',
             color: '#6a6a6a',
             padding: '14px',
@@ -49,7 +49,7 @@ module.exports = {
             'background-color': 'white',
             'padding': '0px 3px 0px 3px',
           },
-          'label': {
+          '.input-container label': {
             position: 'absolute',
             top: '50%',
             left: '10px',

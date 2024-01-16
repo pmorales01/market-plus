@@ -11,7 +11,6 @@ export default function create_product() {
     const categories = ['Appliances', 'Arts & Crafts', 'Automotive Accessories', 'Automotive Parts', 'Books', 'Clothing','Electronics', 'Music', 'Trading Cards', 'Video Games']
     const [showSelected, setShowSelected] = useState(false)
     const [charLength, setCharLength] = useState(0)
-    const [children, setChildren] = useState([])
     const [previewVisible, setPreviewVisible] = useState(false)
     const [productImages, setProductImages] = useState([])
     const [imageCount, setImageCount] = useState(0)
@@ -174,6 +173,10 @@ export default function create_product() {
 
         // decrement image count
         setImageCount(imageCount - 1)
+
+        // Reset file input element
+        const fileInput = document.getElementById('product-image-upload');
+        fileInput.value = ''; // clear the selected file
     }
 
     const processTextarea = (event) => {
@@ -245,7 +248,7 @@ export default function create_product() {
                 data.append('category', selected)
                 data.append('condition', fieldset.querySelector('input:checked').value)
                 data.append('condition_desc', document.getElementById('condition-desc').value)
-                data.append('description', JSON.stringify(children))
+                
                 productImages.map(image => {
                     data.append('images', image.file)
                 })
@@ -290,18 +293,24 @@ export default function create_product() {
                         <input type="image" src="/svgs/eye.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" onClick={handlePreview}/>
                     </div>
                     <div className="flex flex-col w-1/2 space-y-2">
-                        <label htmlFor="product-name">Product Name<span className="text-rose-600"> *</span></label>
-                        <input type="text" id="product-name" name="product-name" className="border px-2" required />
-                        <label htmlFor="product-brand">Brand<span className="text-rose-600"> *</span></label>
-                        <input type="text" id="product-brand" name="product-brand" className="border px-2" required />
-                        <label htmlFor="price">Price<span className='text-rose-600'> *</span></label>
+                        <div className="input-container" style={{marginLeft : '0px'}}>
+                            <input type="text" id="product-name" name="product-name" className="border px-2" placeholder="" required />
+                            <label htmlFor="product-name">Product Name</label>
+                        </div>
+                        <div className="input-container" style={{marginLeft : '0px'}}>
+                            <input type="text" id="product-brand" name="product-brand" className="border px-2" placeholder="" required />
+                            <label htmlFor="product-brand">Brand</label>
+                        </div>
+                        <label htmlFor="price">Price</label>
                         <div className='flex flex-row'>
                             <p className='w-12 bg-[#D2D2D2] h-full text-center font-bold rounded'>$</p>
-                            <input type="number" id="price" name="price" className='border px-2 w-1/4' min="0.01" max="10000" step="0.01" required/>
+                            <input type="number" id="price" name="price" className='border px-2 w-1/4' min="0.01" max="10000" step="1" required/>
                         </div>
-                        <label htmlFor='product-color'>Color</label>
-                        <input type="text" id="product-color" name="product-color" className="border px-2" />
-                        <label htmlFor='product-description'>Short Product Description<span className="text-rose-600"> *</span> (max 1000 characters)</label>
+                        <div className="input-container">
+                            <input type="text" id="product-color" name="product-color" className="border px-2" placeholder="" />
+                            <label htmlFor='product-color'>Color</label>
+                        </div>
+                        <label htmlFor='product-description'>Short Product Description (max 1000 characters)</label>
                         <textarea maxLength={1000} id="product-description" onChange={processTextarea} onKeyDown={handleKeyDown} className='resize-none	h-32 border p-2' required></textarea>
                     </div>
                     <div className='flex flex-col'>
@@ -318,8 +327,8 @@ export default function create_product() {
                             <div className={`grid grid-rows-${Math.ceil(imageCount / 2)} grid-cols-2 gap-8`}>
                                 {productImages.map(image => {
                                     return (
-                                        <div key={image.id}>
-                                            <img src={image.src}  id={image.id} className="max-w-full h-48" onClick={deleteProductImage}/>
+                                        <div key={image.id} className='flex flex-col justify-center items-center space-y-2'>
+                                            <img src={image.src}  id={image.id} className="max-w-fit h-48" onClick={deleteProductImage}/>
                                             <p className='text-center'>{image.filename}</p>
                                         </div>
                                     )
@@ -353,7 +362,7 @@ export default function create_product() {
                         )}
                     </div>
                     <div>
-                        <h2>Condition<span className="text-rose-600"> *</span></h2>
+                        <h2>Condition</h2>
                         <fieldset id="condition-radio">
                             <input type="radio" id="New" name="condition" value="New" required/>
                             <label htmlFor="New"> New</label>
@@ -380,17 +389,12 @@ export default function create_product() {
                             <textarea className="border border-2 w-full" id="condition-desc" name="condition-desc" onChange={handleTextarea} maxLength="50" required></textarea>
                             <p className='text-right'>{charLength}/50 Characters</p>
                         </div>
-                        <div className='my-8'>
-                            <h2>Description <span className='text-sm'>(Describe your product in more detail)</span></h2>
-                            <Canvas children={children} setChildren={setChildren}/>
-                        </div>
                     </div>
                     {previewVisible && 
                         <div className="fixed z-50 h-screen w-screen top-0 left-0 overflow-auto" id="popup">
                             <div className="-translate-x-1/2 card w-11/12 bg-base-100 shadow-xl inset-1/2">
                                 <div className="card-body">
                                 <h2 className="card-title self-center">Preview</h2>
-                                <Description children={children}/>
                                 <div className="card-actions justify-center">
                                     <button className="btn btn-primary" onClick={closePreview}>
                                         <span className="capitalize">Close</span>
