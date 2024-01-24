@@ -52,10 +52,12 @@ export default function Login () {
     return (
         <div className="flex flex-col items-center space-y-12 w-full h-screen">
             <NavBar/>
-            <h1 className='title'>Login</h1>
             <form method='post' className="grow form-control w-[400px]" onSubmit={handleSubmit}>
                 {message && visible && <Alert message={message} onClick={updatePopup} />}
-                <p className='self-center mb-4'>Please enter your e-mail and password:</p>
+                <header className='flex flex-col items-center'>
+                    <h1 className='title mb-5'>Login</h1>
+                    <p className='self-center mb-5'>Please enter your e-mail and password:</p>
+                </header>
                 <div className='input-container'>
                     <input type="email" id="email" name="email" autoComplete='on' className="input input-bordered input-sm w-full max-w-full" placeholder=' ' required></input>
                     <label className="label" htmlFor="email">
@@ -69,11 +71,11 @@ export default function Login () {
                     </label>
                 </div>
                 
-                <div className='flex justify-center space-x-1 mt-4'>
+                <div className='flex justify-center space-x-1 mb-5'>
                     <p>Don't have an account?</p>
                     <Link href="/signup" className='link link-hover'>Create one</Link>
                 </div>
-                <button className="btn btn-primary m-5">
+                <button className="btn btn-primary">
                     LOGIN
                 </button>
             </form>

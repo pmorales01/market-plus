@@ -6,9 +6,17 @@ module.exports = {
     './app/**/*.{js,ts,jsx,tsx,mdx}',
   ],
 
+  important: true,
+
   daisyui: {
+    screens: {
+      'sm': '375px',
+      'md': '768px',
+      'lg': '1024px',
+      'xl': '1280px',
+    },
     themes: [
-      {
+      { 
         light: {
           '*' : {
             'font-family': 'Montserrat, sans-serif',
@@ -34,7 +42,7 @@ module.exports = {
           },
           '.input-container': {
             position: 'relative',
-            margin: '20px',
+            'margin-bottom': '20px'
           },
           '.input-container input' : {
             'border-radius': '0px',
@@ -71,14 +79,8 @@ module.exports = {
             'font-size': '13px',
             'font-weight': '500',
           }
-        },
-        screens: {
-          'sm': '535px',
-          'md': '768px',
-          'lg': '1024px',
-          'xl': '1280px',
-        },
-      },
+        }
+      }
     ],
   },
 
