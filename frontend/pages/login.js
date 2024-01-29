@@ -50,16 +50,16 @@ export default function Login () {
     }
 
     return (
-        <div className="flex flex-col items-center space-y-12 w-full sm:max-md:w-fit h-screen sm:bg-red-200 md:bg-blue-800">
+        <div className="flex flex-col items-center space-y-12 w-full sm:max-md:w-fit h-screen">
             <NavBar/>
-            <form method='post' className="grow form-control w-[400px] xs:w-11/12 w-full" onSubmit={handleSubmit}>
+            <form method='post' className="grow form-control w-[400px] xs:max-sm:w-11/12" onSubmit={handleSubmit}>
                 {message && visible && <Alert message={message} onClick={updatePopup} />}
                 <header className='flex flex-col items-center'>
                     <h1 className='title mb-5'>Login</h1>
                     <p className='self-center mb-5'>Please enter your e-mail and password:</p>
                 </header>
                 <div className='input-container'>
-                    <input type="email" id="email" name="email" autoComplete='on' className="input input-bordered input-sm w-full  max-w-full" placeholder=' ' required></input>
+                    <input type="email" id="email" name="email" autoComplete='on' className="input input-bordered input-sm w-full max-w-full" placeholder=' ' required></input>
                     <label className="label" htmlFor="email">
                         <span>Email</span>
                     </label>
