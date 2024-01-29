@@ -7,14 +7,15 @@ module.exports = {
   ],
 
   important: true,
-
-  daisyui: {
+  theme: {
     screens: {
-      'sm': '375px',
-      'md': '768px',
+      'xs': '300px',
+      'sm': '450px',
+      'md': '575px',
       'lg': '1024px',
-      'xl': '1280px',
     },
+  },
+  daisyui: {
     themes: [
       { 
         light: {
