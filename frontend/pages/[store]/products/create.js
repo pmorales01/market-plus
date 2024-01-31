@@ -1,9 +1,7 @@
 import NavBar from '/components/NavBar'
 import Footer from '/components/Footer'
-import Canvas from '/components/Canvas'
 import Alert from '/components/Alert'
 import {getRandomNumber} from '../../../components/Canvas'
-import Description from '/components/Description'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 
@@ -11,7 +9,6 @@ export default function create_product() {
     const categories = ['Appliances', 'Arts & Crafts', 'Automotive Accessories', 'Automotive Parts', 'Books', 'Clothing','Electronics', 'Music', 'Trading Cards', 'Video Games']
     const [showSelected, setShowSelected] = useState(false)
     const [charLength, setCharLength] = useState(0)
-    const [previewVisible, setPreviewVisible] = useState(false)
     const [productImages, setProductImages] = useState([])
     const [imageCount, setImageCount] = useState(0)
     const MAX_IMAGE_COUNT = 6 // maximum # of product images
@@ -113,16 +110,6 @@ export default function create_product() {
     const handleTextarea = ((event) => {
         setCharLength(event.target.value.length)
     })
-
-    const handlePreview = (event) => {
-        event.preventDefault()
-        setPreviewVisible(true)
-    }
-
-    const closePreview = (event) => {
-        event.preventDefault()
-        setPreviewVisible(!previewVisible)
-    }
 
     const handleProductImage = (event) => {
         event.preventDefault()
@@ -283,38 +270,35 @@ export default function create_product() {
 
     if (authenticated) {
         return (
-        <div className="flex flex-col items-center space-y-14 w-full h-screen">
+        // <div className="flex flex-col items-center space-y-14 w-full h-screen">
+        <div className="flex flex-col items-center space-y-12 w-full sm:max-md:w-fit h-screen">
             <NavBar/>
-            <div className="flex w-10/12 h-fit">
+            <section className="grow form-control w-[400px] xs:max-sm:w-11/12">
+                <header className='title'> Tell Us About Your Product</header>
                 <form method='post' encType="multipart/form-data" className="grow form-control max-w-full space-y-2" onSubmit={handleSubmit}>
                     {message && visible && <Alert message={message} onClick={updatePopup} />}
-                    <h1 className='text-center'>Tell Us About Your Product</h1>
-                    <div className='sticky top-0 flex justify-end z-10 mr-2'>
-                        <input type="image" src="/svgs/eye.svg" className="w-10 bg-slate-100 ring-offset-2 ring ring-slate-100" onClick={handlePreview}/>
-                    </div>
-                    <div className="flex flex-col w-1/2 space-y-2">
-                        <div className="input-container" style={{marginLeft : '0px'}}>
-                            <input type="text" id="product-name" name="product-name" className="border px-2" placeholder="" required />
+                    <div className="flex flex-col space-y-4">
+                        <div className="input-container">
+                            <input type="text" id="product-name" name="product-name" className="border px-2 w-full" placeholder="" required />
                             <label htmlFor="product-name">Product Name</label>
                         </div>
-                        <div className="input-container" style={{marginLeft : '0px'}}>
-                            <input type="text" id="product-brand" name="product-brand" className="border px-2" placeholder="" required />
+                        <div className="input-container">
+                            <input type="text" id="product-brand" name="product-brand" className="border px-2 w-full" placeholder="" required />
                             <label htmlFor="product-brand">Brand</label>
                         </div>
-                        <label htmlFor="price">Price</label>
-                        <div className='flex flex-row'>
-                            <p className='w-12 bg-[#D2D2D2] h-full text-center font-bold rounded'>$</p>
-                            <input type="number" id="price" name="price" className='border px-2 w-1/4' min="0.01" max="10000" step="1" required/>
+                        <div className="input-container">
+                            <input type="text" id="product-color" name="product-color" className="border px-2 w-full" placeholder="" />
+                            <label htmlFor='product-color'>Color</label>
                         </div>
                         <div className="input-container">
-                            <input type="text" id="product-color" name="product-color" className="border px-2" placeholder="" />
-                            <label htmlFor='product-color'>Color</label>
+                            <input type="text" id="price" name="price" className='border px-2 w-full' placeholder="" required/>
+                            <label htmlFor="price">Price</label>
                         </div>
                         <label htmlFor='product-description'>Short Product Description (max 1000 characters)</label>
                         <textarea maxLength={1000} id="product-description" onChange={processTextarea} onKeyDown={handleKeyDown} className='resize-none	h-32 border p-2' required></textarea>
                     </div>
                     <div className='flex flex-col'>
-                        <h2 className='my-4'>Upload Product Images<span className="text-rose-600"> *</span></h2>
+                        <h2 className='my-4'>Upload Product Images</h2>
                         <div className='flex flex-col w-4/5 border-2 self-center items-center space-y-4 p-8 shadow-xl rounded my-8'>
                             <label className='h-8 flex items-center justify-center px-4 border rounded-lg bg-blue-500 text-white w-2/5'>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className='object-contain h-5 mr-2' fill='white'>
@@ -337,7 +321,7 @@ export default function create_product() {
                         </div>
                     </div>
                     <div>
-                        <h2>Category<span className="text-rose-600"> *</span> (Select all that Apply)</h2>
+                        <h2>Category (Select all that Apply)</h2>
                         {showSelected && (
                             <div className='flex flex-row flex-wrap space-x-2 gap-y-2'>
                                 {selected.map((category, index) => {
@@ -390,23 +374,9 @@ export default function create_product() {
                             <p className='text-right'>{charLength}/50 Characters</p>
                         </div>
                     </div>
-                    {previewVisible && 
-                        <div className="fixed z-50 h-screen w-screen top-0 left-0 overflow-auto" id="popup">
-                            <div className="-translate-x-1/2 card w-11/12 bg-base-100 shadow-xl inset-1/2">
-                                <div className="card-body">
-                                <h2 className="card-title self-center">Preview</h2>
-                                <div className="card-actions justify-center">
-                                    <button className="btn btn-primary" onClick={closePreview}>
-                                        <span className="capitalize">Close</span>
-                                    </button>
-                                </div>
-                                </div>
-                            </div>
-                        </div>
-                    }
                     <button className='h-10 px-4 border rounded-lg bg-blue-500 text-white w-1/3 hover:bg-rose-700 self-center mt-8'>Create Listing</button>
                 </form>
-            </div>
+            </section>
             <Footer/>
         </div>
     )}
