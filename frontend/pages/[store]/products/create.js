@@ -270,37 +270,36 @@ export default function create_product() {
 
     if (authenticated) {
         return (
-        // <div className="flex flex-col items-center space-y-14 w-full h-screen">
-        <div className="flex flex-col items-center space-y-12 w-full sm:max-md:w-fit h-screen">
+        <div className="flex flex-col items-center justify-between w-full sm:max-md:w-fit h-screen">
             <NavBar/>
-            <section className="grow form-control w-[400px] xs:max-sm:w-11/12">
-                <header className='title'> Tell Us About Your Product</header>
-                <form method='post' encType="multipart/form-data" className="grow form-control max-w-full space-y-2" onSubmit={handleSubmit}>
+            <section className="form-control w-[400px] xs:max-sm:w-11/12">
+                <header className='title mb-5'> Tell Us About Your Product</header>
+                <form method='post' encType="multipart/form-data" className="grow form-control max-w-full space-y-5" onSubmit={handleSubmit}>
                     {message && visible && <Alert message={message} onClick={updatePopup} />}
-                    <div className="flex flex-col space-y-4">
+                    <div className="flex flex-col">
                         <div className="input-container">
-                            <input type="text" id="product-name" name="product-name" className="border px-2 w-full" placeholder="" required />
+                            <input type="text" id="product-name" name="product-name" className="input input-bordered input-sm w-full max-w-full" placeholder="" required />
                             <label htmlFor="product-name">Product Name</label>
                         </div>
                         <div className="input-container">
-                            <input type="text" id="product-brand" name="product-brand" className="border px-2 w-full" placeholder="" required />
+                            <input type="text" id="product-brand" name="product-brand" className="input input-bordered input-sm w-full max-w-full" placeholder="" required />
                             <label htmlFor="product-brand">Brand</label>
                         </div>
                         <div className="input-container">
-                            <input type="text" id="product-color" name="product-color" className="border px-2 w-full" placeholder="" />
+                            <input type="text" id="product-color" name="product-color" className="input input-bordered input-sm w-full max-w-full" placeholder="" />
                             <label htmlFor='product-color'>Color</label>
                         </div>
                         <div className="input-container">
-                            <input type="text" id="price" name="price" className='border px-2 w-full' placeholder="" required/>
+                            <input type="text" id="price" name="price" className='input input-bordered input-sm w-full max-w-full' placeholder="" required/>
                             <label htmlFor="price">Price</label>
                         </div>
                         <label htmlFor='product-description'>Short Product Description (max 1000 characters)</label>
                         <textarea maxLength={1000} id="product-description" onChange={processTextarea} onKeyDown={handleKeyDown} className='resize-none	h-32 border p-2' required></textarea>
                     </div>
                     <div className='flex flex-col'>
-                        <h2 className='my-4'>Upload Product Images</h2>
-                        <div className='flex flex-col w-4/5 border-2 self-center items-center space-y-4 p-8 shadow-xl rounded my-8'>
-                            <label className='h-8 flex items-center justify-center px-4 border rounded-lg bg-blue-500 text-white w-2/5'>
+                        <h2 className='text-black'>Upload Product Images</h2>
+                        <div className='flex flex-col w-full border-2 self-center items-center space-y-4 p-8 shadow-xl rounded my-2'>
+                            <label className='h-8 flex items-center justify-center px-4 border rounded-lg bg-blue-500 text-white w-5/6'>
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className='object-contain h-5 mr-2' fill='white'>
                                     <path d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/>
                                 </svg>
@@ -308,7 +307,7 @@ export default function create_product() {
                                 <input type="file" id="product-image-upload" className="hidden" accept="image/png, image/jpeg"onChange={handleProductImage}/>
                             </label>
                             <p className='text-lg'>{imageCount} Images Selected</p>
-                            <div className={`grid grid-rows-${Math.ceil(imageCount / 2)} grid-cols-2 gap-8`}>
+                            <div className={`grid grid-rows-${Math.ceil(imageCount / 2)} grid-cols-2 gap-8 xs:max-sm:grid-cols-1`}>
                                 {productImages.map(image => {
                                     return (
                                         <div key={image.id} className='flex flex-col justify-center items-center space-y-2'>
@@ -321,32 +320,32 @@ export default function create_product() {
                         </div>
                     </div>
                     <div>
-                        <h2>Category (Select all that Apply)</h2>
+                        <h2 className='text-black'>Category (Select all that Apply)</h2>
                         {showSelected && (
-                            <div className='flex flex-row flex-wrap space-x-2 gap-y-2'>
+                            <div className='flex flex-row flex-wrap space-x-2 gap-y-2 mt-5'>
                                 {selected.map((category, index) => {
                                     return (
-                                        <button key={index} className='btn rounded-full bg-neutral-200 text-zinc-500 capitalize hover:text-white disabled:bg-slate-300' onClick={removeCategory}>{category}</button>
+                                        <button key={index} className='btn rounded-full bg-neutral-200 text-zinc-500 capitalize hover:text-white disabled:bg-slate-300 h-8 min-h-8' onClick={removeCategory}>{category}</button>
                                     )
                                 })}
                             </div>
                         )}
                     </div>
-                    <div className='w-48'>
-                        <div className='w-fit h-fit flex flex-row items-center'>
-                            <input type="text" onClick={showCategories} className="border border-2 h-10 text-xl" onChange={handleSearch}/>
-                            <p className="text-4xl bg-slate-300 text-center w-8">&#x2315;</p>
+                    <div>
+                        <div className='h-fit flex flex-row items-center'>
+                            <input type="text" onClick={showCategories} className="border border-2 h-10 w-full text-xl" onChange={handleSearch}/>
+                            <p className="text-4xl bg-slate-300 text-center w-2/12">&#x2315;</p>
                         </div>
                         {(
-                            <ul id="cat-list" onBlur={handleBlur} hidden className='h-40 w-60 overflow-y-auto p-4 bg-stone-50 border-16'> 
+                            <ul id="cat-list" onBlur={handleBlur} hidden className='h-40 w-11/12 overflow-y-auto p-4 bg-stone-50 border-16'> 
                             {categories.map((category, index) => (
-                                <li key={index}><button id={`cat-${category.split(" ").join("")}`} onClick={addCategory} className="hover:bg-blue-200 w-full text-left disabled:bg-slate-300">{category}</button></li>
+                                <li key={index}><button id={`cat-${category.split(" ").join("")}`} onClick={addCategory} className="hover:bg-blue-300 w-full text-left text-black disabled:bg-slate-300">{category}</button></li>
                             ))}
                             </ul>
                         )}
                     </div>
                     <div>
-                        <h2>Condition</h2>
+                        <h2 className='text-black'>Condition</h2>
                         <fieldset id="condition-radio">
                             <input type="radio" id="New" name="condition" value="New" required/>
                             <label htmlFor="New"> New</label>
@@ -367,14 +366,14 @@ export default function create_product() {
                             <label htmlFor="Poor"> Poor</label>
                         </fieldset>
                         <br/>
-                        <label htmlFor="condition-desc">Condition Description<span className="text-rose-600"> *</span></label>
+                        <label className="text-black" htmlFor="condition-desc">Condition Description</label>
                         <br/>
-                        <div className='w-80'>
+                        <div className='w-full'>
                             <textarea className="border border-2 w-full" id="condition-desc" name="condition-desc" onChange={handleTextarea} maxLength="50" required></textarea>
                             <p className='text-right'>{charLength}/50 Characters</p>
                         </div>
                     </div>
-                    <button className='h-10 px-4 border rounded-lg bg-blue-500 text-white w-1/3 hover:bg-rose-700 self-center mt-8'>Create Listing</button>
+                    <button className='btn btn-primary'>Create Listing</button>
                 </form>
             </section>
             <Footer/>
