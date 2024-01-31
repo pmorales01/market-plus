@@ -50,9 +50,9 @@ export default function Login () {
     }
 
     return (
-        <div className="flex flex-col items-center space-y-12 w-full sm:max-md:w-fit h-screen">
+        <div className="flex flex-col items-center justify-between w-full sm:max-md:w-fit h-screen">
             <NavBar/>
-            <form method='post' className="grow form-control w-[400px] xs:max-sm:w-11/12" onSubmit={handleSubmit}>
+            <form method='post' className="form-control w-[400px] xs:max-sm:w-11/12" onSubmit={handleSubmit}>
                 {message && visible && <Alert message={message} onClick={updatePopup} />}
                 <header className='flex flex-col items-center'>
                     <h1 className='title mb-5'>Login</h1>
@@ -70,7 +70,6 @@ export default function Login () {
                         <span>Password</span>
                     </label>
                 </div>
-                
                 <div className='flex justify-center space-x-1 mb-5'>
                     <p>Don't have an account?</p>
                     <Link href="/signup" className='link link-hover'>Create one</Link>
