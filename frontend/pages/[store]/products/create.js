@@ -270,10 +270,10 @@ export default function create_product() {
 
     if (authenticated) {
         return (
-        <div className="flex flex-col items-center justify-between w-full sm:max-md:w-fit h-screen">
+        <div className="flex flex-col items-center justify-between w-full sm:max-md:w-fit">
             <NavBar/>
             <section className="form-control w-[400px] xs:max-sm:w-11/12">
-                <header className='title mb-5'> Tell Us About Your Product</header>
+                <header className='title tracking-[.1em] my-5'> Tell Us About Your Product</header>
                 <form method='post' encType="multipart/form-data" className="grow form-control max-w-full space-y-5" onSubmit={handleSubmit}>
                     {message && visible && <Alert message={message} onClick={updatePopup} />}
                     <div className="flex flex-col">
@@ -293,7 +293,7 @@ export default function create_product() {
                             <input type="text" id="price" name="price" className='input input-bordered input-sm w-full max-w-full' placeholder="" required/>
                             <label htmlFor="price">Price</label>
                         </div>
-                        <label htmlFor='product-description'>Short Product Description (max 1000 characters)</label>
+                        <label htmlFor='product-description'><span className="text-black">Short Product Description (max 1000 characters)</span></label>
                         <textarea maxLength={1000} id="product-description" onChange={processTextarea} onKeyDown={handleKeyDown} className='resize-none	h-32 border p-2' required></textarea>
                     </div>
                     <div className='flex flex-col'>
@@ -303,15 +303,15 @@ export default function create_product() {
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className='object-contain h-5 mr-2' fill='white'>
                                     <path d="M288 109.3V352c0 17.7-14.3 32-32 32s-32-14.3-32-32V109.3l-73.4 73.4c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3l128-128c12.5-12.5 32.8-12.5 45.3 0l128 128c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L288 109.3zM64 352H192c0 35.3 28.7 64 64 64s64-28.7 64-64H448c35.3 0 64 28.7 64 64v32c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V416c0-35.3 28.7-64 64-64zM432 456a24 24 0 1 0 0-48 24 24 0 1 0 0 48z"/>
                                 </svg>
-                                <span>Upload Image</span>
+                                <span className='text-inherit'>Upload Image</span>
                                 <input type="file" id="product-image-upload" className="hidden" accept="image/png, image/jpeg"onChange={handleProductImage}/>
                             </label>
                             <p className='text-lg'>{imageCount} Images Selected</p>
-                            <div className={`grid grid-rows-${Math.ceil(imageCount / 2)} grid-cols-2 gap-8 xs:max-sm:grid-cols-1`}>
+                            <div className={`grid grid-rows-${Math.ceil(imageCount / 2)} grid-cols-1 gap-8`}>
                                 {productImages.map(image => {
                                     return (
                                         <div key={image.id} className='flex flex-col justify-center items-center space-y-2'>
-                                            <img src={image.src}  id={image.id} className="max-w-fit h-48" onClick={deleteProductImage}/>
+                                            <img src={image.src}  id={image.id} className="w-fit h-48" onClick={deleteProductImage}/>
                                             <p className='text-center'>{image.filename}</p>
                                         </div>
                                     )
