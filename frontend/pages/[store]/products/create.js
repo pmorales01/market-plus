@@ -59,6 +59,20 @@ export default function create_product() {
         authenticate()
     }, [])
 
+    const handlePrice = ((event) => {
+        // get the <input> tag's value
+        var input = event.target.value
+
+        // remove non-numeric characters and negatives
+        input = input.replace(/[^\d.]/g, '')
+
+        // remove any extra decimals (more than 1)
+        input = input.replace(/(\..*)\./g, '$1');
+        
+        // update the price <input>'s value
+        event.target.value = input
+    })
+
     const showCategories = (() => {  
         const list = document.getElementById('cat-list')
 
@@ -255,9 +269,13 @@ export default function create_product() {
                 
                 console.log(response)
 
-                const json_data = await response.json()
-
-                console.log(json_data)
+                if (response.status != 200) {
+                    setMessage(data.detail)
+                    setVisible(true)
+                } else if (response.status == 200) {
+                    console.log("successfuly created a product")
+                    // router.push('/account')
+                }
             } catch (error) {
                 console.log("Unexpected Error: " + error)
             }
@@ -290,11 +308,11 @@ export default function create_product() {
                             <label htmlFor='product-color'>Color</label>
                         </div>
                         <div className="input-container">
-                            <input type="text" id="price" name="price" className='input input-bordered input-sm w-full max-w-full' placeholder="" required/>
+                            <input type="text" id="price" name="price" className='input input-bordered input-sm w-full max-w-full' onChange={handlePrice} placeholder="" required/>
                             <label htmlFor="price">Price</label>
                         </div>
                         <label htmlFor='product-description'><span className="text-black">Short Product Description (max 1000 characters)</span></label>
-                        <textarea maxLength={1000} id="product-description" onChange={processTextarea} onKeyDown={handleKeyDown} className='resize-none	h-32 border p-2' required></textarea>
+                        <textarea maxLength={1000} id="product-description" onChange={processTextarea} onKeyDown={handleKeyDown} className='resize-none	text-black h-32 border p-2' required></textarea>
                     </div>
                     <div className='flex flex-col'>
                         <h2 className='text-black'>Upload Product Images</h2>
@@ -369,7 +387,7 @@ export default function create_product() {
                         <label className="text-black" htmlFor="condition-desc">Condition Description</label>
                         <br/>
                         <div className='w-full'>
-                            <textarea className="border border-2 w-full" id="condition-desc" name="condition-desc" onChange={handleTextarea} maxLength="50" required></textarea>
+                            <textarea className="border border-2 w-full text-black" id="condition-desc" name="condition-desc" onChange={handleTextarea} maxLength="50" required></textarea>
                             <p className='text-right'>{charLength}/50 Characters</p>
                         </div>
                     </div>

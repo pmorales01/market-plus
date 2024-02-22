@@ -21,7 +21,6 @@ module.exports = {
         light: {
           '*' : {
             'font-family': 'Montserrat, sans-serif',
-            'color': 'black'
           },
           '.btn-primary': {
             'background-color': 'black',
@@ -33,7 +32,7 @@ module.exports = {
             'font-family': 'Montserrat, sans-serif',
             'border-radius': '0px',
             'letter-spacing': '.2em',
-            'font-size': '13px'
+            'font-size': '13px',
           },
           '.title': {
             'font-size': '20px',
