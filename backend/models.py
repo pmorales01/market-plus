@@ -1,8 +1,7 @@
-from fastapi import Form, HTTPException, UploadFile, Body
-from pydantic import BaseModel, validator, Field
-from typing import List, Optional, Dict, Union
-from bson.binary import UuidRepresentation
-from uuid import UUID, uuid4
+from fastapi import Form
+from pydantic import BaseModel, validator
+from typing import List, Optional
+from uuid import UUID
 
 class Product(BaseModel):
     name: str = Form(...)
@@ -32,6 +31,8 @@ class Product(BaseModel):
     
     @validator('price')
     def price_within_range(cls, v):
+        if not isinstance(v, float):
+            raise(ValueError('price must be a number!'))
         if v <= 0:
             raise ValueError('price cannot be less than or equal to $0.00!')
         elif v > 10000:

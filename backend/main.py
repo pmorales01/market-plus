@@ -451,7 +451,6 @@ async def create_item(request: Request,
     category: List[str] = Form(...),
     condition: str = Form(...),
     condition_desc: str = Form(...),
-    description: Optional[str] = Form(None),
     images: List[UploadFile] = File(...),
     seller: str = Depends(authenticate_seller)):
     try:
@@ -478,12 +477,11 @@ async def create_item(request: Request,
             file_type = image.content_type
             imgs.append({'bytes': Binary(bytes_read), 'type': file_type})
         
-        # add the description, images (binary), seller name, and id to 'data'
-        data['description'] = json.loads(description)
+        # add the images (binary), seller name, and id to 'data'
         data['images'] = imgs
         data['seller'] = seller['name']
         data['id'] = str(uuid.uuid4())
-        data['alias'] = getAliasPath(data['name'])
+        data['alias'] = await getAliasPath(data['name'])
 
         collection = db["products"]
 
@@ -506,6 +504,7 @@ async def create_item(request: Request,
 @app.get('/products/{name}/{id}')
 async def get_product(name:str, id: UUID):
     try:
+        # validate the product's path
         product = GetProduct(name=name, id=id)
 
         collection = db['products']
@@ -526,7 +525,8 @@ async def get_product(name:str, id: UUID):
             'short_desc': result['short_desc'], 'price': result['price'], 
             'condition': result['condition'], 'condition_desc': result['condition_desc'],
             'seller' : result['seller'],
-            'images': images, 'description': result['description']}
+            'images': images,
+        }
     except OperationFailure:
         raise HTTPException(status_code=404, detail="Page not found")
     except ValidationError as e:

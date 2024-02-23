@@ -387,7 +387,7 @@ export default function create_product() {
                         <label className="text-black" htmlFor="condition-desc">Condition Description</label>
                         <br/>
                         <div className='w-full'>
-                            <textarea className="border border-2 w-full text-black" id="condition-desc" name="condition-desc" onChange={handleTextarea} maxLength="50" required></textarea>
+                            <textarea className="border border-2 w-full text-black resize-none" id="condition-desc" name="condition-desc" onChange={handleTextarea} maxLength="50" required></textarea>
                             <p className='text-right'>{charLength}/50 Characters</p>
                         </div>
                     </div>
