@@ -274,7 +274,7 @@ export default function create_product() {
                     setVisible(true)
                 } else if (response.status == 200) {
                     console.log("successfuly created a product")
-                    // router.push('/account')
+                    router.push('/account')
                 }
             } catch (error) {
                 console.log("Unexpected Error: " + error)

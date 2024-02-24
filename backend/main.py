@@ -538,3 +538,30 @@ async def get_product(name:str, id: UUID):
 
         # return a 400 status code and ValueErrors
         raise HTTPException(status_code=400, detail=errors)
+    
+@app.get('/top-products')
+async def get_top_products():
+    try:
+        collection = db['products']
+
+        # retrieve list of top products (returns all products for now)
+        results = await collection.find().to_list(length=None)
+
+        # list of top products
+        products = []
+
+        # for every product, return name, brand, condition, price, seller, image, and link
+        for result in results:
+            products.append({
+                'name': result['name'], 'brand' : result['brand'], 'price': result['price'],
+                'condition': result['condition'], 'condition_desc': result['condition_desc'],
+                'seller' : result['seller'],
+                'image': {
+                    'bytes': base64.b64encode(result['images'][0]['bytes']).decode("utf-8"), 
+                    'type' : result['images'][0]['type']
+                },
+                'link': f"http://127.0.0.1:3000/products/{result['name']}/{result['id']}"
+            }) 
+        return products
+    except OperationFailure:
+        raise HTTPException(staus_code=500, detail="500 Internal Server Error")
