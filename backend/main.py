@@ -441,11 +441,9 @@ async def getAliasPath(name: str):
     return path.lower()
 
 @app.post('/{store}/products/create')
-async def create_item(request: Request,
-    store: str, 
-    color: Optional[str] = Form(None),
+async def create_item(
     name: str = Form(...),
-    brand: str = Form(...),
+    publisher: str = Form(...),
     price: float = Form(...),
     short_desc: str = Form(...),
     category: List[str] = Form(...),
@@ -456,9 +454,8 @@ async def create_item(request: Request,
     try:
         product = Product(
             name=name,
-            brand=brand,
+            publisher=publisher,
             price=price,
-            color=color,
             short_desc=short_desc,
             category=category,
             condition=condition, 
@@ -521,7 +518,7 @@ async def get_product(name:str, id: UUID):
         for image in result['images']:
             images.append({'bytes' : base64.b64encode(image['bytes']).decode("utf-8"), 'type' : image['type']})
 
-        return {'name': result['name'], 'brand' : result['brand'], 
+        return {'name': result['name'], 'publisher' : result['publisher'], 
             'short_desc': result['short_desc'], 'price': result['price'], 
             'condition': result['condition'], 'condition_desc': result['condition_desc'],
             'seller' : result['seller'],
@@ -550,10 +547,10 @@ async def get_top_products():
         # list of top products
         products = []
 
-        # for every product, return name, brand, condition, price, seller, image, and link
+        # for every product, return name, publisher, condition, price, seller, image, and link
         for result in results:
             products.append({
-                'name': result['name'], 'brand' : result['brand'], 'price': result['price'],
+                'name': result['name'], 'publisher' : result['publisher'], 'price': result['price'],
                 'condition': result['condition'], 'condition_desc': result['condition_desc'],
                 'seller' : result['seller'],
                 'image': {

@@ -5,9 +5,8 @@ from uuid import UUID
 
 class Product(BaseModel):
     name: str = Form(...)
-    brand: str = Form(...)
+    publisher: str = Form(...)
     price: float = Form(...)
-    color: Optional[str] = Form(None)
     short_desc: str = Form(...)
     category: List[str] = Form(...)
     condition: str = Form(...)
@@ -21,12 +20,12 @@ class Product(BaseModel):
             raise ValueError('name must be between 3-50 characters long!')
         return v
     
-    @validator('brand')
+    @validator('publisher')
     def brand_length(cls, v):
         if len(v) < 3:
-            raise ValueError('brand name must be between 3-25 characters long!')
+            raise ValueError('publisher name must be between 3-25 characters long!')
         elif len(v) > 25:
-            raise ValueError('brand name must be between 3-25 characters long!')
+            raise ValueError('publisher name must be between 3-25 characters long!')
         return v
     
     @validator('price')
