@@ -247,7 +247,7 @@ export default function create_product() {
                 
                 const data = new FormData()
                 data.append('name', document.getElementById('product-name').value)
-                data.append('brand', document.getElementById('product-brand').value)
+                data.append('publisher', document.getElementById('publisher').value)
                 data.append('price', document.getElementById('price').value)
                 data.append('short_desc', document.getElementById('product-description').value)
                 data.append('genre', selected)
@@ -304,12 +304,8 @@ export default function create_product() {
                             <label htmlFor="product-name">Product Name</label>
                         </div>
                         <div className="input-container">
-                            <input type="text" id="product-brand" name="product-brand" className="input input-bordered input-sm w-full max-w-full" placeholder="" required />
-                            <label htmlFor="product-brand">Brand</label>
-                        </div>
-                        <div className="input-container">
-                            <input type="text" id="product-color" name="product-color" className="input input-bordered input-sm w-full max-w-full" placeholder="" />
-                            <label htmlFor='product-color'>Color</label>
+                            <input type="text" id="publisher" name="publisher" className="input input-bordered input-sm w-full max-w-full" placeholder="" required />
+                            <label htmlFor="publisher">Publisher</label>
                         </div>
                         <div className="input-container">
                             <input type="text" id="price" name="price" className='input input-bordered input-sm w-full max-w-full' onChange={handlePrice} placeholder="" required/>
