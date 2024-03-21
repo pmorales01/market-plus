@@ -6,14 +6,14 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 
 export default function create_product() {
-    const categories = ['Appliances', 'Arts & Crafts', 'Automotive Accessories', 'Automotive Parts', 'Books', 'Clothing','Electronics', 'Music', 'Trading Cards', 'Video Games']
+    const genres = ['Fiction', 'Children\'s Literature', 'Young Adult', 'Classics', 'Comedy', 'Coming-of-age', 'Cooking', 'Crime', 'Encyclopedic', 'Financial', 'Horror', 'Legal', 'Folklore', 'Historical', 'Historical Fiction', 'Manga', 'Mystery', 'Philosophical', 'Poetry', 'Political', 'Religious', 'Romance', 'Satire', 'Science Fiction', 'Thriller', 'Travel']
     const [showSelected, setShowSelected] = useState(false)
     const [charLength, setCharLength] = useState(0)
     const [productImages, setProductImages] = useState([])
     const [imageCount, setImageCount] = useState(0)
     const MAX_IMAGE_COUNT = 6 // maximum # of product images
 
-    // tracks which categories the user selected
+    // tracks which genres the user selected
     const [selected, setSelected] = useState([])
 
     // tracks username and authentication
@@ -73,8 +73,8 @@ export default function create_product() {
         event.target.value = input
     })
 
-    const showCategories = (() => {  
-        const list = document.getElementById('cat-list')
+    const showGenres = (() => {  
+        const list = document.getElementById('gen-list')
 
         // unhide list if hidden
         if (list.hasAttribute('hidden')) {
@@ -84,32 +84,36 @@ export default function create_product() {
 
     const handleBlur = (() => {
         // hide the list if user clicks outside of it 
-        document.getElementById('cat-list').setAttribute("hidden", "")
+        document.getElementById('gen-list').setAttribute("hidden", "")
     }) 
 
-    const addCategory = ((event) => {
+    const addGenre = ((event) => {
         event.target.setAttribute("disabled", "")
         setSelected([...selected, event.target.textContent])
         setShowSelected(true)
+
+        // clear text from genre search bar (if any)
+        document.getElementById('genre-bar').value = ''
+
     })
 
-    const removeCategory = ((event) => {
+    const removeGenre = ((event) => {
         event.preventDefault()
 
-        // category to remove from selected list 
-        const selectedCategory = event.target.textContent
+        // genre to remove from selected list 
+        const selectedGenre = event.target.textContent
 
-        // unselect the category (remove from user's selected list)
-        setSelected(selected.filter((category) => selectedCategory !== category))
+        // unselect the genre (remove from user's selected list)
+        setSelected(selected.filter((genre) => selectedGenre !== genre))
 
-        // make the category from the cateogry list clickable again 
-        const category = document.getElementById(`cat-${selectedCategory.split(" ").join("")}`)
-        category.removeAttribute('disabled')
+        // make the genre from the cateogry list clickable again 
+        const genre = document.getElementById(`gen-${selectedGenre.split(" ").join("")}`)
+        genre.removeAttribute('disabled')
     })
 
     const handleSearch = ((event) => {
         const search = event.target.value
-        const items = document.getElementById('cat-list').children
+        const items = document.getElementById('gen-list').children
         const regex = new RegExp(search, 'i')
 
         for (let i = 0; i < items.length; ++i) {
@@ -235,7 +239,7 @@ export default function create_product() {
             setMessage(['No product images uploaded!'])
             setVisible(true)
         } else if (selected.length === 0) {
-            setMessage(['No product categories were selected!'])
+            setMessage(['No genres were selected!'])
             setVisible(true)
         } else {
             try {
@@ -246,7 +250,7 @@ export default function create_product() {
                 data.append('brand', document.getElementById('product-brand').value)
                 data.append('price', document.getElementById('price').value)
                 data.append('short_desc', document.getElementById('product-description').value)
-                data.append('category', selected)
+                data.append('genre', selected)
                 data.append('condition', fieldset.querySelector('input:checked').value)
                 data.append('condition_desc', document.getElementById('condition-desc').value)
                 
@@ -338,12 +342,12 @@ export default function create_product() {
                         </div>
                     </div>
                     <div>
-                        <h2 className='text-black'>Category (Select all that Apply)</h2>
+                        <h2 className='text-black'>Genre (Select all that Apply)</h2>
                         {showSelected && (
                             <div className='flex flex-row flex-wrap space-x-2 gap-y-2 mt-5'>
-                                {selected.map((category, index) => {
+                                {selected.map((genre, index) => {
                                     return (
-                                        <button key={index} className='btn rounded-full bg-neutral-200 text-zinc-500 capitalize hover:text-white disabled:bg-slate-300 h-8 min-h-8' onClick={removeCategory}>{category}</button>
+                                        <button key={index} className='btn rounded-full bg-neutral-200 text-zinc-500 capitalize hover:text-white disabled:bg-slate-300 h-8 min-h-8' onClick={removeGenre}>{genre}</button>
                                     )
                                 })}
                             </div>
@@ -351,13 +355,13 @@ export default function create_product() {
                     </div>
                     <div>
                         <div className='h-fit flex flex-row items-center'>
-                            <input type="text" onClick={showCategories} className="border border-2 h-10 w-full text-xl" onChange={handleSearch}/>
+                            <input id="genre-bar" type="text" onClick={showGenres} className="border border-2 h-10 w-full text-xl" onChange={handleSearch}/>
                             <p className="text-4xl bg-slate-300 text-center w-2/12">&#x2315;</p>
                         </div>
                         {(
-                            <ul id="cat-list" onBlur={handleBlur} hidden className='h-40 w-11/12 overflow-y-auto p-4 bg-stone-50 border-16'> 
-                            {categories.map((category, index) => (
-                                <li key={index}><button id={`cat-${category.split(" ").join("")}`} onClick={addCategory} className="hover:bg-blue-300 w-full text-left text-black disabled:bg-slate-300">{category}</button></li>
+                            <ul id="gen-list" onBlur={handleBlur} hidden className='h-40 w-11/12 overflow-y-auto p-4 bg-stone-50 border-16'> 
+                            {genres.map((genre, index) => (
+                                <li key={index}><button id={`gen-${genre.split(" ").join("")}`} onClick={addGenre} className="hover:bg-blue-300 w-full text-left text-black disabled:bg-slate-300">{genre}</button></li>
                             ))}
                             </ul>
                         )}
