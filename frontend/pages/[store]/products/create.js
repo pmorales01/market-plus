@@ -6,7 +6,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 
 export default function create_product() {
-    const genres = ['Fiction', 'Children\'s Literature', 'Young Adult', 'Classics', 'Comedy', 'Coming-of-age', 'Cooking', 'Crime', 'Encyclopedic', 'Financial', 'Horror', 'Legal', 'Folklore', 'Historical', 'Historical Fiction', 'Manga', 'Mystery', 'Philosophical', 'Poetry', 'Political', 'Religious', 'Romance', 'Satire', 'Science Fiction', 'Thriller', 'Travel']
+    const genres = ['Children\'s Literature', 'Classics', 'Comedy', 'Coming-of-age', 'Cooking', 'Crime', 'Encyclopedic', 'Fiction', 'Financial', 'Horror', 'Legal', 'Folklore', 'Historical', 'Historical Fiction', 'Manga', 'Mystery', 'Philosophical', 'Poetry', 'Political', 'Religious', 'Romance', 'Satire', 'Science Fiction', 'Thriller', 'Travel', 'Young Adult']
     const [showSelected, setShowSelected] = useState(false)
     const [charLength, setCharLength] = useState(0)
     const [productImages, setProductImages] = useState([])
@@ -97,7 +97,7 @@ export default function create_product() {
 
         const items = document.getElementById('gen-list').children
 
-        // set each <li>'s display to its default
+        // set each <li>'s display to its default (to clear query results)
         for (let i = 0; i < items.length; ++i) {
             items[i].style.display = ""
         }
@@ -118,6 +118,16 @@ export default function create_product() {
 
         // hide the list
         document.getElementById('gen-list').setAttribute("hidden", "")
+
+        // clear text from genre search bar (if any)
+        document.getElementById('genre-bar').value = ''
+
+        const items = document.getElementById('gen-list').children
+
+        // set each <li>'s display to its default (to clear query results)
+        for (let i = 0; i < items.length; ++i) {
+            items[i].style.display = ""
+        }
     })
 
     const handleSearch = ((event) => {
