@@ -95,6 +95,12 @@ export default function create_product() {
         // clear text from genre search bar (if any)
         document.getElementById('genre-bar').value = ''
 
+        const items = document.getElementById('gen-list').children
+
+        // set each <li>'s display to its default
+        for (let i = 0; i < items.length; ++i) {
+            items[i].style.display = ""
+        }
     })
 
     const removeGenre = ((event) => {
@@ -109,6 +115,9 @@ export default function create_product() {
         // make the genre from the cateogry list clickable again 
         const genre = document.getElementById(`gen-${selectedGenre.split(" ").join("")}`)
         genre.removeAttribute('disabled')
+
+        // hide the list
+        document.getElementById('gen-list').setAttribute("hidden", "")
     })
 
     const handleSearch = ((event) => {
@@ -351,7 +360,7 @@ export default function create_product() {
                     </div>
                     <div>
                         <div className='h-fit flex flex-row items-center'>
-                            <input id="genre-bar" type="text" onClick={showGenres} className="border border-2 h-10 w-full text-xl" onChange={handleSearch}/>
+                            <input id="genre-bar" type="text" onClick={showGenres}  className="border border-2 h-10 w-full text-xl" onChange={handleSearch}/>
                             <p className="text-4xl bg-slate-300 text-center w-2/12">&#x2315;</p>
                         </div>
                         {(
