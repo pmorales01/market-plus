@@ -43,10 +43,11 @@ module.exports = {
           },
           '.input-container': {
             position: 'relative',
-            'margin-bottom': '20px'
+            'margin-bottom': '15px',
           },
           '.input-container input' : {
             'border-radius': '0px',
+            'border-color': '#deddde',
             color: '#6a6a6a',
             padding: '14px',
             height: '42px',

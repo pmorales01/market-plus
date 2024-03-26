@@ -52,7 +52,7 @@ export default function Login () {
     return (
         <div className="flex flex-col items-center justify-between w-full sm:max-md:w-fit h-screen">
             <NavBar/>
-            <form method='post' className="form-control w-[400px] xs:max-sm:w-11/12" onSubmit={handleSubmit}>
+            <form method='post' className="form-control w-[400px] my-20 xs:max-sm:w-11/12" onSubmit={handleSubmit}>
                 {message && visible && <Alert message={message} onClick={updatePopup} />}
                 <header className='flex flex-col items-center'>
                     <h1 className='title mb-5'>Login</h1>
