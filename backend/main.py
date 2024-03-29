@@ -446,7 +446,7 @@ async def create_item(
     publisher: str = Form(...),
     price: float = Form(...),
     short_desc: str = Form(...),
-    category: List[str] = Form(...),
+    genre: List[str] = Form(...),
     condition: str = Form(...),
     condition_desc: str = Form(...),
     images: List[UploadFile] = File(...),
@@ -457,7 +457,7 @@ async def create_item(
             publisher=publisher,
             price=price,
             short_desc=short_desc,
-            category=category,
+            genre=genre,
             condition=condition, 
             condition_desc=condition_desc,
         )

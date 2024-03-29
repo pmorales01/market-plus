@@ -314,13 +314,13 @@ export default function create_product() {
         <div className="flex flex-col items-center justify-between w-full sm:max-md:w-fit">
             <NavBar/>
             <section className="form-control w-[400px] my-20 xs:max-sm:w-11/12">
-                <header className='title tracking-[.1em] my-5'> Tell Us About Your Product</header>
+                <header className='title tracking-[.1em] my-5 text-center'> Tell Us About Your Product</header>
                 <form method='post' encType="multipart/form-data" className="grow form-control max-w-full space-y-5" onSubmit={handleSubmit}>
                     {message && visible && <Alert message={message} onClick={updatePopup} />}
                     <div className="flex flex-col">
                         <div className="input-container">
                             <input type="text" id="product-name" name="product-name" className="input input-bordered input-sm w-full max-w-full" placeholder="" required />
-                            <label htmlFor="product-name">Product Name</label>
+                            <label htmlFor="product-name">Title</label>
                         </div>
                         <div className="input-container">
                             <input type="text" id="publisher" name="publisher" className="input input-bordered input-sm w-full max-w-full" placeholder="" required />
@@ -331,7 +331,7 @@ export default function create_product() {
                             <label htmlFor="price">Price</label>
                         </div>
                         <label htmlFor='product-description'><span className="text-black">Short Product Description (max 1000 characters)</span></label>
-                        <textarea maxLength={1000} id="product-description" onChange={processTextarea} onKeyDown={handleKeyDown} className='resize-none	text-black h-32 border p-2' style={{'margin-bottom': '0px'}} required></textarea>
+                        <textarea maxLength={1000} id="product-description" onChange={processTextarea} onKeyDown={handleKeyDown} className='resize-none	text-black h-32 border p-2' style={{'marginBottom': '0px'}} required></textarea>
                     </div>
                     <div className='flex flex-col'>
                         <h2 className='text-black'>Upload Product Images</h2>

@@ -8,7 +8,7 @@ class Product(BaseModel):
     publisher: str = Form(...)
     price: float = Form(...)
     short_desc: str = Form(...)
-    category: List[str] = Form(...)
+    genre: List[str] = Form(...)
     condition: str = Form(...)
     condition_desc: str = Form(...)
 
