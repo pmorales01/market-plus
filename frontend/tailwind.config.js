@@ -80,6 +80,25 @@ module.exports = {
             'color': '#6a6a6a',
             'font-size': '13px',
             'font-weight': '500',
+          },
+          'nav a' : {
+            'font-size': '14px',
+            'color': '#201e1f',
+            'text-transform': 'uppercase',
+            'letter-spacing': '.15em',
+            'font-weight': '525',
+            'line-height': '1.7',
+          },
+          'nav li:hover' : {
+            'border-bottom': 'solid',
+            'border-color': '#119c24'
+          },
+          '#category-dropdown button' : {
+            'font-family' : 'Lato',
+            'font-size': '14px'
+          },
+          '#search-bar input:focus' : {
+            'outline' : 'none'
           }
         }
       }
