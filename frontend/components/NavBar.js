@@ -47,12 +47,35 @@ export default function NavBar() {
 
   return (
     <div>
-      <div id='banner' className='h-[40px]'>
-        <ul>
-          <li>Get up to 50% your first purchase!</li>
-          <li>Free Shipping on Orders over $25</li>
-          <li>Access Exclusive Offers and Rewards</li>
-        </ul>
+      <div id='banner' className=' carousel w-full h-[40px] bg-[rgb(248,248,248)]'>
+        <div id="slide1" className="carousel-item relative w-full flex justify-center items-center">
+          <p className='banner-font'>Get up to 50% your first purchase!</p>
+          <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+            <a href="#slide4" className="">❮</a> 
+            <a href="#slide2" className="">❯</a>
+          </div>
+        </div> 
+        <div id="slide2" className="carousel-item relative w-full flex justify-center items-center">
+          <p className='banner-font'>Free Shipping on Orders over $25</p>
+          <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+            <a href="#slide1" className="">❮</a> 
+            <a href="#slide3" className="">❯</a>
+          </div>
+        </div> 
+        <div id="slide3" className="carousel-item relative w-full flex justify-center items-center">
+          <p className='banner-font'>Nonfiction books 50% Off today only!</p>
+          <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+            <a href="#slide2" className="">❮</a> 
+            <a href="#slide4" className="">❯</a>
+          </div>
+        </div> 
+        <div id="slide4" className="carousel-item relative w-full flex justify-center items-center">
+          <p className='banner-font'>Access Exclusive Offers and Rewards</p>
+          <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
+            <a href="#slide3" className="">❮</a> 
+            <a href="#slide1" className="">❯</a>
+          </div>
+        </div>
       </div>
       <div className='flex flex-row h-[40px]'>
         <Link href='/'>

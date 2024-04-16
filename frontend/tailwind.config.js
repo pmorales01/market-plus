@@ -99,6 +99,14 @@ module.exports = {
           },
           '#search-bar input:focus' : {
             'outline' : 'none'
+          }, 
+          '.banner-font' : {
+            'font-family' : 'Montserrat, sans-serif',
+            'letter-spacing' : '0.15em',
+            'text-transform' : 'uppercase',
+            'color' : 'rgb(33,31,32)',
+            'font-size' : '0.625rem',
+            'font-weight' : '400',
           }
         }
       }
