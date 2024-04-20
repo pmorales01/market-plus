@@ -37,14 +37,13 @@ export default function Index () {
     <>
       <NavBar/>
       <div className="flex flex-row mx-auto w-full px-2 sm:px-6">
-        <Sidebar width="w-1/6"/>
-        <div className='bg-red-400 w-5/6 grid grid-cols-4 gap-1 justify-between'>
+        <div className='bg-red-400 w-full h-1/6 flex flex-row justify-between'>
         {hasLoaded && topProducts.map((product, index) => {
             return (
-              <div key={index} className="card w-full bg-base-100 shadow-xl rounded-sm">
-                <div className='card-body'>
-                  <p>{product['name']}</p>
-                  <input type="image" src={`data:${product['image']['type']};base64,${product['image']['bytes']}`}/>
+              <div key={index} className="card w-1/4 h-full bg-base-100 bg-blue-400 shadow-xl rounded-sm border-[1px]">
+                <div className='card-body h-1/2'>
+                  <input type="image" src={`data:${product['image']['type']};base64,${product['image']['bytes']}`} className='object-fill w-5/6 self-center'/>
+                  <p className='text-left text-black'>{product['name']}</p>
                 </div>
               </div>
             )

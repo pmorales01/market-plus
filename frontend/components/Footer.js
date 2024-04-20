@@ -17,7 +17,7 @@ export default function Footer () {
                 </div>
             </div> 
             <div>
-                <p>Copyright © 2023 - All right reserved by Market+</p>
+                <p>Copyright © 2024 - All right reserved by Market+</p>
             </div>
         </footer>
     )

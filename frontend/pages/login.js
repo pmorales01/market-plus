@@ -50,34 +50,36 @@ export default function Login () {
     }
 
     return (
-        <div className="flex flex-col items-center justify-between w-full sm:max-md:w-fit h-screen">
+        <div>
             <NavBar/>
-            <form method='post' className="form-control w-[400px] my-20 xs:max-sm:w-11/12" onSubmit={handleSubmit}>
-                {message && visible && <Alert message={message} onClick={updatePopup} />}
-                <header className='flex flex-col items-center'>
-                    <h1 className='title mb-5'>Login</h1>
-                    <p className='self-center mb-5'>Please enter your e-mail and password:</p>
-                </header>
-                <div className='input-container'>
-                    <input type="email" id="email" name="email" autoComplete='on' className="input input-bordered input-sm w-full max-w-full" placeholder=' ' required></input>
-                    <label className="label" htmlFor="email">
-                        <span>Email</span>
-                    </label>
-                </div>
-                <div className='input-container'>
-                    <input type="password" id="password" name="password" autoComplete='on' className="input input-bordered input-sm w-full max-w-full" placeholder=' ' required></input>
-                    <label className="label" htmlFor="password">
-                        <span>Password</span>
-                    </label>
-                </div>
-                <div className='flex justify-center space-x-1 mb-5'>
-                    <p>Don't have an account?</p>
-                    <Link href="/signup" className='link link-hover'>Create one</Link>
-                </div>
-                <button className="btn btn-primary">
-                    LOGIN
-                </button>
-            </form>
+            <div className='flex justify-center'>
+                <form method='post' className="form-control w-[400px] my-20 xs:max-sm:w-11/12" onSubmit={handleSubmit}>
+                    {message && visible && <Alert message={message} onClick={updatePopup} />}
+                    <header className='flex flex-col items-center'>
+                        <h1 className='title mb-5'>Login</h1>
+                        <p className='self-center mb-5'>Please enter your e-mail and password:</p>
+                    </header>
+                    <div className='input-container'>
+                        <input type="email" id="email" name="email" autoComplete='on' className="input input-bordered input-sm w-full max-w-full" placeholder=' ' required></input>
+                        <label className="label" htmlFor="email">
+                            <span>Email</span>
+                        </label>
+                    </div>
+                    <div className='input-container'>
+                        <input type="password" id="password" name="password" autoComplete='on' className="input input-bordered input-sm w-full max-w-full" placeholder=' ' required></input>
+                        <label className="label" htmlFor="password">
+                            <span>Password</span>
+                        </label>
+                    </div>
+                    <div className='flex justify-center space-x-1 mb-5'>
+                        <p>Don't have an account?</p>
+                        <Link href="/signup" className='link link-hover'>Create one</Link>
+                    </div>
+                    <button className="btn btn-primary">
+                        LOGIN
+                    </button>
+                </form>
+            </div>
             <Footer/>
         </div>
     )

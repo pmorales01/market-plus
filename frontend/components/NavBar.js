@@ -52,7 +52,7 @@ export default function NavBar() {
   ]
 
   return (
-    <div>
+    <>
       <div id='banner' className=' carousel w-full h-[40px] bg-[rgb(248,248,248)]'>
         <Swiper
           cssMode={true}
@@ -61,13 +61,12 @@ export default function NavBar() {
           scrollbar={true}
           className="mySwiper"
           >
-          <SwiperSlide className="flex justify-center items-center banner-font">Get up to 50% your first purchase!</SwiperSlide>
+          <SwiperSlide className="flex justify-center items-center banner-font"><Link href='/signup'>Get up to 50% off your first purchase!</Link></SwiperSlide>
           <SwiperSlide className="flex justify-center items-center banner-font">Free Shipping on Orders over $25</SwiperSlide>
           <SwiperSlide className="flex justify-center items-center banner-font">Nonfiction books 50% Off today only!</SwiperSlide>
           <SwiperSlide className="flex justify-center items-center banner-font">Access Exclusive Offers and Rewards</SwiperSlide>
         </Swiper>
       </div>
-
       <div className='flex flex-row h-[40px]'>
         <Link href='/'>
           <img
@@ -103,7 +102,7 @@ export default function NavBar() {
           ))}
         </ul>
       </nav>
-    </div>
+    </>
   )
 }
 
