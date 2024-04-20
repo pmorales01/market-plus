@@ -107,7 +107,12 @@ module.exports = {
             'color' : 'rgb(33,31,32)',
             'font-size' : '0.625rem',
             'font-weight' : '400',
-          }
+          },
+          '.swiper-slide' : {
+            'text-align': 'center',
+            'font-size': '18px',
+            'background': '#fff',
+          }, 
         }
       }
     ],
