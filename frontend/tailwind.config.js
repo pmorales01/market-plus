@@ -113,6 +113,15 @@ module.exports = {
             'font-size': '18px',
             'background': '#fff',
           }, 
+          '#search-bar-btn' : {
+            'font-family' : 'Lato',
+            'font-size': '14px',
+            'border-radius': '0px',
+            'background-color': 'black',
+            'color': 'white',
+            'font': 'inherit',
+            'text-transform': 'none'
+          },
         }
       }
     ],
